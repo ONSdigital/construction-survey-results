@@ -1,0 +1,48 @@
+name: cml_runtimes
+
+on:
+  # Triggers the workflow on pull requests to main branch
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  commit-hooks:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v3
+        with:
+          python-version: 3.10.13
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+
+      - name: Check commit hooks
+        run: |
+          pre-commit run --all-files
+
+  testing-cml:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cml_version: ["3.8", "3.9", "3.10","3.11"]
+    steps:
+    - name: checkout ml-runtimes  #https://github.com/cloudera/ml-runtimes
+      uses: actions/checkout@master
+      with:
+        repository: cloudera/ml-runtimes
+    - name: build runtime cml_${{matrix.cml_version}}
+      run: docker build -t cml:${{matrix.cml_version}} -f 'pbj-workbench-python${{matrix.cml_version}}-standard.Dockerfile' .
+    - name: checkout to repository
+      uses: actions/checkout@v3
+    - name: create container
+      run:  docker run -id --name container_${{matrix.cml_version}} -v"$(pwd)"://home/cdsw cml:${{matrix.cml_version}}
+    - name: build in dev mode
+      run: docker exec container_${{matrix.cml_version}}  pip install ."[dev]"
+    - name: check env
+      run: docker exec container_${{matrix.cml_version}} pip list
+    - name: test
+      run: docker exec container_${{matrix.cml_version}} pytest

@@ -1,0 +1,8 @@
+{
+  "survey": {
+    "results_filepath": "/d:/repos/construction-survey-results/cons_results/survey_results.csv"
+  },
+  "logging": {
+    "file": "/var/log/construction_survey.log"
+  }
+}
