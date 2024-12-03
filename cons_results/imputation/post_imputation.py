@@ -45,6 +45,19 @@ def calculate_totals(df: pd.DataFrame, derive_from: list[int]) -> pd.DataFrame:
     return sums.assign(constrain_marker=f"sum{derive_from}").reset_index()
 
 
+def constrain_imputed_values(df: pd.DataFrame, derive_from: list[int]) -> pd.DataFrame:
+    df_temp = df.fillna(0)
+
+    sums = sum(
+        [
+            df_temp.loc[question_no]
+            for question_no in derive_from
+            if question_no in df_temp.index
+        ]
+    )
+    print("sums: \n", sums)
+
+
 def create_derive_map():
     """
     Function to create derive mapping dictionary
@@ -79,11 +92,7 @@ def post_imputation_processing(
 
     df_subset = df.loc[~df[reference].isin(returned_total_reference)]
     df_subset = df_subset.set_index(
-        [
-            question_no,
-            period,
-            reference,
-        ],
+        [question_no, period, reference, "marker"],
         verify_integrity=False,
     )
     df_subset = df_subset[[target]]
@@ -96,9 +105,40 @@ def post_imputation_processing(
         ]
     )
 
+    df_subset = df.loc[df[reference].isin(returned_total_reference)]
+    df_subset = df_subset.set_index(
+        [question_no, period, reference, "marker"],
+        verify_integrity=False,
+    )
+    df_subset = df_subset[[target]]
+
+    constrain_imputed_values(df_subset, question_no_mapping["from"])
+
+    # Only checking references with returned total
+
+    # df_returned_total = df.loc[df[reference].isin(returned_total_reference)]
+    # derived_values_2 = pd.concat(
+    #     [
+    #         calculate_totals(df_returned_total, question_no_mapping["from"]).assign(
+    #             **{"question_no": question_no_mapping["derive"]}
+    #         )
+    #     ]
+    # )
+    # print(derived_values_2)
+
+    # check_imputed_values_constrained(df, question_no_mapping["from"])
+
     final_constrained = pd.concat([df, derived_values])
 
     return final_constrained
+
+
+def check_imputed_values_constrained(
+    df: pd.DataFrame, derive_from: list[int]
+) -> pd.DataFrame:
+    # derive total again, DO NOT OVERWRITE RETURN
+
+    pass
 
 
 if __name__ == "__main__":
@@ -106,4 +146,5 @@ if __name__ == "__main__":
     df_out = post_imputation_processing(
         df, "period", "reference", "question_no", "target"
     )
+
     print(df_out)
