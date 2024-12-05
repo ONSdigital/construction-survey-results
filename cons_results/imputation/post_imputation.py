@@ -41,6 +41,8 @@ def calculate_totals(df: pd.DataFrame, derive_from: list[int]) -> pd.DataFrame:
             if question_no in df_temp.index
         ]
     )
+    sums.rename(columns={"target": "derived_target"}, inplace=True)
+    print(sums)
 
     return sums.assign(constrain_marker=f"sum{derive_from}").reset_index()
 
@@ -90,9 +92,9 @@ def post_imputation_processing(
     ].unique()
     print(returned_total_reference)
 
-    df_subset = df.loc[~df[reference].isin(returned_total_reference)]
-    df_subset = df_subset.set_index(
-        [question_no, period, reference, "marker"],
+    # df_subset = df.loc[~df[reference].isin(returned_total_reference)]
+    df_subset = df.set_index(
+        [question_no, period, reference],
         verify_integrity=False,
     )
     df_subset = df_subset[[target]]
@@ -105,26 +107,30 @@ def post_imputation_processing(
         ]
     )
 
-    df_subset = df.loc[df[reference].isin(returned_total_reference)]
-    df_subset = df_subset.set_index(
-        [question_no, period, reference, "marker"],
-        verify_integrity=False,
-    )
-    df_subset = df_subset[[target]]
+    # df_subset = df.loc[df[reference].isin(returned_total_reference)]
+    # df_subset = df_subset.set_index(
+    #     [question_no, period, reference],
+    #     verify_integrity=False,
+    # )
+    # df_subset = df_subset[[target]]
 
-    constrain_imputed_values(df_subset, question_no_mapping["from"])
+    # constrain_imputed_values(df_subset, question_no_mapping["from"])
 
-    # Only checking references with returned total
+    # # Only checking references with returned total
 
-    # df_returned_total = df.loc[df[reference].isin(returned_total_reference)]
+    # df_returned_total_2 = df.loc[df[reference].isin(returned_total_reference)]
+    # df_returned_total_2 = df_returned_total_2.set_index(
+    #     [question_no, period, reference, "marker"],
+    #     verify_integrity=False,
+    # )
     # derived_values_2 = pd.concat(
     #     [
-    #         calculate_totals(df_returned_total, question_no_mapping["from"]).assign(
+    #         calculate_totals(df_returned_total_2, question_no_mapping["from"]).assign(
     #             **{"question_no": question_no_mapping["derive"]}
     #         )
     #     ]
     # )
-    # print(derived_values_2)
+    # print("derived 2", derived_values_2)
 
     # check_imputed_values_constrained(df, question_no_mapping["from"])
 
