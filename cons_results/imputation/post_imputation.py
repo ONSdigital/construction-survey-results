@@ -81,16 +81,15 @@ def create_derive_map():
 
 
 def post_imputation_processing(
-    df: pd.DataFrame, period, reference, question_no, target
+    df: pd.DataFrame, period, reference, question_no, target, marker
 ):
     question_no_mapping = create_derive_map()
 
     # Check if there is a returned total, remove this reference when deriving
-    returned_total_reference = df.loc[
-        (df[question_no] == question_no_mapping["derive"]) & (df["marker"] == "r"),
-        reference,
-    ].unique()
-    print(returned_total_reference)
+    # returned_total_reference = df.loc[
+    #     (df[question_no] == question_no_mapping["derive"]) & (df["marker"] == "r"),
+    #     reference,
+    # ].unique()
 
     # df_subset = df.loc[~df[reference].isin(returned_total_reference)]
     df_subset = df.set_index(
@@ -107,36 +106,64 @@ def post_imputation_processing(
         ]
     )
 
-    # df_subset = df.loc[df[reference].isin(returned_total_reference)]
-    # df_subset = df_subset.set_index(
-    #     [question_no, period, reference],
-    #     verify_integrity=False,
-    # )
-    # df_subset = df_subset[[target]]
+    final_constrained = pd.merge(
+        df, derived_values, on=[question_no, period, reference], how="outer"
+    )
+    print(final_constrained.columns)
 
-    # constrain_imputed_values(df_subset, question_no_mapping["from"])
-
-    # # Only checking references with returned total
-
-    # df_returned_total_2 = df.loc[df[reference].isin(returned_total_reference)]
-    # df_returned_total_2 = df_returned_total_2.set_index(
-    #     [question_no, period, reference, "marker"],
-    #     verify_integrity=False,
-    # )
-    # derived_values_2 = pd.concat(
-    #     [
-    #         calculate_totals(df_returned_total_2, question_no_mapping["from"]).assign(
-    #             **{"question_no": question_no_mapping["derive"]}
-    #         )
-    #     ]
-    # )
-    # print("derived 2", derived_values_2)
-
-    # check_imputed_values_constrained(df, question_no_mapping["from"])
-
-    final_constrained = pd.concat([df, derived_values])
+    final_constrained = final_constrained.groupby(
+        [
+            period,
+            reference,
+        ]
+    ).apply(lambda df: rescale_imputed_values(df))
 
     return final_constrained
+
+
+def rescale_imputed_values(df: pd.DataFrame) -> pd.DataFrame:
+    # TODO: remove hard coded refrence to question_no 4
+    # deal with derived nans when question does not exist? - not urgent
+    #
+    # Check if the target and derived_target values are equal for question_no 4
+    if df.loc[df["question_no"] == 4, "target"].equals(
+        df.loc[df["question_no"] == 4, "derived_target"]
+    ):
+        print("values are equal")
+        return df  # Return the DataFrame as is
+
+    # Check if all markers are 'r'
+    if (df["marker"].nunique() == 1) and ("r" in df["marker"].unique()):
+        print("WARNING DERIVED AND RETURNED ARE NOT EQUAL")
+        print("all other values in this period / reference are returns")
+        return df  # Return the DataFrame as is
+
+    # If the target and derived_target values are not equal for question_no 4, rescale
+    print("values are not equal - need to rescale")
+    sum_returned_exclude_total = df.loc[
+        (df["question_no"] != 4) & (df["marker"] == "r"), "target"
+    ].sum()
+    sum_imputed = df.loc[
+        (df["question_no"] != 4) & (df["marker"] != "r"), "target"
+    ].sum()
+    print(sum_returned_exclude_total, sum_imputed)
+
+    # Calculate the rescale factor
+    df["rescale_factor"] = (
+        df.loc[df["question_no"] == 4, "target"] - sum_returned_exclude_total
+    ) / sum_imputed
+    df.loc[df["marker"] != "r", "rescale_factor"] = df.loc[
+        df["question_no"] == 4, "rescale_factor"
+    ].values[0]
+    df["rescale_factor"] = df["rescale_factor"].fillna(1)
+
+    # Apply the rescale factor to the target values
+    df.loc[df["question_no"] != 4, "rescaled_value"] = (
+        df["target"] * df["rescale_factor"]
+    )
+    print(df)
+
+    return df  # Return the modified DataFrame
 
 
 def check_imputed_values_constrained(
@@ -150,7 +177,7 @@ def check_imputed_values_constrained(
 if __name__ == "__main__":
     df = pd.read_csv("test.csv")
     df_out = post_imputation_processing(
-        df, "period", "reference", "question_no", "target"
+        df, "period", "reference", "question_no", "target", "marker"
     )
 
     print(df_out)
