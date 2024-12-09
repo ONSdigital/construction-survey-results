@@ -32,9 +32,7 @@ def calculate_totals(df: pd.DataFrame, derive_from: list[int]) -> pd.DataFrame:
         A dataframe with sums, constain marker, and columns from index which the
         sum was based on.
     """
-    # difference between using sum or agg RE NaNs
-    # Temp fix, fillna with 0.
-    # Add info the backlog ticket to replace this temp fix after combining columns
+
     df_temp = df.fillna(0)
 
     sums = sum(
@@ -45,22 +43,7 @@ def calculate_totals(df: pd.DataFrame, derive_from: list[int]) -> pd.DataFrame:
         ]
     )
     sums.rename(columns={"target": "derived_target"}, inplace=True)
-    print(sums)
-
     return sums.assign(constrain_marker=f"sum{derive_from}").reset_index()
-
-
-def constrain_imputed_values(df: pd.DataFrame, derive_from: list[int]) -> pd.DataFrame:
-    df_temp = df.fillna(0)
-
-    sums = sum(
-        [
-            df_temp.loc[question_no]
-            for question_no in derive_from
-            if question_no in df_temp.index
-        ]
-    )
-    print("sums: \n", sums)
 
 
 def create_derive_map():
@@ -75,7 +58,10 @@ def create_derive_map():
         Derived question mapping in a dictionary.
         Removes form IDs which are not present in dataframe
     """
-
+    warnings.warn(
+        "This might need to be expanded to allow for multiple derived questions "
+        "and updated to correct question numbers"
+    )
     derive_map = {
         "derive": 5,
         "from": [1, 2, 3, 4],
@@ -84,37 +70,55 @@ def create_derive_map():
 
 
 def post_imputation_processing(
-    df: pd.DataFrame, period, reference, question_no, target, marker
-):
+    df: pd.DataFrame, period, reference, question_no, target, imputation_marker
+) -> pd.DataFrame:
+    """
+    first outline of post imputation processing for the construction survey
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        post imputation dataframe
+    period : _type_
+        period column name
+    reference : _type_
+        reference column name
+    question_no : _type_
+        question number column name
+    target : _type_
+        target column name
+    imputation_marker : _type_
+        imputation marker column name
+
+    Returns
+    -------
+    pd.DataFrame
+        post imputation dataframe with derived questions and rescaled values where
+        needed
+    """
     question_no_mapping = create_derive_map()
 
-    # Check if there is a returned total, remove this reference when deriving
-    # returned_total_reference = df.loc[
-    #     (df[question_no] == question_no_mapping["derive"]) & (df["marker"] == "r"),
-    #     reference,
-    # ].unique()
-
-    # df_subset = df.loc[~df[reference].isin(returned_total_reference)]
     df_subset = df.set_index(
         [question_no, period, reference], verify_integrity=False, drop=True
     )
     df_subset = df_subset[[target]]
 
-    derived_values = pd.concat(
-        [
-            calculate_totals(df_subset, question_no_mapping["from"]).assign(
-                **{question_no: question_no_mapping["derive"]}
-            )
-        ]
+    derived_values = calculate_totals(df_subset, question_no_mapping["from"]).assign(
+        **{question_no: question_no_mapping["derive"]}
     )
 
     final_constrained = pd.merge(
         df, derived_values, on=[question_no, period, reference], how="outer"
     )
-    print(final_constrained.columns)
 
-    final_constrained = final_constrained.groupby([period, reference]).apply(
-        lambda df: rescale_imputed_values(df, question_no, marker, question_no_mapping)
+    final_constrained = (
+        final_constrained.groupby([period, reference])
+        .apply(
+            lambda group_df: rescale_imputed_values(
+                group_df, question_no, target, imputation_marker, question_no_mapping
+            )
+        )
+        .reset_index(drop=True)
     )
 
     return final_constrained
@@ -124,9 +128,30 @@ def rescale_imputed_values(
     df: pd.DataFrame,
     question_no: str,
     target: str,
-    marker: str,
+    imputation_marker: str,
     question_no_mapping: dict,
 ) -> pd.DataFrame:
+    """
+    rescales imputed / constructed values if total is a return.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        original dataframe, grouped by period and reference
+    question_no : str
+        question number column name
+    target : str
+        target column name
+    imputation_marker : str
+        imputation marker column name
+    question_no_mapping : dict
+        dictionary containing question number derived and question numbers summed
+
+    Returns
+    -------
+    pd.DataFrame
+        original dataframe with adjusted values and rescale factors
+    """
 
     reference_value = df["reference"].unique()[0]
     derived_question_mask = df[question_no] == question_no_mapping["derive"]
@@ -135,13 +160,14 @@ def rescale_imputed_values(
     if df.loc[derived_question_mask, target].equals(
         df.loc[derived_question_mask, "derived_target"]
     ):
-        print(f"Values are equal, reference: {reference_value} \n")
         df["adjusted_value"] = df[target]
         df["rescale_factor"] = np.nan
         return df
 
     # Check if all markers are 'r'
-    if (df[marker].nunique() == 1) and ("r" in df[marker].unique()):
+    if (df[imputation_marker].nunique() == 1) and (
+        "r" in df[imputation_marker].unique()
+    ):
         warnings.warn(
             "Derived and returned value are not equal."
             + f"All other values are returns. reference: {reference_value} \n"
@@ -160,13 +186,14 @@ def rescale_imputed_values(
         return df
 
     # If target and derived_target values are not equal for derived question, rescale
-    print(f"Values are not equal - need to rescale. reference: {reference_value} \n")
     sum_returned_exclude_total = df.loc[
-        (df[question_no] != question_no_mapping["derive"]) & (df[marker] == "r"),
+        (df[question_no] != question_no_mapping["derive"])
+        & (df[imputation_marker] == "r"),
         target,
     ].sum()
     sum_imputed = df.loc[
-        (df[question_no] != question_no_mapping["derive"]) & (df[marker] != "r"),
+        (df[question_no] != question_no_mapping["derive"])
+        & (df[imputation_marker] != "r"),
         target,
     ].sum()
 
@@ -174,7 +201,7 @@ def rescale_imputed_values(
     rescale_factor = (
         df.loc[derived_question_mask, target].values[0] - sum_returned_exclude_total
     ) / sum_imputed
-    df["rescale_factor"] = np.where(df[marker] != "r", rescale_factor, 1)
+    df["rescale_factor"] = np.where(df[imputation_marker] != "r", rescale_factor, 1)
     df.loc[derived_question_mask, "rescale_factor"] = np.nan
 
     # Apply the rescale factor to the target values
@@ -182,7 +209,7 @@ def rescale_imputed_values(
 
     # Set derived question value to target if a return, derived otherwise
     df.loc[derived_question_mask, "adjusted_value"] = np.where(
-        df.loc[derived_question_mask, marker] == "r",
+        df.loc[derived_question_mask, imputation_marker] == "r",
         df.loc[derived_question_mask, target],
         df.loc[derived_question_mask, "derived_target"],
     )
@@ -196,13 +223,3 @@ def check_imputed_values_constrained(
     # derive total again, DO NOT OVERWRITE RETURN
 
     pass
-
-
-if __name__ == "__main__":
-    df = pd.read_csv("test.csv")
-    # df["target"] = df["target"].fillna(0)
-    df_out = post_imputation_processing(
-        df, "period", "reference", "question_no", "target", "marker"
-    )
-
-    print(df_out)
