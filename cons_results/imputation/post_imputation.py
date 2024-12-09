@@ -121,74 +121,69 @@ def post_imputation_processing(
 
 
 def rescale_imputed_values(
-    df: pd.DataFrame, question_no: str, marker: str, question_no_mapping: dict
+    df: pd.DataFrame,
+    question_no: str,
+    target: str,
+    marker: str,
+    question_no_mapping: dict,
 ) -> pd.DataFrame:
-    # TODO: remove hard coded refrence to question_no 4
-    # deal with derived nans when question does not exist? - not urgent
-    #
-    # Check if the target and derived_target values are equal for question_no 4
+
     reference_value = df["reference"].unique()[0]
     derived_question_mask = df[question_no] == question_no_mapping["derive"]
 
-    if df.loc[df[question_no] == question_no_mapping["derive"], "target"].equals(
-        df.loc[df[question_no] == question_no_mapping["derive"], "derived_target"]
+    # Checking if target and derived target are equal
+    if df.loc[derived_question_mask, target].equals(
+        df.loc[derived_question_mask, "derived_target"]
     ):
-        print("values are equal, reference: {} \n".format(reference_value))
-        df["adjusted_value"] = df["target"]
-        return df  # Return the DataFrame as is
+        print(f"Values are equal, reference: {reference_value} \n")
+        df["adjusted_value"] = df[target]
+        df["rescale_factor"] = np.nan
+        return df
 
     # Check if all markers are 'r'
     if (df[marker].nunique() == 1) and ("r" in df[marker].unique()):
         warnings.warn(
-            """Derived and returned value are not equal.
-            All other values are returns. reference: {} \n""".format(
-                reference_value
-            )
+            "Derived and returned value are not equal."
+            + f"All other values are returns. reference: {reference_value} \n"
         )
-        df["adjusted_value"] = df["target"]
-        return df  # Return the DataFrame as is
+        df["adjusted_value"] = df[target]
+        df["rescale_factor"] = np.nan
+        return df
 
-    if df.loc[df[question_no] == question_no_mapping["derive"], "target"].isna().any():
-        df["adjusted_value"] = df["target"]
+    # Handles if target is NaN i.e. not returned total
+    if df.loc[derived_question_mask, target].isna().any():
+        df["adjusted_value"] = df[target]
         df.loc[derived_question_mask, "adjusted_value"] = df.loc[
             derived_question_mask, "derived_target"
         ]
+        df["rescale_factor"] = np.nan
         return df
 
-    # If the target and derived_target values are not equal for derived q, rescale
-    print(
-        "values are not equal - need to rescale. reference: {} \n".format(
-            reference_value
-        )
-    )
+    # If target and derived_target values are not equal for derived question, rescale
+    print(f"Values are not equal - need to rescale. reference: {reference_value} \n")
     sum_returned_exclude_total = df.loc[
         (df[question_no] != question_no_mapping["derive"]) & (df[marker] == "r"),
-        "target",
+        target,
     ].sum()
     sum_imputed = df.loc[
         (df[question_no] != question_no_mapping["derive"]) & (df[marker] != "r"),
-        "target",
+        target,
     ].sum()
 
     # Calculate the rescale factor
-    df["rescale_factor"] = (
-        df.loc[df[question_no] == question_no_mapping["derive"], "target"]
-        - sum_returned_exclude_total
+    rescale_factor = (
+        df.loc[derived_question_mask, target].values[0] - sum_returned_exclude_total
     ) / sum_imputed
-    df.loc[df[marker] != "r", "rescale_factor"] = df.loc[
-        df[question_no] == question_no_mapping["derive"], "rescale_factor"
-    ].values[0]
-    df.loc[df[marker] == "r", "rescale_factor"] = 1
-    df.loc[derived_question_mask, "rescale_factor"] = None
+    df["rescale_factor"] = np.where(df[marker] != "r", rescale_factor, 1)
+    df.loc[derived_question_mask, "rescale_factor"] = np.nan
 
     # Apply the rescale factor to the target values
-    df.loc[df[question_no] != question_no_mapping["derive"], "adjusted_value"] = (
-        df["target"] * df["rescale_factor"]
-    )
+    df["adjusted_value"] = df[target] * df["rescale_factor"]
 
+    # Set derived question value to target if a return, derived otherwise
     df.loc[derived_question_mask, "adjusted_value"] = np.where(
         df.loc[derived_question_mask, marker] == "r",
-        df.loc[derived_question_mask, "target"],
+        df.loc[derived_question_mask, target],
         df.loc[derived_question_mask, "derived_target"],
     )
 
