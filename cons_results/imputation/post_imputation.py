@@ -1,3 +1,6 @@
+import warnings
+
+import numpy as np
 import pandas as pd
 
 # Case 1 - all responses - calculate total (even if given or not this will be same)
@@ -74,8 +77,8 @@ def create_derive_map():
     """
 
     derive_map = {
-        "derive": 4,
-        "from": [1, 2, 3],
+        "derive": 5,
+        "from": [1, 2, 3, 4],
     }
     return derive_map
 
@@ -93,8 +96,7 @@ def post_imputation_processing(
 
     # df_subset = df.loc[~df[reference].isin(returned_total_reference)]
     df_subset = df.set_index(
-        [question_no, period, reference],
-        verify_integrity=False,
+        [question_no, period, reference], verify_integrity=False, drop=True
     )
     df_subset = df_subset[[target]]
 
@@ -111,57 +113,84 @@ def post_imputation_processing(
     )
     print(final_constrained.columns)
 
-    final_constrained = final_constrained.groupby(
-        [
-            period,
-            reference,
-        ]
-    ).apply(lambda df: rescale_imputed_values(df))
+    final_constrained = final_constrained.groupby([period, reference]).apply(
+        lambda df: rescale_imputed_values(df, question_no, marker, question_no_mapping)
+    )
 
     return final_constrained
 
 
-def rescale_imputed_values(df: pd.DataFrame) -> pd.DataFrame:
+def rescale_imputed_values(
+    df: pd.DataFrame, question_no: str, marker: str, question_no_mapping: dict
+) -> pd.DataFrame:
     # TODO: remove hard coded refrence to question_no 4
     # deal with derived nans when question does not exist? - not urgent
     #
     # Check if the target and derived_target values are equal for question_no 4
-    if df.loc[df["question_no"] == 4, "target"].equals(
-        df.loc[df["question_no"] == 4, "derived_target"]
+    reference_value = df["reference"].unique()[0]
+    derived_question_mask = df[question_no] == question_no_mapping["derive"]
+
+    if df.loc[df[question_no] == question_no_mapping["derive"], "target"].equals(
+        df.loc[df[question_no] == question_no_mapping["derive"], "derived_target"]
     ):
-        print("values are equal")
+        print("values are equal, reference: {} \n".format(reference_value))
+        df["adjusted_value"] = df["target"]
         return df  # Return the DataFrame as is
 
     # Check if all markers are 'r'
-    if (df["marker"].nunique() == 1) and ("r" in df["marker"].unique()):
-        print("WARNING DERIVED AND RETURNED ARE NOT EQUAL")
-        print("all other values in this period / reference are returns")
+    if (df[marker].nunique() == 1) and ("r" in df[marker].unique()):
+        warnings.warn(
+            """Derived and returned value are not equal.
+            All other values are returns. reference: {} \n""".format(
+                reference_value
+            )
+        )
+        df["adjusted_value"] = df["target"]
         return df  # Return the DataFrame as is
 
-    # If the target and derived_target values are not equal for question_no 4, rescale
-    print("values are not equal - need to rescale")
+    if df.loc[df[question_no] == question_no_mapping["derive"], "target"].isna().any():
+        df["adjusted_value"] = df["target"]
+        df.loc[derived_question_mask, "adjusted_value"] = df.loc[
+            derived_question_mask, "derived_target"
+        ]
+        return df
+
+    # If the target and derived_target values are not equal for derived q, rescale
+    print(
+        "values are not equal - need to rescale. reference: {} \n".format(
+            reference_value
+        )
+    )
     sum_returned_exclude_total = df.loc[
-        (df["question_no"] != 4) & (df["marker"] == "r"), "target"
+        (df[question_no] != question_no_mapping["derive"]) & (df[marker] == "r"),
+        "target",
     ].sum()
     sum_imputed = df.loc[
-        (df["question_no"] != 4) & (df["marker"] != "r"), "target"
+        (df[question_no] != question_no_mapping["derive"]) & (df[marker] != "r"),
+        "target",
     ].sum()
-    print(sum_returned_exclude_total, sum_imputed)
 
     # Calculate the rescale factor
     df["rescale_factor"] = (
-        df.loc[df["question_no"] == 4, "target"] - sum_returned_exclude_total
+        df.loc[df[question_no] == question_no_mapping["derive"], "target"]
+        - sum_returned_exclude_total
     ) / sum_imputed
-    df.loc[df["marker"] != "r", "rescale_factor"] = df.loc[
-        df["question_no"] == 4, "rescale_factor"
+    df.loc[df[marker] != "r", "rescale_factor"] = df.loc[
+        df[question_no] == question_no_mapping["derive"], "rescale_factor"
     ].values[0]
-    df["rescale_factor"] = df["rescale_factor"].fillna(1)
+    df.loc[df[marker] == "r", "rescale_factor"] = 1
+    df.loc[derived_question_mask, "rescale_factor"] = None
 
     # Apply the rescale factor to the target values
-    df.loc[df["question_no"] != 4, "rescaled_value"] = (
+    df.loc[df[question_no] != question_no_mapping["derive"], "adjusted_value"] = (
         df["target"] * df["rescale_factor"]
     )
-    print(df)
+
+    df.loc[derived_question_mask, "adjusted_value"] = np.where(
+        df.loc[derived_question_mask, marker] == "r",
+        df.loc[derived_question_mask, "target"],
+        df.loc[derived_question_mask, "derived_target"],
+    )
 
     return df  # Return the modified DataFrame
 
@@ -176,6 +205,7 @@ def check_imputed_values_constrained(
 
 if __name__ == "__main__":
     df = pd.read_csv("test.csv")
+    # df["target"] = df["target"].fillna(0)
     df_out = post_imputation_processing(
         df, "period", "reference", "question_no", "target", "marker"
     )
