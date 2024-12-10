@@ -1,4 +1,5 @@
 import warnings
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -11,7 +12,7 @@ import pandas as pd
 # Can the total be imputed? my guess would be no
 
 
-def calculate_totals(df: pd.DataFrame, derive_from: list[int]) -> pd.DataFrame:
+def calculate_totals(df: pd.DataFrame, derive_from: List[int]) -> pd.DataFrame:
 
     """
     Returns the sums of a dataframe in which the first level index is in
