@@ -41,8 +41,8 @@ jobs:
     - name: create container
       run:  docker run -id --name container_${{matrix.cml_version}} -v"$(pwd)"://home/cdsw cml:${{matrix.cml_version}}
     - name: build in dev mode
-      run: docker exec container_${{matrix.cml_version}}  pip install ."[dev]"
+      run: docker exec container_${{matrix.cml_version}}  pip install -e .[dev]
     - name: check env
       run: docker exec container_${{matrix.cml_version}} pip list
     - name: test
-      run: docker exec container_${{matrix.cml_version}} pytest
+      run: docker exec container_${{matrix.cml_version}} pytest -v

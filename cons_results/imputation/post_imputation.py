@@ -11,7 +11,7 @@ import pandas as pd
 # Can the total be imputed? my guess would be no
 
 
-def calculate_totals(df: pd.DataFrame, derive_from: list[int]) -> pd.DataFrame:
+def calculate_totals(df: pd.DataFrame, derive_from: list) -> pd.DataFrame:
 
     """
     Returns the sums of a dataframe in which the first level index is in
@@ -215,11 +215,3 @@ def rescale_imputed_values(
     )
 
     return df  # Return the modified DataFrame
-
-
-def check_imputed_values_constrained(
-    df: pd.DataFrame, derive_from: list[int]
-) -> pd.DataFrame:
-    # derive total again, DO NOT OVERWRITE RETURN
-
-    pass

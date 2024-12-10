@@ -5,9 +5,8 @@ from cons_results.imputation.post_imputation import rescale_imputed_values
 
 scenarios = [100, 101, 102, 103, 104, 105]
 
-pytestmark = pytest.mark.parametrize("reference", scenarios)
 
-
+@pytest.mark.parametrize("reference", scenarios)
 def test_rescale_imputed_values(reference):
     expected_output = pd.read_csv(
         "tests/data/imputation/test_data_rescale_imputed_single.csv"
