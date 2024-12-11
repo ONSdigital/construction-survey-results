@@ -71,7 +71,13 @@ def create_derive_map():
 
 
 def post_imputation_processing(
-    df: pd.DataFrame, period, reference, question_no, target, imputation_marker
+    df: pd.DataFrame,
+    period,
+    reference,
+    question_no,
+    target,
+    imputation_marker,
+    **config,
 ) -> pd.DataFrame:
     """
     first outline of post imputation processing for the construction survey
@@ -90,7 +96,8 @@ def post_imputation_processing(
         target column name
     imputation_marker : _type_
         imputation marker column name
-
+    **config: Dict
+        main pipeline configuration. Can be used to input the entire config dictionary
     Returns
     -------
     pd.DataFrame
