@@ -1,2 +1,2 @@
-import mbs_results.outlier_detection
+import mbs_results.outlier_detection  # noqa
 
