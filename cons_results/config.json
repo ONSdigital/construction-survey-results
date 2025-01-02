@@ -4,5 +4,10 @@
   },
   "logging": {
     "file": "/var/log/construction_survey.log"
+  },
+  "question_number_mapping": {
+    "mapping_1": {"derive": 5,"from": [1, 2, 3, 4]},
+    "mapping_2":{"derive": 6,"from": [1, 2]},
+    "mapping_3":{"derive": 7,"from": [3, 4]}
   }
 }

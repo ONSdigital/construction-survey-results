@@ -138,6 +138,7 @@ def rescale_imputed_values(
     target: str,
     imputation_marker: str,
     question_no_mapping: dict,
+    drop_intermediate_cols: bool = False,
 ) -> pd.DataFrame:
     """
     rescales imputed / constructed values if total is a return.
@@ -162,7 +163,14 @@ def rescale_imputed_values(
     """
 
     reference_value = df["reference"].unique()[0]
-    derived_question_mask = df[question_no] == question_no_mapping["derive"]
+    # question_no_mapping is nested dict
+    derived_question_no_list = []
+    for i in question_no_mapping:
+        derived_question_no = question_no_mapping[i]["derive"]
+        derived_question_no_list.append(derived_question_no)
+    print(derived_question_no_list)
+
+    derived_question_mask = df[question_no].isin(derived_question_no_list)
 
     # Checking if target and derived target are equal
     if df.loc[derived_question_mask, target].equals(
@@ -195,12 +203,12 @@ def rescale_imputed_values(
 
     # If target and derived_target values are not equal for derived question, rescale
     sum_returned_exclude_total = df.loc[
-        (df[question_no] != question_no_mapping["derive"])
+        (~df[question_no].isin(derived_question_no_list))
         & (df[imputation_marker] == "r"),
         target,
     ].sum()
     sum_imputed = df.loc[
-        (df[question_no] != question_no_mapping["derive"])
+        (~df[question_no].isin(derived_question_no_list))
         & (df[imputation_marker] != "r"),
         target,
     ].sum()
@@ -222,4 +230,31 @@ def rescale_imputed_values(
         df.loc[derived_question_mask, "derived_target"],
     )
 
+    if drop_intermediate_cols:
+        df.drop(columns=["adjusted_value"], inplace=True)
+
     return df  # Return the modified DataFrame
+
+
+if __name__ == "__main__":
+    derive_map_nested = {
+        "map_1": {
+            "derive": 5,
+            "from": [1, 2, 3, 4],
+        },
+        "map_2": {
+            "derive": 6,
+            "from": [
+                1,
+                2,
+            ],
+        },
+    }
+
+    derive_map = {"derive": 5, "from": [1, 2, 3, 4]}
+    q_list = []
+    for i in derive_map:
+        if i == "derive":
+            q_no = derive_map.get(i)
+            q_list.append(q_no)
+            print(q_list)
