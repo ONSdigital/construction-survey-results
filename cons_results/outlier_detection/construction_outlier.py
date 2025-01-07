@@ -1,2 +1,1 @@
-import mbs_results.outlier_detection  #noqa: F401
-
+import mbs_results.outlier_detection  # noqa: F401
