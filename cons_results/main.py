@@ -1,7 +1,9 @@
 import warnings
 
 from mbs_results.utilities.inputs import load_config
+
 from cons_results.staging.stage_dataframe import stage_dataframe
+
 # import imputation
 # import post-imputation
 # import estimation
@@ -17,9 +19,7 @@ def run_pipeline(config_user_dict=None):
 
     config = load_config(config_user_dict)
 
-    warnings.warn(
-        "This is a placeholder for config validation, not yet implemented"
-    )
+    warnings.warn("This is a placeholder for config validation, not yet implemented")
 
     staged_data = stage_dataframe(config)
     staged_data.to_csv("tests/data/outputs/staged_data.csv")
@@ -43,7 +43,7 @@ def run_pipeline(config_user_dict=None):
     )
 
     warnings.warn("This is a placeholder for outlier detection,  not yet implemented")
-    
+
     warnings.warn("This is a placeholder for estimation,  not yet implemented")
 
 

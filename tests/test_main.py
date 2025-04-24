@@ -24,13 +24,13 @@ def test_config(filepath):
         "output_path": "",
         "population_prefix": "",
         "sample_prefix": "finalsel228",
-        "back_data_qv_path":"",
-        "back_data_cp_path":"",
-        "back_data_finalsel_path":"",
+        "back_data_qv_path": "",
+        "back_data_cp_path": "",
+        "back_data_finalsel_path": "",
         "sic_domain_mapping_path": "",
         "current_period": 202303,
         "revision_window": 13,
-        "state": "frozen"
+        "state": "frozen",
     }
 
 
