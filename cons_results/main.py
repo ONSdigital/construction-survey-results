@@ -1,7 +1,7 @@
 import warnings
 
-# import load general config (JSON)
-# import staging
+from mbs_results.utilities.inputs import load_config
+from cons_results.staging.stage_dataframe import stage_dataframe
 # import imputation
 # import post-imputation
 # import estimation
@@ -12,30 +12,38 @@ import warnings
 # import estimation checks
 
 
-def run_pipeline():
+def run_pipeline(config_user_dict=None):
     """This is the main function that runs the pipeline"""
 
+    config = load_config(config_user_dict)
+
     warnings.warn(
-        "This is a placeholder for load general config (JSON),  not yet implemented"
+        "This is a placeholder for config validation, not yet implemented"
     )
 
-    warnings.warn("This is a placeholder for staging,  not yet implemented")
+    staged_data = stage_dataframe(config)
+    staged_data.to_csv("tests/data/outputs/staged_data.csv")
+
     warnings.warn(
         "This is a placeholder for staging validation checksng,  not yet implemented"
     )
 
     warnings.warn("This is a placeholder for imputation,  not yet implemented")
+
     warnings.warn("This is a placeholder post-imputation,  not yet implemented")
+
     warnings.warn(
         "This is a placeholder for imputation validation checks,  not yet implemented"
     )
 
     warnings.warn("This is a placeholder for estimation,  not yet implemented")
+
     warnings.warn(
         "This is a placeholder for estimation validation checks,  not yet implemented"
     )
 
     warnings.warn("This is a placeholder for outlier detection,  not yet implemented")
+    
     warnings.warn("This is a placeholder for estimation,  not yet implemented")
 
 
