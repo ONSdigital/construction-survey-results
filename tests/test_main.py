@@ -10,19 +10,33 @@ def filepath():
     return Path("tests/data/test_main/")
 
 
-# Either pass test_config as run pipeline arg, or save the test_config in
-# wdir (working directory)
 @pytest.fixture(scope="class")
 def test_config(filepath):
-    return {}
+    return {
+        "platform": "network",
+        "bucket": "",
+        "calibration_group_map_path": "",
+        "classification_values_path": "",
+        "folder_path": filepath,
+        "l_values_path": "",
+        "manual_outlier_path": "",
+        "construction_file_name": "dummy_snapshot.json",
+        "output_path": "",
+        "population_prefix": "",
+        "sample_prefix": "finalsel228",
+        "back_data_qv_path":"",
+        "back_data_cp_path":"",
+        "back_data_finalsel_path":"",
+        "sic_domain_mapping_path": "",
+        "current_period": 202303,
+        "revision_window": 13,
+        "state": "frozen"
+    }
 
 
-# Comment out the skip if testing can be done, otherwise please
-# add a reason why the testing should be skipped
-@pytest.mark.skip(reason="Nothing to test, no moodules in main")
 class TestMain:
     """Test for main"""
 
     def test_run_pipeline(self, test_config):
-        """Run main pipeline based on test_condig"""
-        run_pipeline()
+        """Run main pipeline based on test_config"""
+        run_pipeline(test_config)
