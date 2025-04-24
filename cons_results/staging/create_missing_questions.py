@@ -41,9 +41,9 @@ def create_missing_questions(
 
     Returns
     -------
-    expected_responses : pd.DataFrame
+    responses_full : pd.DataFrame
         A dataframe containing full responses, original plus missing rows for
-        expected questions which were not in orogina responses.
+        expected questions which were not in oroginal responses.
 
     Examples
     --------
