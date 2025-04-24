@@ -1,9 +1,12 @@
+from typing import List
+
 import pandas as pd
 
 
 def create_missing_questions(
     responses: pd.DataFrame,
     contributors: pd.DataFrame,
+    all_questions: List[int],
     reference: str,
     period: str,
     question_col: str,
@@ -30,6 +33,8 @@ def create_missing_questions(
     contributors : pd.DataFrame
         Dataframe containing contributors.
         Reference,period unique identifiers in contributors.
+    all_questions: List[int]
+        List of all question codes which are expected in the responses.
     reference : str
         Column name containing reference variable, must exist in both
         responses and contributors.
@@ -78,8 +83,6 @@ def create_missing_questions(
     4    2  202202            90     NaN
     5    2  202202            91     NaN
     """
-
-    all_questions = responses[question_col].unique()
 
     contributors = contributors.set_index([reference, period]).index
 
