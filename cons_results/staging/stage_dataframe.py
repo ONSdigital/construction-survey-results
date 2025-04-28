@@ -1,20 +1,19 @@
+import warnings
+
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
 from mbs_results.staging.data_cleaning import (
     convert_annual_thousands,
-    convert_cell_number,
     enforce_datatypes,
     filter_out_questions,
     run_live_or_frozen,
 )
-
 from mbs_results.staging.dfs_from_spp import get_dfs_from_spp
 from mbs_results.staging.stage_dataframe import (
-  read_and_combine_colon_sep_files,
-  drop_derived_questions,
+    drop_derived_questions,
+    read_and_combine_colon_sep_files,
 )
 from mbs_results.utilities.utils import get_snapshot_alternate_path
-
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
@@ -91,7 +90,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         config["form_id_spp"],
         config["form_to_derived_map"],
     )
-    
+
     warnings.warn("add live or frozen after fixing error marker column in config")
     df = run_live_or_frozen(
         df,
