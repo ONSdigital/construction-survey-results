@@ -1,7 +1,18 @@
+import warnings
+
 import pandas as pd
-from mbs_results.staging.data_cleaning import enforce_datatypes
+from mbs_results.staging.back_data import append_back_data
+from mbs_results.staging.data_cleaning import (
+    convert_annual_thousands,
+    enforce_datatypes,
+    filter_out_questions,
+    run_live_or_frozen,
+)
 from mbs_results.staging.dfs_from_spp import get_dfs_from_spp
-from mbs_results.staging.stage_dataframe import read_and_combine_colon_sep_files
+from mbs_results.staging.stage_dataframe import (
+    drop_derived_questions,
+    read_and_combine_colon_sep_files,
+)
 from mbs_results.utilities.utils import get_snapshot_alternate_path
 
 
@@ -51,7 +62,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     # Filter contributors files here to temp fix this overlap
 
-    contributors = pd.merge(
+    df = pd.merge(
         left=contributors,
         right=finalsel,
         on=[period, reference],
@@ -59,4 +70,38 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         how="outer",
     )
 
-    return contributors
+    df = append_back_data(df, config)
+
+    snapshot_name = config["mbs_file_name"].split(".")[0]
+
+    df = filter_out_questions(
+        df=df,
+        column=config["question_no"],
+        questions_to_filter=config["filter_out_questions"],
+        save_full_path=config["output_path"]
+        + snapshot_name
+        + "_filter_out_questions.csv",
+        **config,
+    )
+
+    df = drop_derived_questions(
+        df,
+        config["question_no"],
+        config["form_id_spp"],
+        config["form_to_derived_map"],
+    )
+
+    warnings.warn("add live or frozen after fixing error marker column in config")
+    df = run_live_or_frozen(
+        df,
+        config["target"],
+        status=config["status"],
+        state=config["state"],
+        error_values=[201],
+    )
+
+    df[config["auxiliary_converted"]] = df[config["auxiliary"]].copy()
+    df = convert_annual_thousands(df, config["auxiliary_converted"])
+
+    print("Staging Completed")
+    return df
