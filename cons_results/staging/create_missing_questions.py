@@ -16,7 +16,7 @@ def create_missing_questions(
     responses and which references exist in contributors.
 
     The rules are:
-        If a reference has not responsed in a specific period then look to
+        If a reference has not responded in a specific period then look to
         prior period to generate which questions should had been responded
 
         If a reference has never responded then generate all possible questions
@@ -48,7 +48,7 @@ def create_missing_questions(
     -------
     responses_full : pd.DataFrame
         A dataframe containing full responses, original plus missing rows for
-        expected questions which were not in oroginal responses.
+        expected questions which were not in original responses.
 
     Examples
     --------
@@ -69,7 +69,7 @@ def create_missing_questions(
         ref  period  questioncode  target
      0    1  202201            90     999
      1    1  202202            91     999
-    >>> result = generate_expected_questions(
+    >>> result = create_missing_questions(
         responses,
         contributors,
         "ref",
