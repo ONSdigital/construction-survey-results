@@ -71,9 +71,9 @@ def derive_imputation_class(
         nas_df = df[df[save_bins_col_name].isna()]
 
         raise ValueError(
-            f"""There are values in {column} which are not
+            f"""There are values in {column}, which are not
  defined in {sizebands}, please check the dataframe:
- {nas_df}"""
+ {nas_df}."""
         )
 
     return df
