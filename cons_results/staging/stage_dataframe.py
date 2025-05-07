@@ -15,6 +15,8 @@ from mbs_results.staging.stage_dataframe import (
 )
 from mbs_results.utilities.utils import get_snapshot_alternate_path
 
+from cons_results.staging.create_missing_questions import create_missing_questions
+
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
     """
@@ -62,17 +64,34 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     # Filter contributors files here to temp fix this overlap
 
-    df = pd.merge(
+    contributors = pd.merge(
         left=contributors,
         right=finalsel,
         on=[period, reference],
         suffixes=["_spp", "_finalsel"],
         how="outer",
     )
+    
+    print(config)
+    
+    df = create_missing_questions(
+            contributors=contributors,
+            responses=responses,
+            all_questions=config["all_questions"],
+            reference=config["reference"],
+            period=config["period"],
+            question_col=config["questioncode"],
+        )
+    
+    df = pd.merge(
+    left = df,
+    right = contributors,
+    on=[period, reference],
+    how="left")
 
     df = append_back_data(df, config)
 
-    snapshot_name = config["mbs_file_name"].split(".")[0]
+    snapshot_name = config["construction_file_name"].split(".")[0]
 
     df = filter_out_questions(
         df=df,
@@ -84,12 +103,12 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         **config,
     )
 
-    df = drop_derived_questions(
-        df,
-        config["question_no"],
-        config["form_id_spp"],
-        config["form_to_derived_map"],
-    )
+#    df = drop_derived_questions(
+#        df,
+#        config["question_no"],
+#        config["form_id_spp"],
+#        config["form_to_derived_map"],
+#    )
 
     warnings.warn("add live or frozen after fixing error marker column in config")
     df = run_live_or_frozen(
