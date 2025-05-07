@@ -250,27 +250,27 @@ def flag_290_case(
     """
 
     # Group and sum adjusted responses for question 290
-    question_290_df = df[df[question_no] == 290].groupby(
-        [period, reference]
-    )[adjusted_response].sum()
+    question_290_df = (
+        df[df[question_no] == 290].groupby([period, reference])[adjusted_response].sum()
+    )
 
     # Group and sum adjusted responses for all other questions
-    other_questions_df = df[df[question_no] != 290].groupby(
-        [period, reference]
-    )[adjusted_response].sum()
+    other_questions_df = (
+        df[df[question_no] != 290].groupby([period, reference])[adjusted_response].sum()
+    )
 
     # Merge groupings
-    df_joined = df_joined = pd.merge(
-        question_290_df, 
-        other_questions_df, 
+    df_joined = pd.merge(
+        question_290_df,
+        other_questions_df,
         on=[period, reference],
     )
 
     # Create index of pairs of period and reference numbers which need to be
     # flagged as the special 290 case
     flagged_pairs = df_joined[
-        (df_joined[f"{adjusted_response}_x"] != df_joined[f"{adjusted_response}_y"]) & 
-        (df_joined[f"{adjusted_response}_y"] == 0)
+        (df_joined[f"{adjusted_response}_x"] != df_joined[f"{adjusted_response}_y"])
+        & (df_joined[f"{adjusted_response}_y"] == 0)
     ].index
 
     # Initialise flag
@@ -279,7 +279,7 @@ def flag_290_case(
     # Set flag based on index
     df.loc[
         pd.MultiIndex.from_frame(df[[period, reference]]).isin(flagged_pairs),
-        ["290_flag"]
+        ["290_flag"],
     ] = 1
 
     return df

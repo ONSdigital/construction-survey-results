@@ -2,8 +2,8 @@ import pandas as pd
 import pytest
 
 from cons_results.imputation.post_imputation import (
-    rescale_imputed_values,
     flag_290_case,
+    rescale_imputed_values,
 )
 
 scenarios = [100, 101, 102, 103, 104, 105]
@@ -87,18 +87,12 @@ def test_rescale_imputed_values_double_call(reference):
 
 
 def test_flag_290_case():
-    expected_output_df = pd.read_csv(
-        "tests/data/imputation/test_data_290_cases.csv"
-    )
+    expected_output_df = pd.read_csv("tests/data/imputation/test_data_290_cases.csv")
 
     input_df = expected_output_df.drop(columns=["290_flag"])
 
     output_df = flag_290_case(
-        input_df,
-        "period",
-        "reference",
-        "question_no",
-        "adjustedresponse"
+        input_df, "period", "reference", "question_no", "adjustedresponse"
     )
 
     print(output_df, "\n\n", expected_output_df)
