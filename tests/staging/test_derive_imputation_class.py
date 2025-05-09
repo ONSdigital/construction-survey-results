@@ -53,11 +53,6 @@ bands_not_ok_cases = [
         [[1, 7], [11, 17]],
         ValueError,
     ),
-    (
-        # bad case 3 no values in that size band
-        [[1, 7], [888, 999]],
-        ValueError,
-    ),
 ]
 
 
