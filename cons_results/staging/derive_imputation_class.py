@@ -68,12 +68,10 @@ def derive_imputation_class(
     # TODO: discuss logging, raising, debugging strategy
     if df[save_bins_col_name].isnull().any():
 
-        nas_df = df[df[save_bins_col_name].isna()]
-
+        # nas_df = df[df[save_bins_col_name].isna()]
         raise ValueError(
-            f"""There are values in {column}, which are not
- defined in {sizebands}, please check the dataframe:
- {nas_df}."""
+            """There are values in {column}, which are not
+ defined in {sizebands}"""
         )
 
     return df
