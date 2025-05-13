@@ -2,6 +2,7 @@ from typing import List
 
 import numpy as np
 import pandas as pd
+from pandas.api.types import is_bool_dtype
 
 
 def create_missing_questions(
@@ -157,14 +158,14 @@ def convert_values(
     df : pd.DataFrame
         Original dataframe with updated flaged values.
 
+    Raises
+    ------
+    ValueError
+        If mask is not bool
     """
 
-    if type(mask.dtypes) is not bool:
+    if not is_bool_dtype(mask):
         raise ValueError(mask, "is not type", bool)
-
-    # np.nan is float
-    if df.dtypes[col] is not type(replace_with):
-        raise ValueError(col, "dtype not the same as replace value")
 
     df.loc[mask, col] = replace_with
 
