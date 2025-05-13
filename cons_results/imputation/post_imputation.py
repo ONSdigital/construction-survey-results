@@ -282,6 +282,75 @@ def flag_290_case(
         ["290_flag"],
     ] = 1
 
+    # Return modified DataFrame and index
+    return df, flagged_pairs
+
+
+def forward_impute_290_case(
+    df: pd.DataFrame,
+    index: pd.MultiIndex,
+    period: str,
+    reference: str,
+    question_no: str,
+    adjusted_response: str,
+) -> pd.DataFrame:
+
+    """
+    Forward impute and rescale components for flagged 290 special cases
+
+    Coding:
+        No attempt to impute response data ------> -1
+        Attempt to impute response data failed -->  0
+        Response data successfully imputed ------>  1
+
+    """
+
+    df["impute_success"] = -1
+
+    pairs_in_source = pd.MultiIndex.from_frame(df[[period, reference]])
+
+    for per, ref in index:
+
+        if (per - 1, ref) in index:
+            df.loc[pairs_in_source.isin([(per, ref)]), ["impute_success"]] = 0
+
+        else:
+
+            if pairs_in_source.isin([(per - 1, ref)]).any():
+
+                impute_source = df[pairs_in_source.isin([(per - 1, ref)])]
+
+                numer = df[pairs_in_source.isin([(per, ref)])]
+                numer = numer[numer[question_no] == 290][adjusted_response].sum()
+
+                denom = impute_source[impute_source[question_no] != 290][
+                    adjusted_response
+                ].sum()
+
+                if denom != 0:
+                    rescale_factor = numer / denom
+
+                    imputed_data = impute_source[impute_source[question_no] != 290][
+                        [question_no, adjusted_response]
+                    ]
+
+                    imputed_data[adjusted_response] *= rescale_factor
+
+                    for entry in imputed_data.to_dict("records"):
+
+                        df.loc[
+                            (pairs_in_source.isin([(per, ref)]))
+                            & (df[question_no] == entry[question_no]),
+                            [adjusted_response],
+                        ] = entry[adjusted_response]
+
+                        df.loc[
+                            pairs_in_source.isin([(per, ref)]), ["impute_success"]
+                        ] = 1
+
+            else:
+                df.loc[pairs_in_source.isin([(per, ref)]), ["impute_success"]] = 0
+
     return df
 
 
