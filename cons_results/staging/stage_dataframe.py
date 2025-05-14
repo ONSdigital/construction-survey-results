@@ -1,5 +1,3 @@
-import warnings
-
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
 from mbs_results.staging.data_cleaning import (
@@ -68,7 +66,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         suffixes=["_spp", "_finalsel"],
         how="outer",
     )
-    
+
     df = create_missing_questions(
         contributors=contributors,
         responses=responses,
