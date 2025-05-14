@@ -9,10 +9,7 @@ from mbs_results.staging.data_cleaning import (
     run_live_or_frozen,
 )
 from mbs_results.staging.dfs_from_spp import get_dfs_from_spp
-from mbs_results.staging.stage_dataframe import (
-    drop_derived_questions,
-    read_and_combine_colon_sep_files,
-)
+from mbs_results.staging.stage_dataframe import read_and_combine_colon_sep_files
 from mbs_results.utilities.utils import get_snapshot_alternate_path
 
 from cons_results.staging.create_missing_questions import create_missing_questions
@@ -71,23 +68,19 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         suffixes=["_spp", "_finalsel"],
         how="outer",
     )
-    
+
     print(config)
-    
+
     df = create_missing_questions(
-            contributors=contributors,
-            responses=responses,
-            all_questions=config["all_questions"],
-            reference=config["reference"],
-            period=config["period"],
-            question_col=config["questioncode"],
-        )
-    
-    df = pd.merge(
-    left = df,
-    right = contributors,
-    on=[period, reference],
-    how="left")
+        contributors=contributors,
+        responses=responses,
+        all_questions=config["all_questions"],
+        reference=config["reference"],
+        period=config["period"],
+        question_col=config["question_no"],
+    )
+
+    df = pd.merge(left=df, right=contributors, on=[period, reference], how="left")
 
     df = append_back_data(df, config)
 
@@ -102,13 +95,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         + "_filter_out_questions.csv",
         **config,
     )
-
-#    df = drop_derived_questions(
-#        df,
-#        config["question_no"],
-#        config["form_id_spp"],
-#        config["form_to_derived_map"],
-#    )
 
     warnings.warn("add live or frozen after fixing error marker column in config")
     df = run_live_or_frozen(
