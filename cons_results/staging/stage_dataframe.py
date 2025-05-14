@@ -68,9 +68,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         suffixes=["_spp", "_finalsel"],
         how="outer",
     )
-
-    print(config)
-
+    
     df = create_missing_questions(
         contributors=contributors,
         responses=responses,
@@ -96,7 +94,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         **config,
     )
 
-    warnings.warn("add live or frozen after fixing error marker column in config")
     df = run_live_or_frozen(
         df,
         config["target"],
