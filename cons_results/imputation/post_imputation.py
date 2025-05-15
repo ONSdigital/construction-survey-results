@@ -274,21 +274,20 @@ def flag_290_case(
     ].index
 
     # Initialise flag
-    df["290_flag"] = 0
+    df["290_flag"] = False
 
     # Set flag based on index
     df.loc[
         pd.MultiIndex.from_frame(df[[period, reference]]).isin(flagged_pairs),
         ["290_flag"],
-    ] = 1
+    ] = True
 
-    # Return modified DataFrame and index
-    return df, flagged_pairs
+    # Return modified DataFrame
+    return df
 
 
 def forward_impute_290_case(
     df: pd.DataFrame,
-    index: pd.MultiIndex,
     period: str,
     reference: str,
     question_no: str,
@@ -297,59 +296,40 @@ def forward_impute_290_case(
 
     """
     Forward impute and rescale components for flagged 290 special cases
-
-    Coding:
-        No attempt to impute response data ------> -1
-        Attempt to impute response data failed -->  0
-        Response data successfully imputed ------>  1
-
     """
 
-    df["impute_success"] = -1
+    flagged_pairs = df[df["290_flag"] == True].groupby([period, reference]).sum().index
 
-    pairs_in_source = pd.MultiIndex.from_frame(df[[period, reference]])
+    all_pairs = pd.MultiIndex.from_frame(df[[period, reference]])
 
-    for per, ref in index:
+    for per, ref in flagged_pairs:
 
-        if (per - 1, ref) in index:
-            df.loc[pairs_in_source.isin([(per, ref)]), ["impute_success"]] = 0
+        impute_source = df[all_pairs.isin([(per, ref)])]
 
-        else:
+        numer = impute_source[impute_source[question_no] == 290][
+            adjusted_response
+        ].sum()
 
-            if pairs_in_source.isin([(per - 1, ref)]).any():
+        denom = impute_source[impute_source[question_no] != 290][
+            adjusted_response
+        ].sum()
 
-                impute_source = df[pairs_in_source.isin([(per - 1, ref)])]
+        if denom != 0:
+            rescale_factor = numer / denom
 
-                numer = df[pairs_in_source.isin([(per, ref)])]
-                numer = numer[numer[question_no] == 290][adjusted_response].sum()
+            imputed_data = impute_source[impute_source[question_no] != 290][
+                [question_no, adjusted_response]
+            ]
 
-                denom = impute_source[impute_source[question_no] != 290][
-                    adjusted_response
-                ].sum()
+            imputed_data[adjusted_response] *= rescale_factor
 
-                if denom != 0:
-                    rescale_factor = numer / denom
+            for entry in imputed_data.to_dict("records"):
 
-                    imputed_data = impute_source[impute_source[question_no] != 290][
-                        [question_no, adjusted_response]
-                    ]
-
-                    imputed_data[adjusted_response] *= rescale_factor
-
-                    for entry in imputed_data.to_dict("records"):
-
-                        df.loc[
-                            (pairs_in_source.isin([(per, ref)]))
-                            & (df[question_no] == entry[question_no]),
-                            [adjusted_response],
-                        ] = entry[adjusted_response]
-
-                        df.loc[
-                            pairs_in_source.isin([(per, ref)]), ["impute_success"]
-                        ] = 1
-
-            else:
-                df.loc[pairs_in_source.isin([(per, ref)]), ["impute_success"]] = 0
+                df.loc[
+                    (all_pairs.isin([(per, ref)]))
+                    & (df[question_no] == entry[question_no]),
+                    [adjusted_response],
+                ] = entry[adjusted_response]
 
     return df
 
