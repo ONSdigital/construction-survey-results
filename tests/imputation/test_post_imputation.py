@@ -3,7 +3,7 @@ import pytest
 
 from cons_results.imputation.post_imputation import (
     flag_290_case,
-    forward_impute_290_case,
+    rescale_290_case,
     rescale_imputed_values,
 )
 
@@ -99,17 +99,17 @@ def test_flag_290_case():
     pd.testing.assert_frame_equal(output_df, expected_output_df)
 
 
-def test_forward_impute_290_case():
+def test_rescale_290_case():
     expected_output_df = pd.read_csv(
-        "tests/data/imputation/test_data_impute_290_output.csv"
+        "tests/data/imputation/test_data_rescale_290_output.csv"
     )
 
     input_df = pd.read_csv(
-        "tests/data/imputation/test_data_impute_290_output.csv",
+        "tests/data/imputation/test_data_rescale_290_output.csv",
         dtype={"adjustedresponse": float},
     )
 
-    output_df = forward_impute_290_case(
+    output_df = rescale_290_case(
         input_df, "period", "reference", "question_no", "adjustedresponse"
     )
 

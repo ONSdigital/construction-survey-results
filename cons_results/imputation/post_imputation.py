@@ -286,7 +286,7 @@ def flag_290_case(
     return df
 
 
-def forward_impute_290_case(
+def rescale_290_case(
     df: pd.DataFrame,
     period: str,
     reference: str,
