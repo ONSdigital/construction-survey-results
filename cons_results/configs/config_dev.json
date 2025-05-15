@@ -12,6 +12,7 @@
     "status": "statusencoded",
     "form_id_idbr": "formtype",
     "calibration_group": "calibration_group",
+    "sic": "frosic2007",
     "period": "period",
     "question_no": "questioncode",
     "reference": "reference",
@@ -59,9 +60,7 @@
         "formtype",
         "cell_no",
         "froempment",
-        "frosic2007",
         "frotover",
-        "period",
         "reference"
     ],
 
@@ -116,5 +115,22 @@
         "12":"derived",
         "13":"fir"
         },
-  "additional_outputs":[]
+  "additional_outputs":[],
+  "all_questions":[201,202,211,212,221,222,231,232,241,242,243],
+        "bands" : [
+            [1,7],
+            [11,17],
+            [21,27],
+            [31,37],
+            [41,47],
+            [51,57],
+            [61,67],
+            [71,77],
+            [81,87],
+            [91,97],
+            [101,107],
+            [111,117],
+            [121,127],
+            [131,137]
+            ]
 }
