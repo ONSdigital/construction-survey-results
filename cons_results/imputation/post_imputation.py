@@ -298,7 +298,7 @@ def forward_impute_290_case(
     Forward impute and rescale components for flagged 290 special cases
     """
 
-    flagged_pairs = df[df["290_flag"] == True].groupby([period, reference]).sum().index
+    flagged_pairs = df[df["290_flag"]].groupby([period, reference]).sum().index
 
     all_pairs = pd.MultiIndex.from_frame(df[[period, reference]])
 
