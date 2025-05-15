@@ -103,5 +103,63 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     df[config["auxiliary_converted"]] = df[config["auxiliary"]].copy()
     df = convert_annual_thousands(df, config["auxiliary_converted"])
 
+    df = flag_290_case(
+        df,
+        period=config["period"],
+        reference=config["reference"],
+        question_no=config["question_no"],
+        adjusted_response=config["target"],
+    )
+
     print("Staging Completed")
+    return df
+
+
+def flag_290_case(
+    df: pd.DataFrame,
+    period: str,
+    reference: str,
+    question_no: str,
+    adjusted_response: str,
+) -> pd.DataFrame:
+
+    """
+    Function to flag cases for imputation where value for question is 290
+    is given with no other components
+    """
+
+    # Group and sum adjusted responses for question 290
+    question_290_df = (
+        df[df[question_no] == 290].groupby([period, reference])[adjusted_response].sum()
+    )
+
+    # Group and sum adjusted responses for all other questions
+    other_questions_df = (
+        df[df[question_no] != 290].groupby([period, reference])[adjusted_response].sum()
+    )
+
+    # Merge groupings
+    df_joined = pd.merge(
+        question_290_df,
+        other_questions_df,
+        on=[period, reference],
+    )
+
+    # Create index of pairs of period and reference numbers which need to be
+    # flagged as the special 290 case
+    flagged_pairs = df_joined[
+        (df_joined[f"{adjusted_response}_x"] != df_joined[f"{adjusted_response}_y"])
+        & (df_joined[f"{adjusted_response}_y"] == 0)
+    ].index
+
+    # Initialise flag
+    df["290_flag"] = False
+
+    # Set flag based on index
+    df.loc[
+        pd.MultiIndex.from_frame(df[[period, reference]]).isin(flagged_pairs),
+        ["290_flag"],
+    ] = True
+
+    # Return modified DataFrame
     return df
