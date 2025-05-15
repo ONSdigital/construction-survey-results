@@ -93,8 +93,8 @@ def create_missing_questions(
     responses_questions = (
         responses.groupby([reference, period])[question_col].apply(list).to_frame()
     )
-
-    responses_questions["filling_helper"] = (
+    # Creating a new column to save list of questions to be created
+    responses_questions["missing_questions_helper"] = (
         responses_questions[question_col].map(set(all_questions).intersection).map(list)
     )
 
@@ -105,20 +105,20 @@ def create_missing_questions(
         .sort_values([reference, period])
     )
 
-    expected_responses["filling_helper"] = expected_responses.groupby([reference])[
-        "filling_helper"
-    ].ffill()
+    expected_responses["missing_questions_helper"] = expected_responses.groupby(
+        [reference]
+    )["missing_questions_helper"].ffill()
 
-    expected_responses["filling_helper"] = expected_responses["filling_helper"].fillna(
-        {row: all_questions for row in expected_responses.index}
-    )
+    expected_responses["missing_questions_helper"] = expected_responses[
+        "missing_questions_helper"
+    ].fillna({row: all_questions for row in expected_responses.index})
 
     # question col now has list of questions which were in the responses
     # if question col is na it means that it was missing and we should use the
     # list of questions in filling_helper column
 
     expected_responses[question_col] = expected_responses[question_col].fillna(
-        expected_responses["filling_helper"]
+        expected_responses["missing_questions_helper"]
     )
 
     expected_responses = expected_responses.explode(question_col, ignore_index=True)
