@@ -79,10 +79,10 @@ def derive_q290(df: pd.DataFrame,
         A dataframe with 290 derived in rows where components were imputed.
       """
   
-    imputed_mask = (df[question_no] != 290) & (df[imputation_flag] != "r")
+    imputed_components = (df[question_no] != 290) & (df[imputation_flag] != "r") & (df["290_flag"] == False)
     
     imputed_sums = (
-        df[imputed_mask]
+        df[imputed_components]
         .groupby([period, reference])[adjustedresponse]
         .sum()
         .reset_index()
@@ -95,7 +95,7 @@ def derive_q290(df: pd.DataFrame,
     df["imputed_sum"].fillna(df[adjustedresponse], inplace=True) 
     df.loc[q290_mask, adjustedresponse] = df.loc[q290_mask, "imputed_sum"]
 
-    df.loc[(df[question_no] == 290) & (df[imputation_flag] != "r"), imputation_flag] = "d"
+    df.loc[(q290_mask) & (df[imputation_flag] != "r"), imputation_flag] = "d"
 
     df = df.drop(columns=["imputed_sum"])
     
