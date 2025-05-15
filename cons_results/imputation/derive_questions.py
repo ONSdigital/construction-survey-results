@@ -1,35 +1,44 @@
+import pandas as pd
+
 def create_q290(df: pd.DataFrame, 
                 contributors: pd.DataFrame,
                 reference: str,
                 period: str,
-                question_no: str) -> pd.DataFrame:
-  """Parameters
-    ----------
-    df : pd.Dataframe
+                question_no: str,
+                adjustedresponse: str,
+               imputation_flag: str,) -> pd.DataFrame:
+    """
+    Parameters
+      ----------
+      df: pd.Dataframe
         The main construction dataframe following the staging module.
-    contributors : pd.DataFrame
+      contributors: pd.DataFrame
         Dataframe containing contributors.
-    reference : str
-        Column name containing reference variable, must exist in both
-        responses and contributors.
-    period : str
-        Column name containing period variable, must exist in both
-        responses and contributors.
-    question_col : str
-        Column name containing question_col variable, must exist in responses.
+      reference: str
+        Column name containing reference variable
+      period: str
+        Column name containing period variable
+      question_no: str
+        Column name containing the question number variable
+      adjustedresponse: str
+        Column name containing the adjustedresponse variable
+      imputation_flag: str
+        Column name containing the imputation flag variable
+      
 
     Returns
     -------
     df
-      A dataframe with rows added for questioncode 290 where these were missing."""
+      A dataframe with rows added for questioncode 290 where these were missing.
+    """
 
-    missing_290 = (create_df.
+    missing_290 = (df.
                    groupby([period, reference]).
                    filter(lambda x: 290 not in x[question_no].values)[[period, reference]])
     
     missing_290.drop_duplicates(inplace=True)
 
-    missing_290 = missing_290.assign(question_no=290, adjustedvalue=None, imputation_flag="d")
+    missing_290 = missing_290.assign(question_no=290, adjustedresponse=0.0, imputation_flag="d")
     
     missing_290.set_index([period, reference], inplace=True)
     contributors = contributors.set_index([period, reference])
@@ -46,22 +55,45 @@ def derive_q290(df: pd.DataFrame,
                 imputation_flag: str,
                 period: str,
                 reference: str,
-                adjustedvalue: str) -> pd.DataFrame:
+                adjustedresponse: str) -> pd.DataFrame:
+    """
+    Parameters
+      ----------
+      df: pd.Dataframe
+        The main construction dataframe following the staging module.
+      question_no: str
+        Column name containing the question number variable
+      imputation_flag: str
+        Column name containing the imputation flag variable
+      period: str
+        Column name containing the period variable
+      reference: str
+        Column name containing reference variable
+      adjustedresponse: str
+        Column name containing the adjustedresponse variable
+
+
+      Returns
+      -------
+      df
+        A dataframe with 290 derived in rows where components were imputed.
+      """
+  
     imputed_mask = (df[question_no] != 290) & (df[imputation_flag] != "r")
     
     imputed_sums = (
         df[imputed_mask]
-        .groupby([period, reference])[adjustedvalue]
+        .groupby([period, reference])[adjustedresponse]
         .sum()
         .reset_index()
-        .rename(columns={adjustedvalue: "imputed_sum"})
+        .rename(columns={adjustedresponse: "imputed_sum"})
     )
     
     df = df.merge(imputed_sums, on=[period, reference], how="left")
     
     q290_mask = df[question_no] == 290
-    df["imputed_sum"].fillna(df[adjustedvalue], inplace=True) 
-    df.loc[q290_mask, adjustedvalue] = df.loc[q290_mask, "imputed_sum"]
+    df["imputed_sum"].fillna(df[adjustedresponse], inplace=True) 
+    df.loc[q290_mask, adjustedresponse] = df.loc[q290_mask, "imputed_sum"]
 
     df.loc[(df[question_no] == 290) & (df[imputation_flag] != "r"), imputation_flag] = "d"
 
