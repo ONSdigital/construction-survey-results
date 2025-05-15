@@ -1,6 +1,8 @@
 from typing import List
 
+import numpy as np
 import pandas as pd
+from pandas.api.types import is_bool_dtype
 
 
 def create_missing_questions(
@@ -69,9 +71,11 @@ def create_missing_questions(
         ref  period  questioncode  target
      0    1  202201            90     999
      1    1  202202            91     999
+    >>> questions = [90,91]
     >>> result = create_missing_questions(
         responses,
         contributors,
+        questions,
         "ref",
         "period",
         "questioncode")
@@ -86,8 +90,12 @@ def create_missing_questions(
 
     contributors = contributors.set_index([reference, period]).index
 
-    responses_questions = responses.groupby([reference, period])[question_col].apply(
-        list
+    responses_questions = (
+        responses.groupby([reference, period])[question_col].apply(list).to_frame()
+    )
+    # Creating a new column to save list of questions to be created
+    responses_questions["missing_questions_helper"] = (
+        responses_questions[question_col].map(set(all_questions).intersection).map(list)
     )
 
     # Sorting first by reference and then by period, for ffill
@@ -97,12 +105,20 @@ def create_missing_questions(
         .sort_values([reference, period])
     )
 
-    expected_responses[question_col] = expected_responses.groupby([reference])[
-        question_col
-    ].ffill()
+    expected_responses["missing_questions_helper"] = expected_responses.groupby(
+        [reference]
+    )["missing_questions_helper"].ffill()
+
+    expected_responses["missing_questions_helper"] = expected_responses[
+        "missing_questions_helper"
+    ].fillna({row: all_questions for row in expected_responses.index})
+
+    # question col now has list of questions which were in the responses
+    # if question col is na it means that it was missing and we should use the
+    # list of questions in filling_helper column
 
     expected_responses[question_col] = expected_responses[question_col].fillna(
-        {row: all_questions for row in expected_responses.index}
+        expected_responses["missing_questions_helper"]
     )
 
     expected_responses = expected_responses.explode(question_col, ignore_index=True)
@@ -116,3 +132,41 @@ def create_missing_questions(
     responses_full = responses.reindex(expected_rows_index).reset_index()
 
     return responses_full
+
+
+def convert_values(
+    df: pd.DataFrame, col: str, mask: pd.Series, replace_with=np.nan
+) -> pd.DataFrame:
+    """
+    Replaces flaged (or masked) values in a dataframe col with replace_with value,
+    default is numpy na.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Original dataframe.
+    col : str
+        df column to replace values.
+    mask : pd.Series
+        Mask of the dataframe this must be a bool series or a condition.
+    replace_with : float, optional
+        Flaged value will be replaced with this, data type should be as dtype
+        of col. The default is np.nan.
+
+    Returns
+    -------
+    df : pd.DataFrame
+        Original dataframe with updated flaged values.
+
+    Raises
+    ------
+    ValueError
+        If mask is not bool
+    """
+
+    if not is_bool_dtype(mask):
+        raise ValueError(mask, "is not type", bool)
+
+    df.loc[mask, col] = replace_with
+
+    return df
