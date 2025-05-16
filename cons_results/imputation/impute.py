@@ -11,7 +11,6 @@ def impute(
     dataframe: pd.DataFrame, 
     manual_constructions: pd.DataFrame, 
     config: dict, 
-    contributors: pd.DataFrame,
     filter_df=None,
 ) -> pd.DataFrame:
     """
@@ -35,6 +34,7 @@ def impute(
         post imputation dataframe, values have been derived and constrained following
         imputation
     """
+    
     dataframe = dataframe.groupby(config["question_no"]).apply(
         lambda df: ratio_of_means(
             df=df,

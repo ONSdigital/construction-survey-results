@@ -23,14 +23,14 @@ def run_pipeline(config_user_dict=None):
 
     warnings.warn("This is a placeholder for config validation, not yet implemented")
 
-    df, contributors, manual_constructions, filter_df = stage_dataframe(config)
+    df, manual_constructions, filter_df = stage_dataframe(config)
     df.to_csv("tests/data/outputs/staged_data.csv")
 
     warnings.warn(
         "This is a placeholder for staging validation checksng,  not yet implemented"
     )
 
-    df = impute(df, manual_constructions, config, contributors, filter_df)
+    df = impute(df, manual_constructions, config, filter_df)
 
     warnings.warn("This is a placeholder post-imputation,  not yet implemented")
 

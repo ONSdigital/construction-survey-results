@@ -127,5 +127,5 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         filter_df = None
 
     print("Staging Completed")
-    return df, contributors, manual_constructions, filter_df
+    return df, manual_constructions, filter_df
   
