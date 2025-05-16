@@ -4,7 +4,9 @@ from cons_results.staging.stage_dataframe import flag_290_case
 
 
 def test_flag_290_case():
-    expected_output_df = pd.read_csv("tests/data/staging/stage_dataframe/test_data_290_cases.csv")
+    expected_output_df = pd.read_csv(
+        "tests/data/staging/stage_dataframe/test_data_290_cases.csv"
+    )
 
     input_df = expected_output_df.drop(columns=["290_flag"])
 
