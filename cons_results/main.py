@@ -21,7 +21,7 @@ def run_pipeline(config_user_dict=None):
 
     warnings.warn("This is a placeholder for config validation, not yet implemented")
 
-    staged_data = stage_dataframe(config)
+    staged_data, contributors, manual_constructions, filter_df = stage_dataframe(config)
     staged_data.to_csv("tests/data/outputs/staged_data.csv")
 
     warnings.warn(

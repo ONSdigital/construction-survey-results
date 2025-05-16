@@ -37,12 +37,11 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     snapshot_file_path = get_snapshot_alternate_path(config)
 
     contributors, responses = get_dfs_from_spp(
-        snapshot_file_path + config["construction_file_name"],
+        snapshot_file_path + config["snapshot_file_name"],
         config["platform"],
         config["bucket"],
     )
     
-    print(f"contributors: {contributors.columns}")
 
     # Filter columns and set data types
     contributors = contributors[config["contributors_keep_cols"]]
@@ -60,7 +59,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     # keep columns is applied in data reading from source, enforcing dtypes
     # in all columns of finalsel
     finalsel = enforce_datatypes(finalsel, keep_columns=list(finalsel), **config)
-    print(f"finalsel after enforce dtypes: {finalsel.columns}")
 
     # Filter contributors files here to temp fix this overlap
 
@@ -71,8 +69,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         suffixes=["_spp", "_finalsel"],
         how="outer",
     )
-    
-    print(f"contributors after merge: {contributors.columns}")
 
     df = create_missing_questions(
         contributors=contributors,
@@ -82,14 +78,12 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         period=config["period"],
         question_col=config["question_no"],
     )
-    
-    print(f"cols after create_missing questions: {df.columns}")
 
     df = pd.merge(left=df, right=contributors, on=[period, reference], how="left")
 
     df = append_back_data(df, config)
 
-    snapshot_name = config["construction_file_name"].split(".")[0]
+    snapshot_name = config["snapshot_file_name"].split(".")[0]
 
     df = filter_out_questions(
         df=df,
@@ -111,8 +105,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     df[config["auxiliary_converted"]] = df[config["auxiliary"]].copy()
     df = convert_annual_thousands(df, config["auxiliary_converted"])
-    
-    print("df before derive imputation class",df)
 
     df = derive_imputation_class(
         df, config["bands"], config["cell_number"], config["imputation_class"]
