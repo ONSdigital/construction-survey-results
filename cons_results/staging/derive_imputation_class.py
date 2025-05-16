@@ -53,7 +53,7 @@ def derive_imputation_class(
 
     if any([len(x) != 2 for x in sizebands]):
         raise ValueError(
-            """{sizebands} is not properly defined, function
+            f"""{sizebands} is not properly defined, function
  expects a list containing a list with 2 integers which will be used to define
  lower and upper bounds"""
         )
@@ -70,7 +70,7 @@ def derive_imputation_class(
 
         # nas_df = df[df[save_bins_col_name].isna()]
         raise ValueError(
-            """There are values in {column}, which are not
+            f"""There are values in {column}, which are not
  defined in {sizebands}"""
         )
 

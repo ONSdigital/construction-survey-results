@@ -41,6 +41,8 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         config["platform"],
         config["bucket"],
     )
+    
+    print(f"contributors: {contributors.columns}")
 
     # Filter columns and set data types
     contributors = contributors[config["contributors_keep_cols"]]
@@ -58,6 +60,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     # keep columns is applied in data reading from source, enforcing dtypes
     # in all columns of finalsel
     finalsel = enforce_datatypes(finalsel, keep_columns=list(finalsel), **config)
+    print(f"finalsel after enforce dtypes: {finalsel.columns}")
 
     # Filter contributors files here to temp fix this overlap
 
@@ -68,6 +71,8 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         suffixes=["_spp", "_finalsel"],
         how="outer",
     )
+    
+    print(f"contributors after merge: {contributors.columns}")
 
     df = create_missing_questions(
         contributors=contributors,
@@ -77,6 +82,8 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         period=config["period"],
         question_col=config["question_no"],
     )
+    
+    print(f"cols after create_missing questions: {df.columns}")
 
     df = pd.merge(left=df, right=contributors, on=[period, reference], how="left")
 
@@ -104,9 +111,8 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     df[config["auxiliary_converted"]] = df[config["auxiliary"]].copy()
     df = convert_annual_thousands(df, config["auxiliary_converted"])
-
-    #not sure if this is needed?
-    #df["ni_gb_cell_number"] = df[config["cell_number"]]
+    
+    print("df before derive imputation class",df)
 
     df = derive_imputation_class(
         df, config["bands"], config["cell_number"], config["imputation_class"]

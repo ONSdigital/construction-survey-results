@@ -7,7 +7,7 @@ from cons_results.main import run_pipeline
 
 @pytest.fixture(scope="class")
 def filepath():
-    return Path("tests/data/test_main/")
+    return Path("tests/data/test_main/input/")
 
 
 @pytest.fixture(scope="class")
@@ -21,15 +21,15 @@ def test_config(filepath):
         "l_values_path": "",
         "manual_outlier_path": "",
         "construction_file_name": "dummy_snapshot.json",
-        "output_path": "",
+        "output_path": "tests/data/test_main/output/",
         "population_prefix": "",
         "sample_prefix": "finalsel228",
-        "back_data_qv_path": str(filepath / "test_qv_009_202202.csv"),
-        "back_data_cp_path": str(filepath / "test_cp_009_202202.csv"),
-        "back_data_finalsel_path": str(filepath / "finalsel228_dummy_202202"),
+        "back_data_qv_path": str(filepath / "test_qv_009_202212.csv"),
+        "back_data_cp_path": str(filepath / "test_cp_009_202212.csv"),
+        "back_data_finalsel_path": str(filepath / "finalsel228_dummy_202212"),
         "sic_domain_mapping_path": "",
         "current_period": 202303,
-        "revision_window": 13,
+        "revision_window": 3,
         "state": "frozen",
     }
 

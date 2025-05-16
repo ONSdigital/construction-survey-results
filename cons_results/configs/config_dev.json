@@ -22,6 +22,7 @@
     "strata": "cell_no",
     "target": "adjustedresponse",
     "form_id_spp": "form_type_spp",
+    "imputation_class": "imputation_class",
 
     "master_column_type_dict" : {
         "reference": "int",
