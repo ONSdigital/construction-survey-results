@@ -4,6 +4,8 @@ from mbs_results.utilities.inputs import load_config
 
 from cons_results.staging.stage_dataframe import stage_dataframe
 
+from cons_results.imputation.impute import impute
+
 # import imputation
 # import post-imputation
 # import estimation
@@ -21,14 +23,14 @@ def run_pipeline(config_user_dict=None):
 
     warnings.warn("This is a placeholder for config validation, not yet implemented")
 
-    staged_data, contributors, manual_constructions, filter_df = stage_dataframe(config)
-    staged_data.to_csv("tests/data/outputs/staged_data.csv")
+    df, contributors, manual_constructions, filter_df = stage_dataframe(config)
+    df.to_csv("tests/data/outputs/staged_data.csv")
 
     warnings.warn(
         "This is a placeholder for staging validation checksng,  not yet implemented"
     )
 
-    warnings.warn("This is a placeholder for imputation,  not yet implemented")
+    df = impute(df, manual_constructions, config, contributors, filter_df)
 
     warnings.warn("This is a placeholder post-imputation,  not yet implemented")
 

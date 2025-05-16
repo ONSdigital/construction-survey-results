@@ -1,19 +1,19 @@
 import pandas as pd
 
 def create_q290(df: pd.DataFrame, 
-                contributors: pd.DataFrame,
+                config: dict,
                 reference: str,
                 period: str,
                 question_no: str,
                 adjustedresponse: str,
-               imputation_flag: str,) -> pd.DataFrame:
+                imputation_flag: str) -> pd.DataFrame:
     """
     Parameters
       ----------
       df: pd.Dataframe
         The main construction dataframe following the staging module.
-      contributors: pd.DataFrame
-        Dataframe containing contributors.
+      config: pd.DataFrame
+        The config as a dictionary
       reference: str
         Column name containing reference variable
       period: str
@@ -41,14 +41,18 @@ def create_q290(df: pd.DataFrame,
     missing_290 = missing_290.assign(question_no=290, adjustedresponse=0.0, imputation_flag="d")
     
     missing_290.set_index([period, reference], inplace=True)
-    contributors = contributors.set_index([period, reference])
 
-    missing_290 = pd.concat([missing_290, contributors.loc[missing_290.index]], axis=1)
+    contributors_cols = list(set(config["contributors_keep_cols"] + config["finalsel_keep_cols"]))
+    contributors_df = df[contributors_cols]
+    contributors_df = contributors_df.groupby([period, reference]).first()
+
+    missing_290 = pd.concat([missing_290, contributors_df.loc[missing_290.index]], axis=1)
     missing_290.reset_index(inplace=True)
     
     df = pd.concat([df, missing_290]).reset_index(drop=True)
 
     return df
+
   
 def derive_q290(df: pd.DataFrame,
                 question_no: str,

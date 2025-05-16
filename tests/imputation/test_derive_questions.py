@@ -15,7 +15,6 @@ def test_derive_q290(filepath):
     df_input = pd.read_csv(filepath / "derive_q290_input.csv")
     df_expected_output = pd.read_csv(filepath / "derive_q290_output.csv")
 
-    # Call the function
     actual_output = derive_q290(
         df=df_input,
         question_no="question_no",
@@ -29,13 +28,17 @@ def test_derive_q290(filepath):
 
 
 def test_create_q290(filepath):
+    
     df_input = pd.read_csv(filepath / "create_q290_input.csv")
-    df_contributors = pd.read_csv(filepath / "create_q290_contributors_input.csv")
+    
     df_expected_output = pd.read_csv(filepath / "create_q290_output.csv", dtype={"adjustedvalue": np.float64})
+    
+    config = {"finalsel_keep_cols": ["froempment", "frotover", "reference"],
+          "contributors_keep_cols": ["period", "reference", "status"]}
 
     actual_output = create_q290(
         df=df_input,
-        contributors=df_contributors,
+        config=config,
         reference="reference",
         period="period",
         question_no="question_no",
