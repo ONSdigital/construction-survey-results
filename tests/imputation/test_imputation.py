@@ -1,13 +1,18 @@
+from pathlib import Path
+
 import pandas as pd
 import pytest
 
 from cons_results.imputation.post_imputation import rescale_290_case
 
 
-def test_rescale_290_case():
-    expected_output_df = pd.read_csv(
-        "tests/data/imputation/test_data_rescale_290_output.csv"
-    )
+@pytest.fixture()
+def filepath():
+    return Path("tests/data/imputation")
+
+
+def test_rescale_290_case(filepath):
+    expected_output_df = pd.read_csv(filepath / "test_data_rescale_290_output.csv")
 
     input_df = pd.read_csv(
         "tests/data/imputation/test_data_rescale_290_output.csv",
