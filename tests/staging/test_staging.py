@@ -1,12 +1,19 @@
+from pathlib import Path
+
 import pandas as pd
+import pytest
+from pandas.testing import assert_frame_equal
 
 from cons_results.staging.stage_dataframe import flag_290_case
 
 
-def test_flag_290_case():
-    expected_output_df = pd.read_csv(
-        "tests/data/staging/stage_dataframe/test_data_290_cases.csv"
-    )
+@pytest.fixture()
+def filepath():
+    return Path("tests/data/staging/stage_dataframe")
+
+
+def test_flag_290_case(filepath):
+    expected_output_df = pd.read_csv(filepath / "test_data_290_cases.csv")
 
     input_df = expected_output_df.drop(columns=["290_flag"])
 
@@ -14,4 +21,4 @@ def test_flag_290_case():
         input_df, "period", "reference", "question_no", "adjustedresponse"
     )
 
-    pd.testing.assert_frame_equal(output_df, expected_output_df)
+    assert_frame_equal(output_df, expected_output_df)

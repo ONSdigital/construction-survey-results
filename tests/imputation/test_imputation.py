@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from pandas.testing import assert_frame_equal
 
 from cons_results.imputation.post_imputation import rescale_290_case
 
@@ -15,7 +16,7 @@ def test_rescale_290_case(filepath):
     expected_output_df = pd.read_csv(filepath / "test_data_rescale_290_output.csv")
 
     input_df = pd.read_csv(
-        "tests/data/imputation/test_data_rescale_290_output.csv",
+        filepath / "test_data_rescale_290_output.csv",
         dtype={"adjustedresponse": float},
     )
 
@@ -23,4 +24,4 @@ def test_rescale_290_case(filepath):
         input_df, "period", "reference", "question_no", "adjustedresponse"
     )
 
-    pd.testing.assert_frame_equal(output_df, expected_output_df)
+    assert_frame_equal(output_df, expected_output_df)
