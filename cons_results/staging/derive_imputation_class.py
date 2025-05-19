@@ -1,11 +1,9 @@
-from typing import List
-
 import pandas as pd
 
 
 def derive_imputation_class(
     df: pd.DataFrame,
-    sizebands: List[List[int]],
+    sizebands: dict,
     column: str,
     save_bins_col_name: str,
     closed: str = "both",
@@ -17,9 +15,9 @@ def derive_imputation_class(
      ----------
      df : pd.DataFrame
          Input dataframe to apply the sizebands.
-     sizebands : List[List[int]]
-         This is passed to pandas.IntervalIndex, list with lower and
-         upper values for each sizeband.
+     sizebands : dict
+         A dictionary with keys as labels and values the lower and upper
+         threshold for each bin.
      column : str
          Column name to apply the sizebands.
      save_bins_col_name : str
@@ -42,7 +40,11 @@ def derive_imputation_class(
          0    1      11
          1    1      13
          2    2      35
-     >>> bands = [[11,17],[31,37]]
+     >>> sizebands = {
+            "1":[11,17],
+            "2":[31,37],
+            "3":[41,47]
+             }
      >>> result = derive_imputation_class(df,bands,"cell_n","imputation_class")
          ref  cell_n imputation_class
           0    1      11         [11, 17]
@@ -51,24 +53,27 @@ def derive_imputation_class(
 
     """
 
-    if any([len(x) != 2 for x in sizebands]):
+    if any([len(x) != 2 for x in sizebands.values()]):
         raise ValueError(
             f"""{sizebands} is not properly defined, function
- expects a list containing a list with 2 integers which will be used to define
+ expects a dict containing a list with 2 integers which will be used to define
  lower and upper bounds"""
         )
 
     # pd.IntervalIndex expects a list of tuples with upper lower bands
-    bands_list_tuples = [tuple(x) for x in sizebands]
+    bands_list_tuples = [tuple(x) for x in sizebands.values()]
 
     bins = pd.IntervalIndex.from_tuples(bands_list_tuples, closed)
 
-    df[save_bins_col_name] = pd.cut(df[column], bins)
+    col_with_bins = pd.cut(df[column].to_list(), bins)
+
+    df[save_bins_col_name] = col_with_bins.rename_categories(sizebands.keys()).astype(
+        float
+    )
 
     # TODO: discuss logging, raising, debugging strategy
     if df[save_bins_col_name].isnull().any():
 
-        # nas_df = df[df[save_bins_col_name].isna()]
         raise ValueError(
             f"""There are values in {column}, which are not
  defined in {sizebands}"""
