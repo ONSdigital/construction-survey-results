@@ -11,6 +11,24 @@ def rescale_290_case(
 
     """
     Forward impute and rescale components for flagged 290 special cases
+
+    Parameters
+    ----------
+    df : pd.Dataframe
+        Input DataFrame which has imputed responses for flagged 290 special cases.
+    period : str
+        Column name containing period variable.
+    reference : str
+        Column name containing reference variable.
+    question_no : str
+        Column name containing question_col variable.
+    adjusted_response: str
+        Column name containing adjusted response for a question code.
+
+    Returns
+    -------
+    pd.DataFrame
+        Output DataFrame with rescaled adjusted responses for flagged 290 special cases.
     """
 
     flagged_pairs = df[df["290_flag"]].groupby([period, reference]).sum().index

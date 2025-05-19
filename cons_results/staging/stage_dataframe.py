@@ -118,6 +118,24 @@ def flag_290_case(
     """
     Function to flag cases for imputation where value for question is 290
     is given with no other components
+
+    Parameters
+    ----------
+    df : pd.Dataframe
+        Input DataFrame which has unflagged 290 special cases.
+    period : str
+        Column name containing period variable.
+    reference : str
+        Column name containing reference variable.
+    question_no : str
+        Column name containing question_col variable.
+    adjusted_response: str
+        Column name containing adjusted response for a question code.
+
+    Returns
+    -------
+    pd.DataFrame
+        Output DataFrame with variable that flags 290 special cases.
     """
 
     # Group and sum adjusted responses for question 290
