@@ -1,16 +1,13 @@
 import pandas as pd
-
-from cons_results.imputation.derive_questions import (
-  create_q290,
-  derive_q290,
-)
-
 from mbs_results.imputation.ratio_of_means import ratio_of_means
 
+from cons_results.imputation.derive_questions import create_q290, derive_q290
+
+
 def impute(
-    dataframe: pd.DataFrame, 
-    manual_constructions: pd.DataFrame, 
-    config: dict, 
+    dataframe: pd.DataFrame,
+    manual_constructions: pd.DataFrame,
+    config: dict,
     filter_df=None,
 ) -> pd.DataFrame:
     """
@@ -26,7 +23,7 @@ def impute(
         config file containing column names and manual construction path
     filter_df : pd.DataFrame
         filter_df dataframe from the staging module
-        
+
 
     Returns
     -------
@@ -34,7 +31,7 @@ def impute(
         post imputation dataframe, values have been derived and constrained following
         imputation
     """
-    
+
     dataframe = dataframe.groupby(config["question_no"]).apply(
         lambda df: ratio_of_means(
             df=df,
@@ -51,23 +48,28 @@ def impute(
         )
     )
 
-    dataframe = create_q290(dataframe, 
-                            contributors, 
-                            config["reference"], 
-                            config["period"], 
-                            config["question_no"])
-    
-    dataframe = derive_q290(dataframe, 
-                        config["question_no"],
-                        config["imputation_flag"], 
-                        config["period"], 
-                        config["reference"], 
-                        config["adjustedvalue"])
-    
+    dataframe = create_q290(
+        dataframe,
+        config,
+        config["reference"],
+        config["period"],
+        config["question_no"],
+        config["target"],
+        config["imputation_marker_col"],
+    )
+
+    dataframe = derive_q290(
+        dataframe,
+        config["question_no"],
+        config["imputation_marker_col"],
+        config["period"],
+        config["reference"],
+        config["target"],
+    )
+
     dataframe["period"] = dataframe["period"].dt.strftime("%Y%m").astype("int")
     dataframe = dataframe.reset_index(drop=True)  # remove groupby leftovers
     dataframe = dataframe[~dataframe["is_backdata"]]  # remove backdata
     dataframe.drop(columns=["is_backdata"], inplace=True)
 
-    
-    return post_constrain
+    return dataframe
