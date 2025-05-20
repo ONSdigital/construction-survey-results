@@ -1,15 +1,36 @@
-import pytest
-import numpy as np
-import pandas as pd
-from pandas.testing import assert_frame_equal
 from pathlib import Path
 
-from cons_results.imputation.derive_questions import create_q290, derive_q290
+import numpy as np
 
-@pytest.fixture(scope="class")
+import pandas as pd
+import pytest
+from pandas.testing import assert_frame_equal
+
+from cons_results.imputation.post_imputation import (
+  create_q290,
+  derive_q290,
+  rescale_290_case,
+)
+
+
+@pytest.fixture()
 def filepath():
-    return Path("tests/data/imputation/derive_questions")
+    return Path("tests/data/imputation/post_imputation")
 
+
+def test_rescale_290_case(filepath):
+    expected_output_df = pd.read_csv(filepath / "test_data_rescale_290_output.csv")
+
+    input_df = pd.read_csv(
+        filepath / "test_data_rescale_290_output.csv",
+        dtype={"adjustedresponse": float},
+    )
+
+    output_df = rescale_290_case(
+        input_df, "period", "reference", "question_no", "adjustedresponse"
+    )
+
+    assert_frame_equal(output_df, expected_output_df)
 
 def test_derive_q290(filepath):
     df_input = pd.read_csv(filepath / "derive_q290_input.csv")

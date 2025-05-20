@@ -125,6 +125,14 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     else:
         filter_df = None
+        
+    df = flag_290_case(
+      df,
+      config["period"],
+      config["reference"],
+      config["question_no"],
+      config["target"],
+    )
 
     print("Staging Completed")
     
