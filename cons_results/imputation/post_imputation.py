@@ -107,7 +107,12 @@ def create_q290(
     missing_290.drop_duplicates(inplace=True)
 
     missing_290 = missing_290.assign(
-        question_no=290, adjustedresponse=0.0, imputation_flag="d"
+      **{
+        question_no: 290,
+        adjustedresponse: 0.0, 
+        imputation_flag: "d",
+        "290_flag": False,
+      }
     )
 
     missing_290.set_index([period, reference], inplace=True)

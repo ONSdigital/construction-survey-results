@@ -52,6 +52,9 @@ def impute(
         )
     )
     
+    dataframe = dataframe[~dataframe["is_backdata"]]  # remove backdata
+    dataframe.drop(columns=["is_backdata"], inplace=True)
+    
     dataframe = rescale_290_case(
       dataframe,
       config["period"],
@@ -81,8 +84,5 @@ def impute(
 
     dataframe["period"] = dataframe["period"].dt.strftime("%Y%m").astype("int")
     dataframe = dataframe.reset_index(drop=True)  # remove groupby leftovers
-    print(dataframe["is_backdata"])
-    dataframe = dataframe[~dataframe["is_backdata"]]  # remove backdata
-    dataframe.drop(columns=["is_backdata"], inplace=True)
 
     return dataframe
