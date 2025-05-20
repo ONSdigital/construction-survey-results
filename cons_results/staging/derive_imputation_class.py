@@ -72,11 +72,11 @@ def derive_imputation_class(
     )
 
     # TODO: discuss logging, raising, debugging strategy
-    if df[save_bins_col_name].isnull().any():
+    if df[save_bins_col_name].hasnans:
 
         raise ValueError(
             f"""There are values in {column}, which are not
- defined in {sizebands}"""
+        defined in {sizebands}"""
         )
 
     return df
