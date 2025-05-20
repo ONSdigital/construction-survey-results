@@ -66,6 +66,7 @@ def rescale_290_case(
 
     return df
 
+
 def create_q290(
     df: pd.DataFrame,
     config: dict,
@@ -107,12 +108,12 @@ def create_q290(
     missing_290.drop_duplicates(inplace=True)
 
     missing_290 = missing_290.assign(
-      **{
-        question_no: 290,
-        adjustedresponse: 0.0, 
-        imputation_flag: "d",
-        "290_flag": False,
-      }
+        **{
+            question_no: 290,
+            adjustedresponse: 0.0,
+            imputation_flag: "d",
+            "290_flag": False,
+        }
     )
 
     missing_290.set_index([period, reference], inplace=True)
@@ -165,9 +166,7 @@ def derive_q290(
     """
 
     imputed_components = (
-        (df[question_no] != 290)
-        & (df[imputation_flag] != "r")
-        & (df["290_flag"] == False)
+        (df[question_no] != 290) & (df[imputation_flag] != "r") & (~df["290_flag"])
     )
 
     imputed_sums = (

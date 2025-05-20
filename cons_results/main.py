@@ -2,9 +2,8 @@ import warnings
 
 from mbs_results.utilities.inputs import load_config
 
-from cons_results.staging.stage_dataframe import stage_dataframe
-
 from cons_results.imputation.impute import impute
+from cons_results.staging.stage_dataframe import stage_dataframe
 
 # import imputation
 # import post-imputation

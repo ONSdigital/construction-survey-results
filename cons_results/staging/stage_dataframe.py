@@ -1,5 +1,4 @@
 import pandas as pd
-from cons_results.staging.derive_imputation_class import derive_imputation_class
 from mbs_results.staging.back_data import append_back_data
 from mbs_results.staging.data_cleaning import (
     convert_annual_thousands,
@@ -9,10 +8,11 @@ from mbs_results.staging.data_cleaning import (
 )
 from mbs_results.staging.dfs_from_spp import get_dfs_from_spp
 from mbs_results.staging.stage_dataframe import read_and_combine_colon_sep_files
-from mbs_results.utilities.utils import get_snapshot_alternate_path
 from mbs_results.utilities.inputs import read_csv_wrapper
+from mbs_results.utilities.utils import get_snapshot_alternate_path
 
 from cons_results.staging.create_missing_questions import create_missing_questions
+from cons_results.staging.derive_imputation_class import derive_imputation_class
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
@@ -41,7 +41,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         config["platform"],
         config["bucket"],
     )
-    
 
     # Filter columns and set data types
     contributors = contributors[config["contributors_keep_cols"]]
@@ -125,18 +124,19 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     else:
         filter_df = None
-        
+
     df = flag_290_case(
-      df,
-      config["period"],
-      config["reference"],
-      config["question_no"],
-      config["target"],
+        df,
+        config["period"],
+        config["reference"],
+        config["question_no"],
+        config["target"],
     )
 
     print("Staging Completed")
-    
+
     return df, manual_constructions, filter_df
+
 
 def flag_290_case(
     df: pd.DataFrame,

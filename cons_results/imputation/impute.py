@@ -2,9 +2,9 @@ import pandas as pd
 from mbs_results.imputation.ratio_of_means import ratio_of_means
 
 from cons_results.imputation.post_imputation import (
-  create_q290, 
-  derive_q290,
-  rescale_290_case,
+    create_q290,
+    derive_q290,
+    rescale_290_case,
 )
 
 
@@ -51,18 +51,18 @@ def impute(
             filters=filter_df,
         )
     )
-    
+
     dataframe = dataframe[~dataframe["is_backdata"]]  # remove backdata
     dataframe.drop(columns=["is_backdata"], inplace=True)
-    
+
     dataframe = rescale_290_case(
-      dataframe,
-      config["period"],
-      config["reference"],
-      config["question_no"],
-      config["target"],
+        dataframe,
+        config["period"],
+        config["reference"],
+        config["question_no"],
+        config["target"],
     )
-    
+
     dataframe = create_q290(
         dataframe,
         config,

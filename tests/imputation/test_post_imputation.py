@@ -1,15 +1,14 @@
 from pathlib import Path
 
 import numpy as np
-
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
 from cons_results.imputation.post_imputation import (
-  create_q290,
-  derive_q290,
-  rescale_290_case,
+    create_q290,
+    derive_q290,
+    rescale_290_case,
 )
 
 
@@ -32,6 +31,7 @@ def test_rescale_290_case(filepath):
 
     assert_frame_equal(output_df, expected_output_df)
 
+
 def test_derive_q290(filepath):
     df_input = pd.read_csv(filepath / "derive_q290_input.csv")
     df_expected_output = pd.read_csv(filepath / "derive_q290_output.csv")
@@ -42,20 +42,24 @@ def test_derive_q290(filepath):
         imputation_flag="imputation_flag",
         period="period",
         reference="reference",
-        adjustedresponse="adjustedresponse"
+        adjustedresponse="adjustedresponse",
     )
 
     assert_frame_equal(actual_output, df_expected_output)
 
 
 def test_create_q290(filepath):
-    
+
     df_input = pd.read_csv(filepath / "create_q290_input.csv")
-    
-    df_expected_output = pd.read_csv(filepath / "create_q290_output.csv", dtype={"adjustedvalue": np.float64})
-    
-    config = {"finalsel_keep_cols": ["froempment", "frotover", "reference"],
-          "contributors_keep_cols": ["period", "reference", "status"]}
+
+    df_expected_output = pd.read_csv(
+        filepath / "create_q290_output.csv", dtype={"adjustedvalue": np.float64}
+    )
+
+    config = {
+        "finalsel_keep_cols": ["froempment", "frotover", "reference"],
+        "contributors_keep_cols": ["period", "reference", "status"],
+    }
 
     actual_output = create_q290(
         df=df_input,
@@ -64,7 +68,7 @@ def test_create_q290(filepath):
         period="period",
         question_no="question_no",
         adjustedresponse="adjustedresponse",
-        imputation_flag="imputation_flag"
+        imputation_flag="imputation_flag",
     )
 
     assert_frame_equal(actual_output, df_expected_output)
