@@ -75,8 +75,7 @@ def derive_imputation_class(
     if df[save_bins_col_name].hasnans:
 
         raise ValueError(
-            f"""There are values in {column}, which are not
-        defined in {sizebands}"""
+            "There are values in", column, ", which are not defined in ", sizebands
         )
 
     return df
