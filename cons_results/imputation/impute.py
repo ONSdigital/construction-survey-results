@@ -9,36 +9,36 @@ from cons_results.imputation.post_imputation import (
 
 
 def impute(
-    dataframe: pd.DataFrame,
-    manual_constructions: pd.DataFrame,
+    df: pd.DataFrame,
     config: dict,
-    filter_df=None,
+    manual_constructions: pd.DataFrame = None,
+    filter_df: pd.DataFrame = None,
 ) -> pd.DataFrame:
     """
-    wrapper function to apply imputation to the given dataframe
+    wrapper function to apply imputation to the given df
 
     Parameters
     ----------
-    dataframe : pd.DataFrame
-        dataframe with both contributors and responses from snapshot
-    dataframe : pd.DataFrame
-        manual constructions dataframe
+    df : pd.DataFrame
+        df with both contributors and responses from snapshot
+    manual_constructions : pd.DataFrame
+        manual_constructions : pd.DataFrame
     config : dict
         config file containing column names and manual construction path
     filter_df : pd.DataFrame
-        filter_df dataframe from the staging module
+        filter_df df from the staging module
 
 
     Returns
     -------
     pd.DataFrame
-        post imputation dataframe, values have been derived and constrained following
+        post imputation df, values have been derived and constrained following
         imputation
     """
 
-    dataframe = dataframe.groupby(config["question_no"]).apply(
-        lambda df: ratio_of_means(
-            df=df,
+    df = df.groupby(config["question_no"]).apply(
+        lambda df_q_code: ratio_of_means(
+            df=df_q_code,
             manual_constructions=manual_constructions,
             reference=config["reference"],
             target=config["target"],
@@ -52,19 +52,21 @@ def impute(
         )
     )
 
-    dataframe = dataframe[~dataframe["is_backdata"]]  # remove backdata
-    dataframe.drop(columns=["is_backdata"], inplace=True)
+    df = df.reset_index(drop=True)  # remove groupby leftovers
 
-    dataframe = rescale_290_case(
-        dataframe,
+    df = df[~df["is_backdata"]]  # remove backdata
+    df.drop(columns=["is_backdata"], inplace=True)
+
+    df = rescale_290_case(
+        df,
         config["period"],
         config["reference"],
         config["question_no"],
         config["target"],
     )
 
-    dataframe = create_q290(
-        dataframe,
+    df = create_q290(
+        df,
         config,
         config["reference"],
         config["period"],
@@ -73,8 +75,8 @@ def impute(
         config["imputation_marker_col"],
     )
 
-    dataframe = derive_q290(
-        dataframe,
+    df = derive_q290(
+        df,
         config["question_no"],
         config["imputation_marker_col"],
         config["period"],
@@ -82,7 +84,6 @@ def impute(
         config["target"],
     )
 
-    dataframe["period"] = dataframe["period"].dt.strftime("%Y%m").astype("int")
-    dataframe = dataframe.reset_index(drop=True)  # remove groupby leftovers
+    df[config["period"]] = df[config["period"]].dt.strftime("%Y%m").astype("int")
 
-    return dataframe
+    return df

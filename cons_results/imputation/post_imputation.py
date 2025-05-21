@@ -77,6 +77,9 @@ def create_q290(
     imputation_flag: str,
 ) -> pd.DataFrame:
     """
+    Creates rows for questioncode = 290 when these do not exist in
+    a period/reference group.
+
     Parameters
       ----------
       df: pd.Dataframe
@@ -98,7 +101,8 @@ def create_q290(
     Returns
     -------
     df
-      A dataframe with rows added for questioncode 290 where these were missing.
+      A dataframe with rows added for questioncode 290 where these were missing
+      in the period/reference group.
     """
 
     missing_290 = df.groupby([period, reference]).filter(
@@ -107,11 +111,12 @@ def create_q290(
 
     missing_290.drop_duplicates(inplace=True)
 
+    # d_create is temporary for debugging but shouldn't appear in final data
     missing_290 = missing_290.assign(
         **{
             question_no: 290,
             adjustedresponse: 0.0,
-            imputation_flag: "d",
+            imputation_flag: "d_create",
             "290_flag": False,
         }
     )
@@ -165,26 +170,26 @@ def derive_q290(
         A dataframe with 290 derived in rows where components were imputed.
     """
 
-    imputed_components = (
+    imputed_components_mask = (
         (df[question_no] != 290) & (df[imputation_flag] != "r") & (~df["290_flag"])
     )
 
-    imputed_sums = (
-        df[imputed_components]
+    imputed_components_sum = (
+        df[imputed_components_mask]
         .groupby([period, reference])[adjustedresponse]
         .sum()
         .reset_index()
-        .rename(columns={adjustedresponse: "imputed_sum"})
+        .rename(columns={adjustedresponse: "imputed_components_sum"})
     )
 
-    df = df.merge(imputed_sums, on=[period, reference], how="left")
+    df = df.merge(imputed_components_sum, on=[period, reference], how="left")
 
     q290_mask = df[question_no] == 290
-    df["imputed_sum"].fillna(df[adjustedresponse], inplace=True)
-    df.loc[q290_mask, adjustedresponse] = df.loc[q290_mask, "imputed_sum"]
+    df["imputed_components_sum"].fillna(df[adjustedresponse], inplace=True)
+    df.loc[q290_mask, adjustedresponse] = df.loc[q290_mask, "imputed_components_sum"]
 
     df.loc[(q290_mask) & (df[imputation_flag] != "r"), imputation_flag] = "d"
 
-    df = df.drop(columns=["imputed_sum"])
+    df = df.drop(columns=["imputed_components_sum"])
 
     return df

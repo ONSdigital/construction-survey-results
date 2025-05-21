@@ -15,7 +15,7 @@ period,reference,question_no,adjustedresponse,imputation_flag,froempment,frotove
 202209,3,221,60.0,r,500,100,clear,False
 202209,3,211,60.0,r,500,100,clear,False
 202209,3,210,60.0,r,500,100,clear,False
-202203,1,290,0.0,d,100,50,clear,False
-202203,2,290,0.0,d,10,60,clear,False
-202206,1,290,0.0,d,100,70,clear,False
-202206,2,290,0.0,d,400,70,clear,False
+202203,1,290,0.0,d_create,100,50,clear,False
+202203,2,290,0.0,d_create,10,60,clear,False
+202206,1,290,0.0,d_create,100,70,clear,False
+202206,2,290,0.0,d_create,400,70,clear,False

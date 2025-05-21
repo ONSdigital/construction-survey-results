@@ -18,18 +18,25 @@ from cons_results.staging.stage_dataframe import stage_dataframe
 def run_pipeline(config_user_dict=None):
     """This is the main function that runs the pipeline"""
 
+    tag_name = "imputation_outputs"
+
     config = load_config(config_user_dict)
 
     warnings.warn("This is a placeholder for config validation, not yet implemented")
 
     df, manual_constructions, filter_df = stage_dataframe(config)
-    df.to_csv("tests/data/outputs/staged_data.csv")
-
-    warnings.warn(
-        "This is a placeholder for staging validation checksng,  not yet implemented"
+    df.to_csv(
+        f'{config["output_path"]}/{config["snapshot_file_name"]}_staging_{tag_name}.csv'
     )
 
-    df = impute(df, manual_constructions, config, filter_df)
+    warnings.warn(
+        "This is a placeholder for staging validation checks,  not yet implemented"
+    )
+
+    df = impute(df, config, manual_constructions, filter_df)
+    df.to_csv(
+        f'{config["output_path"]}/{config["snapshot_file_name"]}_impute_{tag_name}.csv'
+    )
 
     warnings.warn("This is a placeholder post-imputation,  not yet implemented")
 
