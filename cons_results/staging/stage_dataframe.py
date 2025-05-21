@@ -8,9 +8,11 @@ from mbs_results.staging.data_cleaning import (
 )
 from mbs_results.staging.dfs_from_spp import get_dfs_from_spp
 from mbs_results.staging.stage_dataframe import read_and_combine_colon_sep_files
+from mbs_results.utilities.inputs import read_csv_wrapper
 from mbs_results.utilities.utils import get_snapshot_alternate_path
 
 from cons_results.staging.create_missing_questions import create_missing_questions
+from cons_results.staging.derive_imputation_class import derive_imputation_class
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
@@ -35,7 +37,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     snapshot_file_path = get_snapshot_alternate_path(config)
 
     contributors, responses = get_dfs_from_spp(
-        snapshot_file_path + config["construction_file_name"],
+        snapshot_file_path + config["snapshot_file_name"],
         config["platform"],
         config["bucket"],
     )
@@ -80,7 +82,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     df = append_back_data(df, config)
 
-    snapshot_name = config["construction_file_name"].split(".")[0]
+    snapshot_name = config["snapshot_file_name"].split(".")[0]
 
     df = filter_out_questions(
         df=df,
@@ -103,8 +105,37 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     df[config["auxiliary_converted"]] = df[config["auxiliary"]].copy()
     df = convert_annual_thousands(df, config["auxiliary_converted"])
 
+    df = derive_imputation_class(
+        df, config["bands"], config["cell_number"], config["imputation_class"]
+    )
+
+    if config["manual_constructions_path"]:
+        manual_constructions = read_csv_wrapper(
+            config["manual_constructions_path"], config["platform"], config["bucket"]
+        )
+    else:
+        manual_constructions = None
+
+    if config["filter"]:
+        filter_df = read_csv_wrapper(
+            config["filter"], config["platform"], config["bucket"]
+        )
+        filter_df = enforce_datatypes(filter_df, list(filter_df), **config)
+
+    else:
+        filter_df = None
+
+    df = flag_290_case(
+        df,
+        config["period"],
+        config["reference"],
+        config["question_no"],
+        config["target"],
+    )
+
     print("Staging Completed")
-    return df
+
+    return df, manual_constructions, filter_df
 
 
 def flag_290_case(

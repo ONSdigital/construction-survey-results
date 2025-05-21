@@ -23,34 +23,32 @@ def input(expected_output):
 
 
 bands_are_ok_cases = [
-    (
-        [
-            [1, 7],
-            [11, 17],
-            [21, 27],
-            [31, 37],
-            [41, 47],
-            [51, 57],
-            [61, 67],
-            [71, 77],
-            [81, 87],
-            [91, 97],
-            [101, 107],
-            [111, 117],
-            [121, 127],
-            [131, 137],
-        ]
-    )
+    {
+        "0": [1, 7],
+        "1": [11, 17],
+        "2": [21, 27],
+        "3": [31, 37],
+        "4": [41, 47],
+        "5": [51, 57],
+        "6": [61, 67],
+        "7": [71, 77],
+        "8": [81, 87],
+        "9": [91, 97],
+        "10": [101, 107],
+        "11": [111, 117],
+        "12": [121, 127],
+        "13": [131, 137],
+    }
 ]
 bands_not_ok_cases = [
     (
         # bad case 1 wrong size, not matching len of 2 (lower, upper)
-        [[1, 7, 3], [11]],
+        {1: [1, 7, 3], 2: [11]},
         ValueError,
     ),
     (
         # bad case 2 values exist but no size band
-        [[1, 7], [11, 17]],
+        {1: [1, 7], 2: [11, 17]},
         ValueError,
     ),
 ]
@@ -60,7 +58,6 @@ bands_not_ok_cases = [
 def test_derive_imputation_class(input, ok_bands, expected_output):
 
     actual_output = derive_imputation_class(input, ok_bands, "values", "expected_bin")
-    actual_output["expected_bin"] = actual_output["expected_bin"].astype(str)
     assert_frame_equal(actual_output, expected_output)
 
 
