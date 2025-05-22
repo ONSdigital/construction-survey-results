@@ -1,3 +1,4 @@
+import os
 import warnings
 
 from mbs_results.utilities.inputs import load_config
@@ -22,21 +23,19 @@ def run_pipeline(config_user_dict=None):
 
     config = load_config(config_user_dict)
 
+    snapshot_file_name = os.path.basename(config["snapshot_file_path"]).split(".")[0]
+
     warnings.warn("This is a placeholder for config validation, not yet implemented")
 
     df, manual_constructions, filter_df = stage_dataframe(config)
-    df.to_csv(
-        f'{config["output_path"]}/{config["snapshot_file_name"]}_staging_{tag_name}.csv'
-    )
+    df.to_csv(f'{config["output_path"]}/{snapshot_file_name}_staging_{tag_name}.csv')
 
     warnings.warn(
         "This is a placeholder for staging validation checks,  not yet implemented"
     )
 
     df = impute(df, config, manual_constructions, filter_df)
-    df.to_csv(
-        f'{config["output_path"]}/{config["snapshot_file_name"]}_impute_{tag_name}.csv'
-    )
+    df.to_csv(f'{config["output_path"]}/{snapshot_file_name}_impute_{tag_name}.csv')
 
     warnings.warn("This is a placeholder post-imputation,  not yet implemented")
 

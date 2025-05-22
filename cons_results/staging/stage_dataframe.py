@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
 from mbs_results.staging.data_cleaning import (
@@ -37,7 +39,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     snapshot_file_path = get_snapshot_alternate_path(config)
 
     contributors, responses = get_dfs_from_spp(
-        snapshot_file_path + config["snapshot_file_name"],
+        snapshot_file_path,
         config["platform"],
         config["bucket"],
     )
@@ -82,7 +84,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     df = append_back_data(df, config)
 
-    snapshot_name = config["snapshot_file_name"].split(".")[0]
+    snapshot_name = os.path.basename(config["snapshot_file_path"]).split(".")[0]
 
     df = filter_out_questions(
         df=df,
