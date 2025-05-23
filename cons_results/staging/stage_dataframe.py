@@ -11,7 +11,6 @@ from mbs_results.staging.data_cleaning import (
 from mbs_results.staging.dfs_from_spp import get_dfs_from_spp
 from mbs_results.staging.stage_dataframe import read_and_combine_colon_sep_files
 from mbs_results.utilities.inputs import read_csv_wrapper
-from mbs_results.utilities.utils import get_snapshot_alternate_path
 
 from cons_results.staging.create_missing_questions import create_missing_questions
 from cons_results.staging.derive_imputation_class import derive_imputation_class
@@ -35,8 +34,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     period = config["period"]
     reference = config["reference"]
-
-    snapshot_file_path = get_snapshot_alternate_path(config)
+    snapshot_file_path = config["snapshot_file_path"]
 
     contributors, responses = get_dfs_from_spp(
         snapshot_file_path,
@@ -84,7 +82,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     df = append_back_data(df, config)
 
-    snapshot_name = os.path.basename(config["snapshot_file_path"]).split(".")[0]
+    snapshot_name = os.path.basename(snapshot_file_path).split(".")[0]
 
     df = filter_out_questions(
         df=df,
