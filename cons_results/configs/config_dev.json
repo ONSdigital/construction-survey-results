@@ -95,8 +95,8 @@
     ],
     "sample_keep_columns": ["reference", "period"],
 
-    "filter_out_questions": [11, 12 ,146],
-    "csw_to_spp_columns":{
+     "filter_out_questions": [11, 12 ,146,902, 903, 904],
+     "csw_to_spp_columns":{
         "returned_value":"response",
         "adjusted_value":"adjustedresponse",
         "question_no":"questioncode"
