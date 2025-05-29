@@ -12,21 +12,21 @@ def get_imputes_and_constructed_output(
     additional_outputs_df : pd.DataFrame
         The input DataFrame containing additional outputs.
     config : dict
-        A dictionary containing configuration parameters. Expected keys:
+        A dictionary containing configuration parameters. Must include:
         - "state" : str
             The state of the process. If not "frozen", the function returns None.
         - "period" : str
-            The column name in `additional_outputs_df` representing the period.
+            The column name for the period.
         - "current_period" : Any
-            The value of the current period to filter rows in `additional_outputs_df`.
+            The value of the current period.
         - "reference" : str
-            The column name representing the reference data.
+            The column name for the reference.
         - "question_no" : str
-            The column name representing the question number.
+            The column name for the question number.
         - "target" : str
-            The column name representing the target data.
+            The column name forthe target data.
         - "imputation_marker_col" : str
-            The column name used to filter rows based on imputation markers.
+            The column name for the imputation markers.
 
     Returns
     -------
@@ -56,7 +56,7 @@ def get_imputes_and_constructed_output(
 
     imputes_and_constructed_output = imputes_and_constructed_output.rename(
         columns={
-            "adjustedresponse": "constructedresponse",
+            config["target"]: "constructedresponse",
             config["imputation_marker_col"]: "imputationmarker",
         }
     )
