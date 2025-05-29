@@ -32,6 +32,7 @@ def output_df(filepath):
 def config():
     return {
         "state": "frozen",
+        "imputation_marker_col": "imputation_flags_adjustedresponse",
         "period": "period",
         "reference": "reference",
         "question_no": "questioncode",

@@ -5,23 +5,34 @@ def get_imputes_and_constructed_output(
     additional_outputs_df: pd.DataFrame, **config
 ) -> pd.DataFrame:
     """
-    Creates imputes and constructed output for the current period for frozen runs only.
+    Creates imputes and constructed output for current period on frozen runs only.
+
     Parameters
     ----------
     additional_outputs_df : pd.DataFrame
         The input DataFrame containing additional outputs.
-    **config : dict
-        A dictionary containing configuration parameters. Must include:
-        - "state" (str): The state of the process, must be "frozen" to proceed.
-        - "period" (str): The column name for the period.
-        - "reference" (str): The column name for the reference.
-        - "question_no" (str): The column name for the question number.
-        - "target" (str): The column name for the target variable.
+    config : dict
+        A dictionary containing configuration parameters. Expected keys:
+        - "state" : str
+            The state of the process. If not "frozen", the function returns None.
+        - "period" : str
+            The column name in `additional_outputs_df` representing the period.
+        - "current_period" : Any
+            The value of the current period to filter rows in `additional_outputs_df`.
+        - "reference" : str
+            The column name representing the reference data.
+        - "question_no" : str
+            The column name representing the question number.
+        - "target" : str
+            The column name representing the target data.
+        - "imputation_marker_col" : str
+            The column name used to filter rows based on imputation markers.
+
     Returns
     -------
     pd.DataFrame
-        The imputes and constructed output DataFrame.
-        Returns None if the "state" in the configuration is not "frozen".
+        Imputes and construction output.
+        Returns None if not frozen run.
     """
     if config["state"] != "frozen":
         return
@@ -35,18 +46,18 @@ def get_imputes_and_constructed_output(
             config["reference"],
             config["question_no"],
             config["target"],
-            "imputation_flags_adjustedresponse",
+            config["imputation_marker_col"],
         ]
     ]
 
     imputes_and_constructed_output = imputes_and_constructed_output[
-        imputes_and_constructed_output["imputation_flags_adjustedresponse"] != "r"
+        imputes_and_constructed_output[config["imputation_marker_col"]] != "r"
     ]
 
     imputes_and_constructed_output = imputes_and_constructed_output.rename(
         columns={
             "adjustedresponse": "constructedresponse",
-            "imputation_flags_adjustedresponse": "imputationmarker",
+            config["imputation_marker_col"]: "imputationmarker",
         }
     )
 
