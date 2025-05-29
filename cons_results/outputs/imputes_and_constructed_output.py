@@ -24,7 +24,7 @@ def get_imputes_and_constructed_output(
         - "question_no" : str
             The column name for the question number.
         - "target" : str
-            The column name forthe target data.
+            The column name for the target data.
         - "imputation_marker_col" : str
             The column name for the imputation markers.
 
