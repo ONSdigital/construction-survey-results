@@ -18,14 +18,13 @@ def detect_outlier(
     )
 
     # filtering out q290 since they don't need to be winsorised
-
     non_290 = pre_win[pre_win[config["question_no"]] != 290]
     q290_rows = pre_win[pre_win[config["question_no"]] == 290]
 
     post_win = non_290.groupby(config["question_no"]).apply(
         lambda df: winsorise(
             df,
-            config["group"],
+            config["strata"],
             config["period"],
             config["auxiliary_converted"],
             config["census"],

@@ -49,7 +49,7 @@ def run_pipeline(config_user_dict=None):
         "This is a placeholder for estimation validation checks,  not yet implemented"
     )
 
-    outlier_detection_df = detect_outlier(df, config)
+    outlier_detection_df = detect_outlier(estimation_output, config)
 
     warnings.warn("This is a placeholder for estimation,  not yet implemented")
 
