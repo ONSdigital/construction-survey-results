@@ -4,12 +4,12 @@ import warnings
 from mbs_results.utilities.inputs import load_config
 
 from cons_results.imputation.impute import impute
-from cons_results.staging.stage_dataframe import stage_dataframe
 
 # import imputation
 # import post-imputation
 # import estimation
-# import outlier detection
+from cons_results.outlier_detection.detect_outlier import detect_outlier
+from cons_results.staging.stage_dataframe import stage_dataframe
 
 # import staging validation checks
 # import imputation checks
@@ -49,7 +49,7 @@ def run_pipeline(config_user_dict=None):
         "This is a placeholder for estimation validation checks,  not yet implemented"
     )
 
-    warnings.warn("This is a placeholder for outlier detection,  not yet implemented")
+    outlier_detection_df = detect_outlier(df, config)
 
     warnings.warn("This is a placeholder for estimation,  not yet implemented")
 
