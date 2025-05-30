@@ -42,7 +42,7 @@ def get_additional_outputs(
             raise ValueError(
                 f"""
                 The function {function} is not registered, check spelling.\n
-                Currently the registered functions are:\n {function_mapper}
+                Currently the registered functions are: \n {function_mapper}
                 """
             )
 
