@@ -1,9 +1,12 @@
 import os
 import warnings
 
+# from mbs_results.outputs.produce_additional_outputs import get_additional_outputs_df
 from mbs_results.utilities.inputs import load_config
 
 from cons_results.imputation.impute import impute
+
+# from cons_results.outputs.produce_additional_outputs import produce_additional_outputs
 from cons_results.staging.stage_dataframe import stage_dataframe
 
 # import imputation
@@ -52,6 +55,12 @@ def run_pipeline(config_user_dict=None):
     warnings.warn("This is a placeholder for outlier detection,  not yet implemented")
 
     warnings.warn("This is a placeholder for estimation,  not yet implemented")
+
+    # commenting these out for now until estimation_output and outlier_output exist
+    # additional_outputs_df = get_additional_outputs_df(
+    # estimation_output, outlier_output
+    # )
+    # produce_additional_outputs(config, additional_outputs_df)
 
 
 if __name__ == "__main__":

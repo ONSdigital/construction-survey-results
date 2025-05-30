@@ -33,6 +33,9 @@ def get_imputes_and_constructed_output(
     pd.DataFrame
         Imputes and construction output.
         Returns None if not frozen run.
+
+    filename: str
+        The name of the output file, formatted as "constructed228_{current_period}".
     """
     if config["state"] != "frozen":
         return
@@ -63,4 +66,6 @@ def get_imputes_and_constructed_output(
 
     imputes_and_constructed_output.reset_index(drop=True, inplace=True)
 
-    return imputes_and_constructed_output
+    filename = f"constructed228_{config['current_period']}"
+
+    return imputes_and_constructed_output, filename

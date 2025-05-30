@@ -51,6 +51,6 @@ class TestImputesAndConstrucedOutput:
 
         expected_output = output_df
 
-        actual_output = get_imputes_and_constructed_output(input_df, **config)
+        actual_output = get_imputes_and_constructed_output(input_df, **config)[0]
 
         assert_frame_equal(actual_output, expected_output)
