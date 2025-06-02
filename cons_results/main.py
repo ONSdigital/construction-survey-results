@@ -1,6 +1,7 @@
 import os
 import warnings
 
+import pandas as pd
 from mbs_results.utilities.inputs import load_config
 
 from cons_results.imputation.impute import impute

@@ -1,4 +1,3 @@
-import pandas as pd
 from mbs_results.outlier_detection.detect_outlier import join_l_values
 from mbs_results.outlier_detection.winsorisation import winsorise
 from mbs_results.utilities.constrains import replace_with_manual_outlier_weights
@@ -39,13 +38,13 @@ def detect_outlier(
     post_win.reset_index(drop=True, inplace=True)
 
     # Concat with question_290 rows
-    post_win = pd.concat(post_win, q290_rows)
+    post_win = pd.concat([post_win, q290_rows])
 
     # Calculate outlier weightsfor q290 rows
     post_win = derive_q290_outlier_weights(
         post_win,
         config,
-        config["adjustedresponse"],
+        config["target"],
         config["question_no"],
         config["reference"],
         config["period"],

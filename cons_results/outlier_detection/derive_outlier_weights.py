@@ -50,7 +50,7 @@ def derive_q290_outlier_weights(
 
     components = df[df[question_no].isin(all_questions)]
     components.loc[:, "o_weight_times_value"] = (
-        components["outlier_weights"] * components[target]
+        components["outlier_weight"] * components[target]
     )
     sum_o_weight_times_value = components.groupby([reference, period])[
         "o_weight_times_value"
@@ -59,7 +59,7 @@ def derive_q290_outlier_weights(
     df.set_index([reference, period], inplace=True)
 
     q290_mask = df[question_no] == 290
-    df.loc[q290_mask, "outlier_weights"] = (
+    df.loc[q290_mask, "outlier_weight"] = (
         sum_o_weight_times_value / df.loc[q290_mask, target]
     )
 
