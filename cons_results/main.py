@@ -44,16 +44,14 @@ def run_pipeline(config_user_dict=None):
         "This is a placeholder for imputation validation checks,  not yet implemented"
     )
 
-    warnings.warn("This is a placeholder for estimation,  not yet implemented")
-
     warnings.warn(
         "This is a placeholder for estimation validation checks,  not yet implemented"
     )
 
-    outlier_detection_df = detect_outlier(estimation_output, config)
+    outlier_detection_output = detect_outlier(estimation_output, config)
+    outlier_detection_output.to_csv(f'{config["output_path"]}/{snapshot_file_name}_outlier_detection_{tag_name}.csv')
 
     warnings.warn("This is a placeholder for estimation,  not yet implemented")
-
 
 if __name__ == "__main__":
     run_pipeline()

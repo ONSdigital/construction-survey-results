@@ -6,6 +6,8 @@ from cons_results.outlier_detection.derive_outlier_weights import (
     derive_q290_outlier_weights,
 )
 
+import pandas as pd
+
 
 def detect_outlier(
     df: pd.DataFrame,
