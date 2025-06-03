@@ -11,7 +11,7 @@
     "design_weight": "design_weight",
     "status": "statusencoded",
     "form_id_idbr": "formtype",
-    "calibration_group": "calibration_group",
+    "calibration_group": "cell_no",
     "sic": "frosic2007",
     "period": "period",
     "question_no": "questioncode",
@@ -81,7 +81,7 @@
         "selmkr", "inclexcl"
     ],
     "population_keep_columns": [
-        "reference", "region", "frotover", "cell_no", "period", "frosic2007"
+        "reference", "region", "frotover", "cell_no"
     ],
 
     "sample_column_names": [
@@ -94,17 +94,15 @@
         "tradstyle2","tradstyle3","contact","telephone","fax","seltype","inclexcl",
         "cell_no","formtype","cso_tel","currency"
     ],
-    "sample_keep_columns": ["reference", "period"],
+    "sample_keep_columns": ["reference"],
 
-    "census_extra_calibration_group": [5043, 5113, 5123, 5203, 5233,
-     5403, 5643, 5763, 5783, 5903, 6073],
      "filter_out_questions": [11, 12 ,146,902, 903, 904],
      "csw_to_spp_columns":{
         "returned_value":"response",
         "adjusted_value":"adjustedresponse",
         "question_no":"questioncode"
-     },
-     "type_to_imputation_marker" : {
+    },
+    "type_to_imputation_marker" : {
         "0":"selected, no return",
         "1":"r",
         "2":"derived",
@@ -116,9 +114,11 @@
         "11":"r",
         "12":"derived",
         "13":"fir"
-        },
-  "additional_outputs":[],
-  "all_questions":[201,202,211,212,221,222,231,232,241,242,243],
+    },
+    "additional_outputs":[],
+    "all_questions":[201,202,211,212,221,222,231,232,241,242,243],
+
+    "census_extra_calibration_group": [],
 
 "bands" : {
     "0": [1,7],
