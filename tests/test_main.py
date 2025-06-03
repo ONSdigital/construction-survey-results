@@ -15,7 +15,6 @@ def test_config(filepath):
     return {
         "platform": "network",
         "bucket": "",
-        "calibration_group_map_path": "",
         "classification_values_path": "",
         "idbr_folder_path": filepath,
         "l_values_path": "",
@@ -24,7 +23,7 @@ def test_config(filepath):
         "manual_constructions_path": filepath / "manual_constructions.csv",
         "filter": None,
         "output_path": "tests/data/test_main/output/",
-        "population_prefix": "",
+        "population_prefix": "test_universe009",
         "sample_prefix": "finalsel228",
         "back_data_qv_path": filepath / "test_qv_009_202212.csv",
         "back_data_cp_path": filepath / "test_cp_009_202212.csv",
