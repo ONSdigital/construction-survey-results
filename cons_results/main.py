@@ -1,13 +1,12 @@
 import os
 import warnings
 
+from mbs_results.estimation.estimate import estimate
 from mbs_results.utilities.inputs import load_config
 
 from cons_results.imputation.impute import impute
 from cons_results.staging.stage_dataframe import stage_dataframe
 
-# import imputation
-# import post-imputation
 # import estimation
 # import outlier detection
 
@@ -42,8 +41,9 @@ def run_pipeline(config_user_dict=None):
     warnings.warn(
         "This is a placeholder for imputation validation checks,  not yet implemented"
     )
+    df = estimate(df=df, method="separate", convert_NI_GB_cells=False, config=config)
 
-    warnings.warn("This is a placeholder for estimation,  not yet implemented")
+    df.to_csv(f'{config["output_path"]}/{snapshot_file_name}_estimate_{tag_name}.csv')
 
     warnings.warn(
         "This is a placeholder for estimation validation checks,  not yet implemented"
