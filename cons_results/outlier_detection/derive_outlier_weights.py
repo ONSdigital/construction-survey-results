@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 def derive_q290_outlier_weights(
     df: pd.DataFrame,
     config: dict,
@@ -48,6 +47,7 @@ def derive_q290_outlier_weights(
 
     all_questions = config["all_questions"]
 
+    # Using the formula to calculate q290 outlier weights    
     components = df[df[question_no].isin(all_questions)]
     components.loc[:, "o_weight_times_value"] = (
         components["outlier_weight"] * components[target]
@@ -57,8 +57,15 @@ def derive_q290_outlier_weights(
     ].sum()
 
     df.set_index([reference, period], inplace=True)
+    
+    # Setting outlier weight to 1 for q290 when component outlier weights are 1 (non-winsorised)
+    avg_component_o_weight = df[df[question_no].isin(all_questions)].groupby(['reference', 'period'])["outlier_weight"].mean()
+    non_winsorised = avg_component_o_weight[avg_component_o_weight == 1.00]
+    df.loc[df.index.isin(non_winsorised.index) & (df[question_no] == 290), "outlier_weight"] = 1.00
 
-    q290_mask = df[question_no] == 290
+    # Changing 290 outlier weight only when it hasn't already been set to 1
+    q290_mask = (df[question_no] == 290) & (df["outlier_weight"] != 1.00)
+    print(q290_mask)
     df.loc[q290_mask, "outlier_weight"] = (
         sum_o_weight_times_value / df.loc[q290_mask, target]
     )
