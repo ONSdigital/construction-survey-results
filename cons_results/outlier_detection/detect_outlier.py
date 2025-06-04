@@ -1,3 +1,4 @@
+import pandas as pd
 from mbs_results.outlier_detection.detect_outlier import join_l_values
 from mbs_results.outlier_detection.winsorisation import winsorise
 from mbs_results.utilities.constrains import replace_with_manual_outlier_weights
@@ -5,8 +6,6 @@ from mbs_results.utilities.constrains import replace_with_manual_outlier_weights
 from cons_results.outlier_detection.derive_outlier_weights import (
     derive_q290_outlier_weights,
 )
-
-import pandas as pd
 
 
 def detect_outlier(

@@ -1,7 +1,6 @@
 import os
 import warnings
 
-
 from mbs_results.estimation.estimate import estimate
 from mbs_results.utilities.inputs import load_config
 
@@ -42,18 +41,25 @@ def run_pipeline(config_user_dict=None):
     warnings.warn(
         "This is a placeholder for imputation validation checks,  not yet implemented"
     )
-    estimation_output = estimate(df=df, method="separate", convert_NI_GB_cells=False, config=config)
+    estimation_output = estimate(
+        df=df, method="separate", convert_NI_GB_cells=False, config=config
+    )
 
-    estimation_output.to_csv(f'{config["output_path"]}/{snapshot_file_name}_estimate_{tag_name}.csv')
+    estimation_output.to_csv(
+        f'{config["output_path"]}/{snapshot_file_name}_estimate_{tag_name}.csv'
+    )
 
     warnings.warn(
         "This is a placeholder for estimation validation checks,  not yet implemented"
     )
 
     outlier_detection_output = detect_outlier(estimation_output, config)
-    outlier_detection_output.to_csv(f'{config["output_path"]}/{snapshot_file_name}_outlier_detection_{tag_name}.csv')
+    outlier_detection_output.to_csv(
+        f'{config["output_path"]}/{snapshot_file_name}_outlier_detection_{tag_name}.csv'
+    )
 
     warnings.warn("This is a placeholder for estimation,  not yet implemented")
+
 
 if __name__ == "__main__":
     run_pipeline()
