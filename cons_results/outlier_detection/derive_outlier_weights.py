@@ -47,11 +47,11 @@ def derive_q290_outlier_weights(
     'o_weights': [0.5, 0.2]
     }
     >>> result = calculate_q290_o_weights(
-    df, 
-    all_questions, 
-    target, 
-    question_no, 
-    reference, 
+    df,
+    all_questions,
+    target,
+    question_no,
+    reference,
     period
     )
     reference  period  questioncode  target  o_weights
@@ -60,7 +60,7 @@ def derive_q290_outlier_weights(
     3    1  202201            290       9       0.33333
 
     """
-    
+
     # Using the formula to calculate q290 outlier weights
     components = df[df[question_no].isin(all_questions)]
     components.loc[:, "o_weight_times_value"] = (
