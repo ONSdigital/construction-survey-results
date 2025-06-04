@@ -14,7 +14,7 @@ def filepath():
     return Path("tests/data/outlier_detection/derive_outlier_weights")
 
 
-test_config = {"all_questions": [201, 202, 211, 212, 221, 222]}
+all_questions = [201, 202, 211, 212, 221, 222]
 
 
 def test_derive_q290_outlier_weights(filepath):
@@ -25,7 +25,12 @@ def test_derive_q290_outlier_weights(filepath):
     input_df = pd.read_csv(filepath / "derive_q290_outlier_weights_output.csv")
 
     output_df = derive_q290_outlier_weights(
-        input_df, test_config, "adjustedresponse", "question_no", "reference", "period"
+        input_df,
+        all_questions,
+        "adjustedresponse",
+        "question_no",
+        "reference",
+        "period",
     )
 
     assert_frame_equal(output_df, expected_output_df)
