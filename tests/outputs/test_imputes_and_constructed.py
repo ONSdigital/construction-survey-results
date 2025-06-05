@@ -41,7 +41,7 @@ def config():
     }
 
 
-class TestImputesAndConstrucedOutput:
+class TestImputesAndConstructedOutput:
     def test_state_not_frozen(sample_data, config):
         config["state"] = "active"
         result = get_imputes_and_constructed_output(sample_data, **config)
@@ -51,6 +51,6 @@ class TestImputesAndConstrucedOutput:
 
         expected_output = output_df
 
-        actual_output = get_imputes_and_constructed_output(input_df, **config)
+        actual_output = get_imputes_and_constructed_output(input_df, **config)[0]
 
         assert_frame_equal(actual_output, expected_output)
