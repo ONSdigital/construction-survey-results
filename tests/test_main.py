@@ -15,9 +15,10 @@ def test_config(filepath):
     return {
         "platform": "network",
         "bucket": "",
-        "classification_values_path": "",
+        "calibration_group_map_path": "",
+        "classification_values_path": filepath / "sic_classification_mapping.csv",
         "idbr_folder_path": filepath,
-        "l_values_path": "",
+        "l_values_path": filepath / "classification_questioncode_l_value_mapping.csv",
         "manual_outlier_path": "",
         "snapshot_file_path": filepath / "dummy_snapshot.json",
         "manual_constructions_path": filepath / "manual_constructions.csv",

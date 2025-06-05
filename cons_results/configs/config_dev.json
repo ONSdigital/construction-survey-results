@@ -23,6 +23,7 @@
     "target": "adjustedresponse",
     "form_id_spp": "form_type_spp",
     "imputation_class": "imputation_class",
+    "l_value_question_no": "questioncode",
 
     "master_column_type_dict" : {
         "reference": "int",
