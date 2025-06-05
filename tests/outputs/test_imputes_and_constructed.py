@@ -41,7 +41,7 @@ def config():
     }
 
 
-class TestImputesAndConstrucedOutput:
+class TestImputesAndConstructedOutput:
     def test_state_not_frozen(sample_data, config):
         config["state"] = "active"
         result = get_imputes_and_constructed_output(sample_data, **config)
