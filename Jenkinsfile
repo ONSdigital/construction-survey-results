@@ -20,12 +20,12 @@ pipeline {
 
     // Define environment variables
     environment {
-        PROJECT_NAME = "mbs_results"
+        PROJECT_NAME = "cons_results"
         MAIN_BRANCH = "main"
         PROXY = credentials("PROXY")  // Http proxy address, set in Jenkins Credentials
         ARTIFACTORY_CREDS = "ARTIFACTORY_CREDENTIALS"
-        ARTIFACTORY_PYPI_REPO = "LR_mbs-results"
-        BUILD_BRANCH = "869-changes-for-prod-env" // only deploy from this/these branches
+        ARTIFACTORY_PYPI_REPO = "LR_construction_results"
+        BUILD_BRANCH = "main" // only deploy from this/these branches
         BUILD_TAG = "v*.*.*" // only deploy with a commit message tagged like v0.0.1
     }
 
