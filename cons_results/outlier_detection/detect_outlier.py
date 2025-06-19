@@ -61,4 +61,5 @@ def detect_outlier(
         config,
     )
 
+    post_win["winsorised_value"] = post_win[config["target"]] * post_win["outlier_weight"]
     return post_win
