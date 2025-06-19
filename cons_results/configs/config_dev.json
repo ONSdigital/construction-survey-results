@@ -94,7 +94,7 @@
         "tradstyle2","tradstyle3","contact","telephone","fax","seltype","inclexcl",
         "cell_no","formtype","cso_tel","currency"
     ],
-    "sample_keep_columns": ["reference"],
+    "sample_keep_columns": ["reference", "runame1"],
 
      "filter_out_questions": [11, 12 ,146,902, 903, 904],
      "csw_to_spp_columns":{
