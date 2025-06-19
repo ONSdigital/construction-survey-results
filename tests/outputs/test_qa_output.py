@@ -21,6 +21,7 @@ def sample_df_and_config():
         "calibration_factor": [1.0, 1.0, 1.0, 2.0],
         "froempment": [3, 3, 3, 4],
         "sic": [100, 100, 100, 200],
+        "runame1": ["A", "A", "A", "B"],
     }
     df = pd.DataFrame(data)
     config = {
@@ -43,7 +44,7 @@ def expected_qa_output():
     expected = pd.read_csv(
         "./tests/data/outputs/qa_output/expected_output.csv",
         header=[0, 1],
-        index_col=[0, 1, 2, 3, 4, 5],
+        index_col=[0, 1, 2, 3, 4, 5, 6],
     )
     return expected
 

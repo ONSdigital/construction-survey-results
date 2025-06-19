@@ -1,14 +1,14 @@
 import pandas as pd
 
 
-def get_qa_output(additional_outputs_df: pd.DataFrame, config: dict) -> pd.DataFrame:
+def get_qa_output(df: pd.DataFrame, config: dict) -> pd.DataFrame:
     """
     Creates QA output
 
     Parameters
     ----------
-    additional_outputs_df : pd.DataFrame
-        The input DataFrame containing additional outputs.
+    df : pd.DataFrame
+        The input DataFrame.
     config : dict
         A dictionary containing configuration parameters. Must include:
         - "period" : str
@@ -44,16 +44,17 @@ def get_qa_output(additional_outputs_df: pd.DataFrame, config: dict) -> pd.DataF
         config["reference"],
         config["cell_number"],
         config["auxiliary"],  # check if aux or converted aux
-        config["froempment"]
+        config["froempment"],
+        "runame1"
         # potentially add entname1?
     ]
 
     # Create value for adj_targer*a*o*g weights
-    additional_outputs_df["curr_grossed_value"] = (
-        additional_outputs_df[config["target"]]
-        * additional_outputs_df["design_weight"]
-        * additional_outputs_df["outlier_weight"]
-        * additional_outputs_df["calibration_factor"]
+    df["curr_grossed_value"] = (
+        df[config["target"]]
+        * df["design_weight"]
+        * df["outlier_weight"]
+        * df["calibration_factor"]
     )
 
     # selecting 4 value columns
@@ -65,7 +66,7 @@ def get_qa_output(additional_outputs_df: pd.DataFrame, config: dict) -> pd.DataF
     ]
 
     # creating pivot table
-    qa_output_df = additional_outputs_df.pivot_table(
+    qa_output_df = df.pivot_table(
         index=index_columns,
         columns=config["question_no"],
         values=value_columns,
