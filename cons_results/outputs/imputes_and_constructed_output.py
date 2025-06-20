@@ -66,6 +66,6 @@ def get_imputes_and_constructed_output(
 
     imputes_and_constructed_output.reset_index(drop=True, inplace=True)
 
-    filename = f"constructed228_{config['current_period']}"
+    filename = f"constructed228_{config['current_period']}.csv"
 
     return imputes_and_constructed_output, filename
