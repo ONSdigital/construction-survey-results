@@ -62,6 +62,8 @@ def detect_outlier(
     )
 
     # This is needed for the additional outputs functions
-    post_win["winsorised_value"] = post_win["outlier_weight"] * post_win["adjustedresponse"]
+    post_win["winsorised_value"] = (
+        post_win["outlier_weight"] * post_win["adjustedresponse"]
+    )
     
     return post_win
