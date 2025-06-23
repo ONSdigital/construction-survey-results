@@ -25,11 +25,9 @@ def get_additional_outputs(
     else:
         # If "all" is not specified, use the provided list combining with
         # mandatory outputs
-        functions_to_run = config["additional_outputs"] + config["mandatory_outputs"]
-
-    if not functions_to_run:
-        print("No additional outputs produced, only producing mandatory outputs.")
-        functions_to_run = config["mandatory_outputs"]
+        functions_to_run = list(
+            set(config["additional_outputs"]) | set(config["mandatory_outputs"])
+        )
 
     for function in functions_to_run:
         if function in function_mapper:
