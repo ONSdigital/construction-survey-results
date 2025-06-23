@@ -20,7 +20,7 @@ def test_config(filepath):
         "idbr_folder_path": filepath,
         "l_values_path": filepath / "classification_questioncode_l_value_mapping.csv",
         "manual_outlier_path": "",
-        "snapshot_file_path": filepath / "dummy_snapshot.json",
+        "snapshot_file_path": str(filepath / "dummy_snapshot.json"),
         "manual_constructions_path": filepath / "manual_constructions.csv",
         "filter": None,
         "output_path": "tests/data/test_main/output/",

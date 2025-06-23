@@ -51,7 +51,7 @@ def expected_qa_output():
 
 def test_get_qa_output_shape_and_columns(sample_df_and_config):
     df, config = sample_df_and_config
-    result = get_qa_output(df, config)
+    result = get_qa_output(df, **config)
     # Should have a MultiIndex on columns: (question_no, value_column)
     assert isinstance(result.columns, pd.MultiIndex)
     # Should have 3 question_no columns (1,2,3) and 4 value columns
@@ -68,7 +68,7 @@ def test_get_qa_output_shape_and_columns(sample_df_and_config):
 
 def test_get_qa_output_values(sample_df_and_config):
     df, config = sample_df_and_config
-    result = get_qa_output(df, config)
+    result = get_qa_output(df, **config)
     # Check that weighted adjusted value is correct (target * 1 * 1 * 1)
     for q in [1, 2, 3]:
         assert (
@@ -88,7 +88,7 @@ def test_get_qa_output_values(sample_df_and_config):
 
 def test_get_qa_output_index(sample_df_and_config, expected_qa_output):
     df, config = sample_df_and_config
-    result = get_qa_output(df, config)
+    result = get_qa_output(df, **config)
     # Index should be a MultiIndex with the specified index columns
     expected = expected_qa_output
     # Index should match expected

@@ -24,6 +24,7 @@
     "form_id_spp": "form_type_spp",
     "imputation_class": "imputation_class",
     "l_value_question_no": "questioncode",
+    "froempment": "froempment",
 
     "master_column_type_dict" : {
         "reference": "int",
@@ -63,7 +64,8 @@
         "cell_no",
         "froempment",
         "frotover",
-        "reference"
+        "reference",
+        "runame1"
     ],
 
     "temporarily_remove_cols": [],
@@ -115,7 +117,8 @@
         "12":"derived",
         "13":"fir"
     },
-    "additional_outputs":[],
+    "additional_outputs":["all"],
+    "mandatory_outputs":["qa_output"] ,
     "all_questions":[201,202,211,212,221,222,231,232,241,242,243],
 
     "census_extra_calibration_group": [],
