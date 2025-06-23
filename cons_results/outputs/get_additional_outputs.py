@@ -13,7 +13,7 @@ def get_additional_outputs(
             """
             In config file additional_outputs must be a list, please use:\n
             ["all"] to get all outputs\n
-            [] to get no outputs\n
+            [] to get only mandatory outputs (defined in dev config) (\n
             or a list with the outputs, e.g. ["output_1","output_2"]
             """
         )
