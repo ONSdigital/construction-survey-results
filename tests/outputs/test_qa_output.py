@@ -60,7 +60,7 @@ def test_get_qa_output_shape_and_columns(sample_df_and_config):
         "target",
         "imputation_marker_col",
         "outlier_weight",
-        "curr_grossed_value",
+        "weighted adjusted value",
     }
     # Should have 2 rows (since all index columns are the same)
     assert result.shape[0] == 2
@@ -69,10 +69,10 @@ def test_get_qa_output_shape_and_columns(sample_df_and_config):
 def test_get_qa_output_values(sample_df_and_config):
     df, config = sample_df_and_config
     result = get_qa_output(df, config)
-    # Check that curr_grossed_value is correct (target * 1 * 1 * 1)
+    # Check that weighted adjusted value is correct (target * 1 * 1 * 1)
     for q in [1, 2, 3]:
         assert (
-            result[(q, "curr_grossed_value")].iloc[0]
+            result[(q, "weighted adjusted value")].iloc[0]
             == df.loc[df["question_no"] == q, "target"].iloc[0]
         )
         assert (

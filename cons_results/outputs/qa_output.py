@@ -50,7 +50,7 @@ def get_qa_output(df: pd.DataFrame, config: dict) -> pd.DataFrame:
     ]
 
     # Create value for adj_targer*a*o*g weights
-    df["curr_grossed_value"] = (
+    df["weighted adjusted value"] = (
         df[config["target"]]
         * df["design_weight"]
         * df["outlier_weight"]
@@ -62,7 +62,7 @@ def get_qa_output(df: pd.DataFrame, config: dict) -> pd.DataFrame:
         config["target"],
         config["imputation_marker_col"],
         "outlier_weight",
-        "curr_grossed_value",  #
+        "weighted adjusted value",  #
     ]
 
     # creating pivot table
