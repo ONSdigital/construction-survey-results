@@ -20,7 +20,7 @@ def get_additional_outputs(
 
     if config["additional_outputs"] == ["all"]:
         # Dont have to worry about mandatory outputs here, all functions from mapper
-        # will run.
+        # will run. mandatory and optional outputs should be defined in the mapper
         functions_to_run = function_mapper.keys()
     else:
         # If "all" is not specified, use the provided list combining with
