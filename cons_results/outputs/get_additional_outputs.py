@@ -41,10 +41,10 @@ def get_additional_outputs(
         if not isinstance(config[config_list_name], list):
             raise TypeError(
                 f"""
-                In config file {config_list_name} must be a list, please use:\n
+                In config file {config_list_name} must be a list, please use: \n
                 ["all"] to get all outputs\n
                 [] to get only mandatory outputs (defined in dev config) (\n
-                or a list with the outputs, e.g. ["output_1","output_2"]
+                or a list with the outputs, e.g. ["output_1", "output_2"]
                 """
             )
 
