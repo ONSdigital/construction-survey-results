@@ -48,7 +48,10 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         contributors, keep_columns=config["contributors_keep_cols"], **config
     )
 
-    contributors = append_back_data(contributors, config)
+    # Drop imputation marker for contributors as it is only neccessary for responses
+    contributors = append_back_data(contributors, config).drop(
+        columns=[config["imputation_marker_col"]]
+    )
 
     responses = responses[config["responses_keep_cols"]]
     responses = enforce_datatypes(
@@ -57,10 +60,9 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     responses = append_back_data(responses, config)
 
+    # Add an extra month to the revison window to include the back data
     back_data_config = config.copy()
     back_data_config["revision_window"] = config["revision_window"] + 1
-    print("====================================================================")
-    print(back_data_config["revision_window"])
 
     finalsel = read_and_combine_colon_sep_files(back_data_config)
 
