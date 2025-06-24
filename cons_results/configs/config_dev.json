@@ -117,8 +117,7 @@
         "12":"derived",
         "13":"fir"
     },
-    "additional_outputs":[],
-    "mandatory_outputs":["qa_output"] ,
+    "mandatory_outputs":["qa_output"],
     "all_questions":[201,202,211,212,221,222,231,232,241,242,243],
 
     "census_extra_calibration_group": [],
