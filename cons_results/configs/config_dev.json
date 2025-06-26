@@ -24,6 +24,7 @@
     "form_id_spp": "form_type_spp",
     "imputation_class": "imputation_class",
     "l_value_question_no": "questioncode",
+    "froempment": "froempment",
 
     "master_column_type_dict" : {
         "reference": "int",
@@ -63,7 +64,8 @@
         "cell_no",
         "froempment",
         "frotover",
-        "reference"
+        "reference",
+        "runame1"
     ],
 
     "temporarily_remove_cols": [],
@@ -94,7 +96,7 @@
         "tradstyle2","tradstyle3","contact","telephone","fax","seltype","inclexcl",
         "cell_no","formtype","cso_tel","currency"
     ],
-    "sample_keep_columns": ["reference"],
+    "sample_keep_columns": ["reference", "runame1"],
 
      "filter_out_questions": [11, 12 ,146,902, 903, 904],
      "csw_to_spp_columns":{
@@ -115,7 +117,7 @@
         "12":"derived",
         "13":"fir"
     },
-    "additional_outputs":[],
+    "mandatory_outputs":["produce_qa_output"],
     "all_questions":[201,202,211,212,221,222,231,232,241,242,243],
 
     "census_extra_calibration_group": [],

@@ -1,9 +1,10 @@
 import pandas as pd
+from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 
-from cons_results.outputs.get_additional_outputs import get_additional_outputs
 from cons_results.outputs.imputes_and_constructed_output import (
     get_imputes_and_constructed_output,
 )
+from cons_results.outputs.qa_output import produce_qa_output
 from cons_results.utilities.utils import get_versioned_filename
 
 
@@ -12,6 +13,7 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
         config,
         {
             "imputes_and_constructed_output": get_imputes_and_constructed_output,
+            "produce_qa_output": produce_qa_output,
         },
         additional_outputs_df,
     )
