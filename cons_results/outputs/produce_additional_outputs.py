@@ -1,6 +1,6 @@
 import pandas as pd
+from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 
-from cons_results.outputs.get_additional_outputs import get_additional_outputs
 from cons_results.outputs.imputes_and_constructed_output import (
     get_imputes_and_constructed_output,
 )
