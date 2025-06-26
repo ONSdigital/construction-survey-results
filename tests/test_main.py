@@ -33,7 +33,7 @@ def test_config(filepath):
         "current_period": 202303,
         "revision_window": 3,
         "state": "frozen",
-        "additional_outputs": ["all"],
+        "optional_outputs": ["all"],
     }
 
 

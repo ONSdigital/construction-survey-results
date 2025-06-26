@@ -1,7 +1,9 @@
 import pandas as pd
 
 
-def get_qa_output(additional_outputs_df: pd.DataFrame, **config: dict) -> pd.DataFrame:
+def produce_qa_output(
+    additional_outputs_df: pd.DataFrame, **config: dict
+) -> pd.DataFrame:
     """
     Creates QA output
 

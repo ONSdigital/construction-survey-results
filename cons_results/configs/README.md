@@ -22,7 +22,7 @@
 | previous_period | The previous period to use as a reference | int | Any int in the form `yyyymm`. |
 | revision_window | The number of months to use as a revision window. | int | Any int in the form `mm` or `m` (does not need to be zero-padded). |
 | state | The name of the column containing the state variable. | string | Any valid column name. |
-
+| optional_outputs | A list of optional outputs to produce after the pipeline has run. | `[]` | list | Any of the outputs listed in `cons_results/outputs/produce_additional_outputs.py` within the `produce_additional_outputs` function which can be produced. Set to all `["all"]` to produce all outputs. |
 
 ## Guidance for use
 As an end user, you will only need to change the user config (named `config_user.json`) - you just need to update the filepaths and period information in the user config. Note: for ONS users, you can find example filepaths in the Confluence documentation.
@@ -63,7 +63,7 @@ As an end user, you will only need to change the user config (named `config_user
 | filter_out_questions | A list of questions to filter out when running the pipeline. | `[11, 12 , 146]` | list | A list of ints where each int refers to a question. |
 | csw_to_spp_columns | Mapping of CSW to SPP columns. | `{"returned_value":"response", "adjusted_value":"adjustedresponse", "question_no":"questioncode"}` | dict | A dictionary in the format `{"CSW_col_name": "SPP_col_name"}`. |
 | type_to_imputation_marker | A dictionary mapper mapping type to imputation marker. | `{"0": "selected, no return", "1": "r", "2": "derived", "3": "fir", "4": "bir", "5": "c", "6": "mc", "10": "r", "11": "r", "12": "derived", "13": "fir" }` | dict | A dictionary in the format `{"type":"imputation_marker"}` where imputation marker is a value found in the imputation_marker_col. |
-| additional_outputs | A list of additional outputs to produce after the pipeline has run. | [] | list | Any of the additional outputs listed in `cons_results/outputs/produce_additional_outputs.py` within the `produce_additional_outputs` function. Currently: `""imputes_and_constructed_output"` or `["all"]` to produce all additional outputs. |
+| mandatory_outputs | A list of mandatory outputs to produce after the pipeline has run. | `[produce_qa_output]` | list | Any of the outputs listed in `cons_results/outputs/produce_additional_outputs.py` within the `produce_additional_outputs` function. |
 
 ## Usage
 **Adding new columns**: To add new columns throughout the pipeline, you will need to add it to one of the keep_cols, i.e. `finalsel_keep_cols`, `responses_keep_cols` or `contributors_keep_cols` **and** you will also need to add it to the `master_column_type_dict` parameter.

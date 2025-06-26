@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from cons_results.outputs.qa_output import get_qa_output
+from cons_results.outputs.qa_output import produce_qa_output
 
 
 @pytest.fixture
@@ -49,9 +49,9 @@ def expected_qa_output():
     return expected
 
 
-def test_get_qa_output_shape_and_columns(sample_df_and_config):
+def test_produce_qa_output_shape_and_columns(sample_df_and_config):
     df, config = sample_df_and_config
-    result = get_qa_output(df, **config)
+    result = produce_qa_output(df, **config)
     # Should have a MultiIndex on columns: (question_no, value_column)
     assert isinstance(result.columns, pd.MultiIndex)
     # Should have 3 question_no columns (1,2,3) and 4 value columns
@@ -66,9 +66,9 @@ def test_get_qa_output_shape_and_columns(sample_df_and_config):
     assert result.shape[0] == 2
 
 
-def test_get_qa_output_values(sample_df_and_config):
+def test_produce_qa_output_values(sample_df_and_config):
     df, config = sample_df_and_config
-    result = get_qa_output(df, **config)
+    result = produce_qa_output(df, **config)
     # Check that weighted adjusted value is correct (target * 1 * 1 * 1)
     for q in [1, 2, 3]:
         assert (
@@ -86,9 +86,9 @@ def test_get_qa_output_values(sample_df_and_config):
         assert result[(q, "outlier_weight")].iloc[0] == 1.0
 
 
-def test_get_qa_output_index(sample_df_and_config, expected_qa_output):
+def test_produce_qa_output_index(sample_df_and_config, expected_qa_output):
     df, config = sample_df_and_config
-    result = get_qa_output(df, **config)
+    result = produce_qa_output(df, **config)
     # Index should be a MultiIndex with the specified index columns
     expected = expected_qa_output
     # Index should match expected
