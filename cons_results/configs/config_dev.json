@@ -25,6 +25,7 @@
     "imputation_class": "imputation_class",
     "l_value_question_no": "questioncode",
     "froempment": "froempment",
+    "nil_status_col": "status",
 
     "master_column_type_dict" : {
         "reference": "int",
@@ -144,6 +145,9 @@
         "42220", "42900", "42910", "42990", "43100", "43110", "43120", "43130",
         "43210", "43220", "43290", "43310", "43320", "43330", "43340", "43341",
         "43342", "43390", "43910", "43990", "43991", "43999"
-    ]
+    ],
 
+    "nil_values" : ["Combined child (NIL2)", "Out of scope (NIL3)", "Ceased trading (NIL4)" ,"Dormant (NIL5)",
+    "Part year return (NIL8)",
+    "No UK activity (NIL9)"]
 }

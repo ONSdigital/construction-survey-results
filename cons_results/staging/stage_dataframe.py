@@ -4,6 +4,7 @@ import pandas as pd
 from mbs_results.staging.back_data import append_back_data
 from mbs_results.staging.data_cleaning import (
     convert_annual_thousands,
+    convert_nil_values,
     enforce_datatypes,
     filter_out_questions,
     run_live_or_frozen,
@@ -135,6 +136,9 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     print("Staging Completed")
 
+    df = convert_nil_values(
+        df, config["nil_status_col"], config["target"], config["nil_values"]
+    )
     return df, manual_constructions, filter_df
 
 
