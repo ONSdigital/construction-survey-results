@@ -31,37 +31,39 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     pd.DataFrame
         Combined dataframe containing response and contributor data
     """
-
-    period = config["period"]
-    reference = config["reference"]
-    snapshot_file_path = config["snapshot_file_path"]
+    # copy config to avoid modifying the original
+    staging_config = config.copy()
+    period = staging_config["period"]
+    reference = staging_config["reference"]
+    snapshot_file_path = staging_config["snapshot_file_path"]
 
     contributors, responses = get_dfs_from_spp(
         snapshot_file_path,
-        config["platform"],
-        config["bucket"],
+        staging_config["platform"],
+        staging_config["bucket"],
     )
 
     # Filter columns and set data types
-    contributors = contributors[config["contributors_keep_cols"]]
+    contributors = contributors[staging_config["contributors_keep_cols"]]
     contributors = enforce_datatypes(
-        contributors, keep_columns=config["contributors_keep_cols"], **config
+        contributors,
+        keep_columns=staging_config["contributors_keep_cols"],
+        **staging_config,
     )
 
     # Drop imputation marker for contributors as it is only neccessary for responses
-    contributors = append_back_data(contributors, config).drop(
-        columns=[config["imputation_marker_col"]]
+    contributors = append_back_data(contributors, staging_config).drop(
+        columns=[staging_config["imputation_marker_col"]]
     )
 
-    responses = responses[config["responses_keep_cols"]]
+    responses = responses[staging_config["responses_keep_cols"]]
     responses = enforce_datatypes(
-        responses, keep_columns=config["responses_keep_cols"], **config
+        responses, keep_columns=staging_config["responses_keep_cols"], **staging_config
     )
 
-    responses = append_back_data(responses, config)
+    responses = append_back_data(responses, staging_config)
 
     # Add an extra month to the revison window to include the back data
-    staging_config = config.copy()
     staging_config["revision_window"] = config["revision_window"] + 1
 
     finalsel = read_and_combine_colon_sep_files(staging_config)
