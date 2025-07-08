@@ -12,26 +12,32 @@ def get_quarterly_by_sizeband_output(
     ----------
     additional_outputs_df : pd.DataFrame
         Input DataFrame containing the data to be processed. Must include columns
-        specified in the config.
+        specified in the `config` dictionary.
     config : dict[str, str]
         Configuration dictionary with the following keys:
-        - "period" : str
-            Column name in `additional_outputs_df` representing the period.
-        - "question_no" : str
-            Column name in `additional_outputs_df` representing the question number.
-        - "target" : str
-            Column name in `additional_outputs_df` representing the values to aggregate.
+            - "period" : str
+                Column name in `additional_outputs_df` representing the period to
+                create quarter.
+            - "question_no" : str
+                Column name in `additional_outputs_df` representing the question number.
+            - "target" : str
+                Column name in `additional_outputs_df` representing the values to
+                aggregate.
+            - "cell_number" : str
+                Column name in `additional_outputs_df` representing the cell number to
+                create sizeband grouping.
 
     Returns
     -------
     pd.DataFrame
         A DataFrame with quarterly data aggregated by sizeband and question number.
         The output contains the following columns:
-        - "quarter" : str
-            Quarterly period in "YYYYQX" format.
-        - "sizeband" : int
-            Sizeband grouping.
-        - Columns corresponding to question numbers, with aggregated values for each.
+            - "quarter" : str
+                Quarterly period in "YYYYQX" format.
+            - "sizeband" : int
+                Sizeband grouping.
+            - Columns corresponding to question numbers, with aggregated values for
+            each.
     """
     filtered_data = additional_outputs_df[
         [
