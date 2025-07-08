@@ -5,6 +5,7 @@ from cons_results.imputation.post_imputation import (
     create_q290,
     derive_q290,
     rescale_290_case,
+    validate_q290,
 )
 
 
@@ -83,6 +84,8 @@ def impute(
         config["reference"],
         config["target"],
     )
+
+    validate_q290(df, config)
 
     df[config["period"]] = df[config["period"]].dt.strftime("%Y%m").astype("int")
 

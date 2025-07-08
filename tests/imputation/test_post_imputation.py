@@ -1,4 +1,5 @@
 from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
@@ -9,6 +10,7 @@ from cons_results.imputation.post_imputation import (
     create_q290,
     derive_q290,
     rescale_290_case,
+    validate_q290,
 )
 
 
@@ -72,3 +74,21 @@ def test_create_q290(filepath):
     )
 
     assert_frame_equal(actual_output, df_expected_output)
+
+
+def test_validate_q290(filepath):
+    df_input = pd.read_csv(filepath / "validate_q290_input.csv")
+    config = {"output_path": ""}
+
+    config = {"output_path": str(tmp_path)}
+    with pytest.warns(
+        UserWarning, match="q290 values do not match the sum of components"
+    ):
+        validate_q290(df, config)
+    # Check that the mismatched file was created
+    output_file = tmp_path / "mismatched_q290_totals.csv"
+    assert output_file.exists()
+    mismatched = pd.read_csv(output_file)
+    assert mismatched.shape[0] == 1
+    assert mismatched["period"].iloc[0] == 202301
+    assert mismatched["reference"].iloc[0] == "A"
