@@ -35,6 +35,10 @@ def rescale_290_case(
 
     all_pairs = pd.MultiIndex.from_frame(df[[period, reference]])
 
+    # initialise the failed_rescale imputed column as false
+    # This indicates where components sum to zero and we cannot scale correctly
+    df["failed_rescale"] = False
+
     for per, ref in flagged_pairs:
 
         impute_source = df[all_pairs.isin([(per, ref)])]
@@ -63,6 +67,13 @@ def rescale_290_case(
                     & (df[question_no] == entry[question_no]),
                     [adjusted_response],
                 ] = entry[adjusted_response]
+        else:
+            # If denom is 0, we need to create new flag to stop deriving q290 in
+            # this special case
+            df.loc[
+                (df["period"] == per) & (df["reference"] == ref), "failed_rescale"
+            ] = True
+            print("here")
 
     return df
 
