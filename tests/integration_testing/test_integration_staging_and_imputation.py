@@ -82,7 +82,7 @@ def test_run_integration_parametrised(
         'period',
         'questioncode',
         'status',
-        'imputation_flags_adjustedresponse',
+        'imputation_flags_adjustedresponse'
     ]
 
     # Load expected output DataFrame
