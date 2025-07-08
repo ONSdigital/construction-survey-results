@@ -2,7 +2,7 @@ import pandas as pd
 
 
 def get_quarterly_by_sizeband_output(
-    additional_outputs_df: pd.DataFrame, config: dict[str, str]
+    additional_outputs_df: pd.DataFrame, **config: dict[str, any]
 ) -> pd.DataFrame:
     """
     Generates a quarterly summary of data grouped by sizeband and question number.
@@ -40,6 +40,11 @@ def get_quarterly_by_sizeband_output(
         pd.to_datetime(additional_outputs_df[config["period"]], format="%Y%m")
         .dt.to_period("Q")
         .astype(str)
+    )
+
+    additional_outputs_df.sort_values(
+        ["quarter", "sizeband", config["question_no"]],
+        inplace=True,
     )
 
     quarterly_by_sizeband_output = (
