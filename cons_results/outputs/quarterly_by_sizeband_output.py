@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 
@@ -32,23 +33,36 @@ def get_quarterly_by_sizeband_output(
             Sizeband grouping.
         - Columns corresponding to question numbers, with aggregated values for each.
     """
-    additional_outputs_df = additional_outputs_df[
-        [config["period"], "sizeband", config["question_no"], config["target"]]
+    filtered_data = additional_outputs_df[
+        [
+            config["period"],
+            config["cell_number"],
+            config["question_no"],
+            config["target"],
+        ]
     ]
 
-    additional_outputs_df["quarter"] = (
-        pd.to_datetime(additional_outputs_df[config["period"]], format="%Y%m")
+    filtered_data["sizeband"] = np.where(
+        filtered_data[config["cell_number"]].isna(),
+        filtered_data[config["cell_number"]],
+        filtered_data[config["cell_number"]].astype(str).str[-1],
+    ).astype(int)
+
+    filtered_data.drop(columns=[config["cell_number"]], inplace=True)
+
+    filtered_data["quarter"] = (
+        pd.to_datetime(filtered_data[config["period"]], format="%Y%m")
         .dt.to_period("Q")
         .astype(str)
     )
 
-    additional_outputs_df.sort_values(
+    filtered_data.sort_values(
         ["quarter", "sizeband", config["question_no"]],
         inplace=True,
     )
 
     quarterly_by_sizeband_output = (
-        additional_outputs_df.pivot_table(
+        filtered_data.pivot_table(
             index=["quarter", "sizeband"],
             columns=config["question_no"],
             values=config["target"],

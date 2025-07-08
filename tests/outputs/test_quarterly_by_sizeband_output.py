@@ -1,35 +1,51 @@
+from pathlib import Path
+
 import pandas as pd
+import pytest
+from pandas.testing import assert_frame_equal
 
 from cons_results.outputs.quarterly_by_sizeband_output import (
     get_quarterly_by_sizeband_output,
 )
 
 
-def test_get_quarterly_by_sizeband_output():
+@pytest.fixture(scope="class")
+def filepath():
+    return Path("tests/data/outputs/quarterly_by_sizeband")
 
-    data = {
-        "period": ["202401", "202402", "202404", "202405"],
-        "sizeband": [1, 2, 1, 2],
-        "questioncode": [201, 201, 202, 202],
-        "adjustedresponse": [100.0, 200.0, 150.0, 250.0],
-    }
-    additional_outputs_df = pd.DataFrame(data)
 
-    config = {
+@pytest.fixture(scope="class")
+def input_df(filepath):
+    return pd.read_csv(
+        filepath / "quarterly_by_sizeband_input.csv",
+        index_col=False,
+        dtype={"period": str},
+    )
+
+
+@pytest.fixture(scope="class")
+def output_df(filepath):
+    return pd.read_csv(filepath / "quarterly_by_sizeband_output.csv", index_col=False)
+
+
+@pytest.fixture
+def config():
+    return {
         "period": "period",
         "question_no": "questioncode",
         "target": "adjustedresponse",
+        "cell_number": "cell_no",
     }
 
-    result = get_quarterly_by_sizeband_output(additional_outputs_df, **config)
 
-    expected_df = pd.DataFrame(
-        {
-            "quarter": ["2024Q1", "2024Q1", "2024Q2", "2024Q2"],
-            "sizeband": [1, 2, 1, 2],
-            "201": [100.0, 200.0, 0.0, 0.0],
-            "202": [0.0, 0.0, 150.0, 250.0],
-        }
-    )
+class TestQuarterlyBySizebandOutput:
+    def test_get_quarterly_by_sizeband_output(self, input_df, output_df, config):
 
-    pd.testing.assert_frame_equal(result, expected_df)
+        expected_output = output_df
+
+        actual_output = get_quarterly_by_sizeband_output(input_df, **config)
+
+        print(actual_output)
+        print(expected_output)
+
+        assert_frame_equal(actual_output, expected_output)
