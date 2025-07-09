@@ -9,12 +9,12 @@ from cons_results.outputs.quarterly_by_sizeband_output import (
 )
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture
 def filepath():
     return Path("tests/data/outputs/quarterly_by_sizeband")
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture
 def input_df(filepath):
     return pd.read_csv(
         filepath / "quarterly_by_sizeband_input.csv",
@@ -23,7 +23,7 @@ def input_df(filepath):
     )
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture
 def output_df(filepath):
     return pd.read_csv(filepath / "quarterly_by_sizeband_output.csv", index_col=False)
 
