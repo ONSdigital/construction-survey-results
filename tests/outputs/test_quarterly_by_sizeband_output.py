@@ -38,14 +38,10 @@ def config():
     }
 
 
-class TestQuarterlyBySizebandOutput:
-    def test_get_quarterly_by_sizeband_output(self, input_df, output_df, config):
+def test_get_quarterly_by_sizeband_output(input_df, output_df, config):
 
-        expected_output = output_df
+    expected_output = output_df
 
-        actual_output = get_quarterly_by_sizeband_output(input_df, **config)
+    actual_output = get_quarterly_by_sizeband_output(input_df, **config)
 
-        print(actual_output)
-        print(expected_output)
-
-        assert_frame_equal(actual_output, expected_output)
+    assert_frame_equal(actual_output, expected_output)
