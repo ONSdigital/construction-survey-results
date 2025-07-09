@@ -100,7 +100,7 @@ def test_validate_q290_warnings_and_output(mock_to_csv, filepath):
     with pytest.warns(
         UserWarning, match="q290 values do not match the sum of components"
     ):
-        validate_q290(df_input, config, output_file="mismatched_q290_totals.csv")
+        validate_q290(df_input, config, output_file_name="mismatched_q290_totals.csv")
 
     # check to csv was called with the correct file name
     mock_to_csv.assert_called_once_with("mismatched_q290_totals.csv", index=False)
