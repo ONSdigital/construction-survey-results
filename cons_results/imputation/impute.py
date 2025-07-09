@@ -85,7 +85,15 @@ def impute(
         config["target"],
     )
 
-    validate_q290(df, config, output_file_name="validate_q290_output.csv")
+    validate_q290(
+        df=df,
+        question_no=config["question_no"],
+        period=config["period"],
+        reference=config["reference"],
+        adjustedresponse=config["target"],
+        output_path=config["output_path"],
+        output_file_name="validate_q290_output.csv",
+    )
 
     df[config["period"]] = df[config["period"]].dt.strftime("%Y%m").astype("int")
 
