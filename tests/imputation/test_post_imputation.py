@@ -1,3 +1,5 @@
+import os
+import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -78,17 +80,39 @@ def test_create_q290(filepath):
 
 def test_validate_q290(filepath):
     df_input = pd.read_csv(filepath / "validate_q290_input.csv")
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        config = {"output_path": tmpdirname}
+        validate_q290(
+            df_input, config, output_file_name="validate_q290_test_output.csv"
+        )
+        actual_output = pd.read_csv(
+            os.path.join(tmpdirname, "validate_q290_test_output.csv")
+        )
+        expected_output = pd.read_csv(filepath / "validate_q290_output.csv")
+        assert_frame_equal(actual_output, expected_output)
+
+
+@patch("pandas.DataFrame.to_csv")  # mock pandas export csv function
+def test_validate_q290_warnings_and_output(mock_to_csv, filepath):
+    df_input = pd.read_csv(filepath / "validate_q290_input.csv")
     config = {"output_path": ""}
 
-    config = {"output_path": str(tmp_path)}
     with pytest.warns(
         UserWarning, match="q290 values do not match the sum of components"
     ):
-        validate_q290(df, config)
-    # Check that the mismatched file was created
-    output_file = tmp_path / "mismatched_q290_totals.csv"
-    assert output_file.exists()
-    mismatched = pd.read_csv(output_file)
-    assert mismatched.shape[0] == 1
-    assert mismatched["period"].iloc[0] == 202301
-    assert mismatched["reference"].iloc[0] == "A"
+        validate_q290(df_input, config, output_file="mismatched_q290_totals.csv")
+
+    # check to csv was called with the correct file name
+    mock_to_csv.assert_called_once_with("mismatched_q290_totals.csv", index=False)
+
+
+@patch("pandas.DataFrame.to_csv")  # mock pandas export csv function
+def test_validate_q290_no_csv(mock_to_csv, filepath):
+    df_input = pd.read_csv(filepath / "validate_q290_input.csv")
+    config = {"output_path": ""}
+    validate_q290(
+        df_input,
+        config,
+    )
+    # check to csv was not called
+    mock_to_csv.assert_not_called()
