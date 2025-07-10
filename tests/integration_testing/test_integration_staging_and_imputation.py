@@ -1,7 +1,9 @@
 import json
 from pathlib import Path
+
 import pandas as pd
 import pytest
+
 from cons_results.imputation.impute import impute
 from cons_results.staging.stage_dataframe import stage_dataframe
 
@@ -66,10 +68,7 @@ def load_config_temp():
     ],
 )
 def test_run_integration_parametrised(
-    test_config,
-    filepath,
-    snapshot_file,
-    expected_output_file
+    test_config, filepath, snapshot_file, expected_output_file
 ):
     """Run Staging and Imputation based on test_config"""
     config = load_config_temp()
@@ -106,8 +105,11 @@ def test_run_integration_parametrised(
     )
 
     cols_expected = df_sorted.columns.to_list()
-    expected_sorted = expected_df[cols_expected].sort_values(
-        by=['period', 'questioncode']).reset_index(drop=True)
+    expected_sorted = (
+        expected_df[cols_expected]
+        .sort_values(by=["period", "questioncode"])
+        .reset_index(drop=True)
+    )
 
     print("\nTest output Dataframe")
     print(df_sorted)
