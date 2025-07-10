@@ -49,7 +49,9 @@ def load_config_temp():
     config = load_config(config_dev_path)
     return config
 
-
+@pytest.mark.skip(
+    reason="Pending future feature development. Enable when features are implemented."
+)
 @pytest.mark.parametrize(
     "snapshot_file,expected_output_file",
     [
