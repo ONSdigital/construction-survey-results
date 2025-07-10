@@ -1,9 +1,9 @@
-from pathlib import Path
-import pytest
 import json
+from pathlib import Path
 import pandas as pd
-from cons_results.staging.stage_dataframe import stage_dataframe
+import pytest
 from cons_results.imputation.impute import impute
+from cons_results.staging.stage_dataframe import stage_dataframe
 
 
 @pytest.fixture(scope="class")
@@ -35,7 +35,7 @@ def test_config(filepath):
         "revision_window": 2,
         "state": "frozen",
         "optional_outputs": [""],
-        "all_questions": [1, 2, 3, 4, 5, 6]
+        "all_questions": [1, 2, 3, 4, 5, 6],
     }
 
 
@@ -49,6 +49,7 @@ def load_config_temp():
     config = load_config(config_dev_path)
     return config
 
+
 @pytest.mark.skip(
     reason="Pending future feature development. Enable when features are implemented."
 )
@@ -61,8 +62,8 @@ def load_config_temp():
         ("total_only_1.json", "expected_total_only_1.csv"),
         ("total_only_2.json", "expected_total_only_2.csv"),
         ("total_only_3.json", "expected_total_only_3.csv"),
-        ("total_only_4.json", "expected_total_only_4.csv")
-    ]
+        ("total_only_4.json", "expected_total_only_4.csv"),
+    ],
 )
 def test_run_integration_parametrised(
     test_config,
@@ -80,11 +81,11 @@ def test_run_integration_parametrised(
     df = impute(df, config, manual_constructions, filter_df)
 
     cols_output = [
-        'reference',
-        'period',
-        'questioncode',
-        'status',
-        'imputation_flags_adjustedresponse'
+        "reference",
+        "period",
+        "questioncode",
+        "status",
+        "imputation_flags_adjustedresponse",
     ]
 
     # Load expected output DataFrame
@@ -93,14 +94,14 @@ def test_run_integration_parametrised(
     expected_df = pd.read_csv(expected_output_path)
 
     if "total" in snapshot_file:
-        cols_output.append('290_flag')
+        cols_output.append("290_flag")
 
     # Sort both DataFrames for consistent comparison
     df_sorted = (
         df[cols_output]
         .assign(derived_zero="FALSE")  # creating a placeholder for column for
         # derived_zero and assigning it FALSE
-        .sort_values(by=['period', 'questioncode'])
+        .sort_values(by=["period", "questioncode"])
         .reset_index(drop=True)
     )
 
