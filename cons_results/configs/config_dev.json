@@ -43,7 +43,8 @@
         "frosic2007": "str",
         "froempment": "int",
         "frotover": "float",
-        "cell_no": "int"},
+        "cell_no": "int",
+        "region": "str"},
 
     "contributors_keep_cols": [
         "period",
@@ -66,6 +67,7 @@
         "froempment",
         "frotover",
         "reference",
+        "region",
         "runame1"
     ],
 
