@@ -78,7 +78,7 @@ def create_skipped_questions(
 
     # Best way to flag these newly created skipped questions at the moment.
     responses_full["skipped_question"] = responses_full[target_col].isna()
-    responses_full.to_csv("test.csv", index=False)
+    responses_full[target_col].fillna(0, inplace=True)
 
     # combining and filling columns
     columns_dont_fill = [reference, question_col, target_col, period]

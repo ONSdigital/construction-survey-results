@@ -14,7 +14,10 @@ def filepath():
 
 def test_create_skipped_questions(filepath):
     df_input = pd.read_csv(filepath / "create_skipped_questions_input.csv")
-    df_expected_output = pd.read_csv(filepath / "create_skipped_questions_output.csv")
+    df_expected_output = pd.read_csv(
+        filepath / "create_skipped_questions_output.csv",
+        dtype={"adjustedresponse": float},
+    )
     column_order = df_expected_output.columns.tolist()
     actual_output = create_skipped_questions(
         df_input,
