@@ -1,5 +1,5 @@
-reference,period,questioncode,status
-1,202501,1,Clear
-1,202501,2,Clear
-1,202501,3,Clear
-1,202501,7,Clear
+reference,period,questioncode,status,adjustedresponse
+1,202501,1,Clear,100
+1,202501,2,Clear,200
+1,202501,3,Clear,300
+1,202501,7,Clear,700

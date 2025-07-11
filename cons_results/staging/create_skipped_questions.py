@@ -1,3 +1,4 @@
+import warnings
 from typing import List
 
 import pandas as pd
@@ -9,9 +10,17 @@ def create_skipped_questions(
     reference: str,
     period: str,
     question_col: str,
+    target_col: str,
+    contributors_keep_col: List[str],
+    responses_keep_col: List[str],
+    finalsel_keep_col: List[str],
 ):
     """function to create skipped questions in the DataFrame."""
-
+    if count_na := df[target_col].isna().sum() > 0:
+        warnings.warn(
+            f"DataFrame contains {count_na} rows with NaN in 'adjustedresponse'. "
+            "These will be flagged as newly created skipped questions."
+        )
     subset_df = (
         df[["reference", "period"]]
         .drop_duplicates()
@@ -67,15 +76,21 @@ def create_skipped_questions(
 
     responses_full = responses.reindex(expected_rows_index).reset_index()
 
-    responses_full = responses_full.merge(
-        expected_responses,
-        on=[reference, period, question_col],
-        how="left",
-        suffixes=("", "_expected"),
+    # Best way to flag these newly created skipped questions at the moment.
+    responses_full["skipped_question"] = responses_full[target_col].isna()
+    responses_full.to_csv("test.csv", index=False)
+
+    # combining and filling columns
+    columns_dont_fill = [reference, question_col, target_col, period]
+    columns_to_fill = (
+        set(contributors_keep_col) | set(responses_keep_col) | set(finalsel_keep_col)
     )
-    responses_full["skipped_question"] = responses_full[question_col].isin(
-        responses_full["missing_questions_helper"]
-    )
+    columns_to_fill -= set(columns_dont_fill)
+    columns_to_fill = list(columns_to_fill)
+
+    responses_full[columns_to_fill] = responses_full.groupby([reference, period])[
+        columns_to_fill
+    ].transform("ffill")
     return responses_full
 
 
@@ -87,6 +102,7 @@ if __name__ == "__main__":
             "period": ["202301", "202301", "202301", "202302"],
             "question": ["Q1", "Q2", "Q1", "Q3"],
             "response": [5, 3, 4, 2],
+            "status": ["clear", "clear", "check needed", "live"],
         }
     )
     create_skipped_questions(
@@ -95,4 +111,8 @@ if __name__ == "__main__":
         period="period",
         question_col="question",
         all_questions=["Q1", "Q2", "Q3", "Q4"],
+        target_col="response",
+        contributors_keep_col=["reference", "period"],
+        responses_keep_col=["reference", "period", "question", "response"],
+        finalsel_keep_col=["reference", "period", "status"],
     )

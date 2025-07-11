@@ -14,6 +14,7 @@ from mbs_results.staging.stage_dataframe import read_and_combine_colon_sep_files
 from mbs_results.utilities.inputs import read_csv_wrapper
 
 from cons_results.staging.create_missing_questions import create_missing_questions
+from cons_results.staging.create_skipped_questions import create_skipped_questions
 from cons_results.staging.derive_imputation_class import derive_imputation_class
 
 
@@ -95,6 +96,14 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     )
 
     df = pd.merge(left=df, right=contributors, on=[period, reference], how="left")
+
+    df = create_skipped_questions(
+        df=df,
+        all_questions=staging_config["all_questions"],
+        reference=staging_config["reference"],
+        period=staging_config["period"],
+        question_col=staging_config["question_no"],
+    )
 
     snapshot_name = os.path.basename(snapshot_file_path).split(".")[0]
 
