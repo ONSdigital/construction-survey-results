@@ -12,3 +12,7 @@ period,reference,question_no,adjustedresponse,290_flag
 2023,100,232,2000,false
 2023,100,241,0,false
 2023,100,242,5000,false
+2022,300,290,100,true
+2022,300,211,0,true
+2022,300,221,0,true
+2022,300,210,0,true

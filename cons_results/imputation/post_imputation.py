@@ -1,3 +1,6 @@
+import os
+import warnings
+
 import pandas as pd
 
 
@@ -35,6 +38,10 @@ def rescale_290_case(
 
     all_pairs = pd.MultiIndex.from_frame(df[[period, reference]])
 
+    # initialise the failed_rescale imputed column as false
+    # This indicates where components sum to zero and we cannot scale correctly
+    df["failed_rescale"] = False
+
     for per, ref in flagged_pairs:
 
         impute_source = df[all_pairs.isin([(per, ref)])]
@@ -63,6 +70,13 @@ def rescale_290_case(
                     & (df[question_no] == entry[question_no]),
                     [adjusted_response],
                 ] = entry[adjusted_response]
+        else:
+            # If denom is 0, we need to create new flag to stop deriving q290 in
+            # this special case
+            df.loc[
+                (df["period"] == per) & (df["reference"] == ref), "failed_rescale"
+            ] = True
+            print("here")
 
     return df
 
@@ -193,3 +207,50 @@ def derive_q290(
     df = df.drop(columns=["imputed_components_sum"])
 
     return df
+
+
+def validate_q290(
+    df: pd.DataFrame,
+    question_no: str,
+    period: str,
+    reference: str,
+    adjustedresponse: str,
+    output_path: str = "",
+    output_file_name: str = "",
+) -> None:
+    """
+    validation function to check q290 values and raise warnings if they
+    are not as expected.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        _description_
+    """
+    q290_mask = df[question_no] == 290
+    df_q290 = df[q290_mask]
+    temp = (
+        df[~q290_mask]
+        .groupby([period, reference])[adjustedresponse]
+        .sum()
+        .reset_index()
+        .rename(columns={adjustedresponse: "components_sum"})
+    )
+    df_q290 = df_q290.merge(temp, on=[period, reference], how="left")
+    mismatched_totals = df_q290.loc[
+        abs(df_q290[adjustedresponse] - df_q290["components_sum"]) >= 1e-3,
+        [period, reference, adjustedresponse, "components_sum", "failed_rescale"],
+    ]
+    if not mismatched_totals.empty:
+        warnings.warn(
+            "q290 values do not match the sum of components for "
+            f"{len(mismatched_totals)} periods and references: "
+            f"{mismatched_totals[[period, reference]].to_dict(orient='records')}"
+        )
+        if output_file_name != "":
+            # Only output file if a name is provided
+            output_file = os.path.join(output_path, output_file_name)
+            print(f"Saving mismatched q290 totals to {output_file}")
+            mismatched_totals.to_csv(output_file, index=False)
+    else:
+        print("q290 values match the sum of components for all periods and references.")
