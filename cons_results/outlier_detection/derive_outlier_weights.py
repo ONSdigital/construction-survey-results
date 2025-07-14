@@ -86,7 +86,7 @@ def derive_q290_outlier_weights(
 
     # Changing 290 outlier weight only when it hasn't already been set to 1
     q290_mask = (df[question_no] == 290) & (df["outlier_weight"] != 1.00)
-    print(q290_mask)
+
     df.loc[q290_mask, "outlier_weight"] = (
         sum_o_weight_times_value / df.loc[q290_mask, target]
     )
