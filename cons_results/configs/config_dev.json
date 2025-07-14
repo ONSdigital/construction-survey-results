@@ -3,6 +3,7 @@
 
     "back_data_type":"type",
     "imputation_marker_col":"imputation_flags_adjustedresponse",
+    "produce_quarterly_extracts": true,
 
     "auxiliary": "frotover",
     "auxiliary_converted": "converted_frotover",
