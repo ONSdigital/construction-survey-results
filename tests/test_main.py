@@ -30,6 +30,7 @@ def test_config(filepath):
         "back_data_cp_path": filepath / "test_cp_009_202212.csv",
         "back_data_finalsel_path": str(filepath / "finalsel228_dummy_202212"),
         "sic_domain_mapping_path": "",
+        "region_mapping_path": filepath / "region_code_name_mapping.csv",
         "current_period": 202303,
         "revision_window": 3,
         "state": "frozen",

@@ -39,6 +39,7 @@ def run_pipeline(config_user_dict=None):
     )
 
     df = impute(df, config, manual_constructions, filter_df)
+
     df.to_csv(f'{config["output_path"]}/{snapshot_file_name}_impute_{tag_name}.csv')
 
     warnings.warn("This is a placeholder post-imputation,  not yet implemented")
@@ -67,11 +68,9 @@ def run_pipeline(config_user_dict=None):
         estimation_output, outlier_detection_output
     )
 
-    print("Columns in additional outputs: \n", additional_outputs_df.columns)
-
     produce_additional_outputs(config, additional_outputs_df)
 
-    produce_quarterly_extracts(config, additional_outputs_df)
+    produce_quarterly_extracts(config, df)
 
 
 if __name__ == "__main__":
