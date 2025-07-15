@@ -16,11 +16,14 @@ def create_skipped_questions(
     finalsel_keep_col: List[str],
 ):
     """function to create skipped questions in the DataFrame."""
-    if count_na := df[target_col].isna().sum() > 0:
+    if (count_na := df[target_col].isna().sum()) > 0:
         warnings.warn(
             f"DataFrame contains {count_na} rows with NaN in 'adjustedresponse'. "
             "These will be flagged as newly created skipped questions."
         )
+    # Incorrect flagging of questions, need to fix using regex and helper column.
+
+    df = df.drop_duplicates(subset=[reference, period, question_col], keep="first")
 
     subset_df = (
         df[["reference", "period"]]

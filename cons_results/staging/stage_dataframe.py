@@ -103,6 +103,10 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         reference=staging_config["reference"],
         period=staging_config["period"],
         question_col=staging_config["question_no"],
+        target_col=staging_config["target"],
+        contributors_keep_col=staging_config["contributors_keep_cols"],
+        responses_keep_col=staging_config["responses_keep_cols"],
+        finalsel_keep_col=staging_config["finalsel_keep_cols"],
     )
 
     snapshot_name = os.path.basename(snapshot_file_path).split(".")[0]
