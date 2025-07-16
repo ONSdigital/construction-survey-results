@@ -2,9 +2,8 @@ import os
 
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
-from mbs_results.staging.data_cleaning import (
+from mbs_results.staging.data_cleaning import (  # convert_nil_values,
     convert_annual_thousands,
-    convert_nil_values,
     enforce_datatypes,
     filter_out_questions,
     run_live_or_frozen,
@@ -53,8 +52,10 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     )
 
     # Drop imputation marker for contributors as it is only neccessary for responses
-    contributors = append_back_data(contributors, staging_config).drop(
-        columns=[staging_config["imputation_marker_col"]]
+    contributors = (
+        append_back_data(contributors, staging_config)
+        .drop(columns=[staging_config["imputation_marker_col"]])
+        .drop_duplicates()
     )
 
     responses = responses[staging_config["responses_keep_cols"]]
@@ -156,9 +157,12 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     print("Staging Completed")
 
-    df = convert_nil_values(
-        df, config["nil_status_col"], config["target"], config["nil_values"]
-    )
+    # commenting out code, convert_nil_values is on MBS main
+    # but not in latest release
+
+    # df = convert_nil_values(
+    #    df, config["nil_status_col"], config["target"], config["nil_values"]
+    # )
     return df, manual_constructions, filter_df
 
 
