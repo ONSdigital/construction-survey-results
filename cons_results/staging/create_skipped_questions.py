@@ -47,10 +47,6 @@ def create_skipped_questions(
         .sort_values([reference, period])
     )
 
-    expected_responses["missing_questions_helper"] = expected_responses.groupby(
-        [reference]
-    )["missing_questions_helper"].ffill()
-
     expected_responses["missing_questions_helper"] = expected_responses[
         "missing_questions_helper"
     ].fillna({row: all_questions for row in expected_responses.index})
@@ -71,6 +67,8 @@ def create_skipped_questions(
     )
 
     expected_responses = expected_responses.explode(question_col, ignore_index=True)
+    # resetting type for created column ready for join
+    expected_responses[question_col] = expected_responses[question_col].astype(int)
 
     expected_rows_index = expected_responses.set_index(
         [reference, period, question_col]
@@ -81,17 +79,32 @@ def create_skipped_questions(
     responses_full = responses.reindex(expected_rows_index).reset_index()
 
     # Best way to flag these newly created skipped questions at the moment.
-    responses_full["skipped_question"] = responses_full[target_col].isna()
-    responses_full[target_col].fillna(0, inplace=True)
+    responses_full = responses_full.merge(
+        expected_responses[
+            [reference, period, question_col, "missing_questions_helper"]
+        ],
+        on=[reference, period, question_col],
+        how="left",
+    )
+    responses_full["skipped_question"] = responses_full.apply(
+        lambda row: row[question_col] in row["missing_questions_helper"]
+        if isinstance(row["missing_questions_helper"], list)
+        else False,
+        axis=1,
+    )
+    responses_full = responses_full.drop(columns=["missing_questions_helper"])
+
+    responses_full.loc[responses_full["skipped_question"], target_col] = 0
 
     # combining and filling columns
     columns_dont_fill = [reference, question_col, target_col, period]
-    columns_to_fill = (
-        set(contributors_keep_col) | set(responses_keep_col) | set(finalsel_keep_col)
+    columns_to_fill = set(
+        contributors_keep_col + responses_keep_col + finalsel_keep_col
     )
     columns_to_fill = list(columns_to_fill - set(columns_dont_fill))
 
     responses_full[columns_to_fill] = responses_full.groupby([reference, period])[
         columns_to_fill
     ].transform("ffill")
+
     return responses_full
