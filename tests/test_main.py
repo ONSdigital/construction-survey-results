@@ -35,6 +35,7 @@ def test_config(filepath):
         "revision_window": 3,
         "state": "frozen",
         "optional_outputs": ["all"],
+        "produce_quarterly_extracts": True,
     }
 
 
