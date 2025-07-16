@@ -9,7 +9,10 @@ from cons_results.imputation.impute import impute
 
 # import estimation
 from cons_results.outlier_detection.detect_outlier import detect_outlier
-from cons_results.outputs.produce_additional_outputs import produce_additional_outputs
+from cons_results.outputs.produce_additional_outputs import (
+    produce_additional_outputs,
+    produce_quarterly_extracts,
+)
 from cons_results.staging.stage_dataframe import stage_dataframe
 
 # import staging validation checks
@@ -36,6 +39,7 @@ def run_pipeline(config_user_dict=None):
     )
 
     df = impute(df, config, manual_constructions, filter_df)
+
     df.to_csv(f'{config["output_path"]}/{snapshot_file_name}_impute_{tag_name}.csv')
 
     warnings.warn("This is a placeholder post-imputation,  not yet implemented")
@@ -60,13 +64,13 @@ def run_pipeline(config_user_dict=None):
         f'{config["output_path"]}/{snapshot_file_name}_outlier_detection_{tag_name}.csv'
     )
 
-    warnings.warn("This is a placeholder for estimation,  not yet implemented")
-
     additional_outputs_df = get_additional_outputs_df(
         estimation_output, outlier_detection_output
     )
 
     produce_additional_outputs(config, additional_outputs_df)
+
+    produce_quarterly_extracts(config, df)
 
 
 if __name__ == "__main__":
