@@ -1,0 +1,8 @@
+reference,period,questioncode,status,imputation_flags_adjustedresponse,derived_zero
+1,202501,1,Clear,r,FALSE
+1,202501,2,Clear,r,FALSE
+1,202501,3,Clear,r,TRUE
+1,202501,4,Clear,r,TRUE
+1,202501,5,Clear,r,TRUE
+1,202501,6,Clear,r,TRUE
+1,202501,290,Clear,r,FALSE

@@ -61,6 +61,7 @@ def load_config_temp():
         ("non_response_1.json", "expected_non_response_1.csv"),
         ("form_in_error_1.json", "expected_form_in_error_1.csv"),
         ("form_in_error_2.json", "expected_form_in_error_2.csv"),
+        ("paper_form_1.json", "expected_paper_form_1.csv"),
         ("total_only_1.json", "expected_total_only_1.csv"),
         ("total_only_2.json", "expected_total_only_2.csv"),
         ("total_only_3.json", "expected_total_only_3.csv"),
@@ -74,7 +75,6 @@ def test_run_integration_parametrised(
     config = load_config_temp()
     config.update(test_config)
     config["snapshot_file_path"] = str(filepath / snapshot_file)
-    print(f"\nTesting for Input: {snapshot_file} with Ouput: {expected_output_file}")
 
     df, manual_constructions, filter_df = stage_dataframe(config)
     df = impute(df, config, manual_constructions, filter_df)
@@ -110,10 +110,5 @@ def test_run_integration_parametrised(
         .sort_values(by=["period", "questioncode"])
         .reset_index(drop=True)
     )
-
-    print("\nTest output Dataframe")
-    print(df_sorted)
-    print("\nExpected Output Dataframe:")
-    print(expected_sorted)
 
     pd.testing.assert_frame_equal(df_sorted, expected_sorted)
