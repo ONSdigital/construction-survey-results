@@ -15,9 +15,6 @@ def create_skipped_questions(
     finalsel_keep_col: List[str],
     imputation_marker_col: str = "",
 ):
-    # TEMP FIX UNTIL PR 42 MERGED
-    df = df.drop_duplicates(subset=[reference, period, question_col], keep="first")
-    # TEMP FIX UNTIL PR 42 MERGED
 
     # getting list of all references and period combinations
     df_index = (
