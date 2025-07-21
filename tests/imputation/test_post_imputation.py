@@ -1,4 +1,7 @@
+import os
+import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
@@ -9,6 +12,7 @@ from cons_results.imputation.post_imputation import (
     create_q290,
     derive_q290,
     rescale_290_case,
+    validate_q290,
 )
 
 
@@ -21,7 +25,7 @@ def test_rescale_290_case(filepath):
     expected_output_df = pd.read_csv(filepath / "test_data_rescale_290_output.csv")
 
     input_df = pd.read_csv(
-        filepath / "test_data_rescale_290_output.csv",
+        filepath / "test_data_rescale_290_input.csv",
         dtype={"adjustedresponse": float},
     )
 
@@ -72,3 +76,57 @@ def test_create_q290(filepath):
     )
 
     assert_frame_equal(actual_output, df_expected_output)
+
+
+def test_validate_q290(filepath):
+    df_input = pd.read_csv(filepath / "validate_q290_input.csv")
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        validate_q290(
+            df_input,
+            period="period",
+            reference="reference",
+            adjustedresponse="adjustedresponse",
+            question_no="question_no",
+            output_path=tmpdirname,
+            output_file_name="validate_q290_test_output.csv",
+        )
+        actual_output = pd.read_csv(
+            os.path.join(tmpdirname, "validate_q290_test_output.csv")
+        )
+        expected_output = pd.read_csv(filepath / "validate_q290_output.csv")
+        assert_frame_equal(actual_output, expected_output)
+
+
+@patch("pandas.DataFrame.to_csv")  # mock pandas export csv function
+def test_validate_q290_warnings_and_output(mock_to_csv, filepath):
+    df_input = pd.read_csv(filepath / "validate_q290_input.csv")
+
+    with pytest.warns(
+        UserWarning, match="q290 values do not match the sum of components"
+    ):
+        validate_q290(
+            df_input,
+            period="period",
+            reference="reference",
+            adjustedresponse="adjustedresponse",
+            question_no="question_no",
+            output_path="",
+            output_file_name="mismatched_q290_totals.csv",
+        )
+
+    # check to csv was called with the correct file name
+    mock_to_csv.assert_called_once_with("mismatched_q290_totals.csv", index=False)
+
+
+@patch("pandas.DataFrame.to_csv")  # mock pandas export csv function
+def test_validate_q290_no_csv(mock_to_csv, filepath):
+    df_input = pd.read_csv(filepath / "validate_q290_input.csv")
+    validate_q290(
+        df_input,
+        period="period",
+        reference="reference",
+        adjustedresponse="adjustedresponse",
+        question_no="question_no",
+    )
+    # check to csv was not called
+    mock_to_csv.assert_not_called()

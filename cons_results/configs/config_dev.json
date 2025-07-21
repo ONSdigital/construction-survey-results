@@ -2,6 +2,7 @@
     "platform" : "s3",
 
     "back_data_type":"type",
+    "back_data_format": "csv",
     "imputation_marker_col":"imputation_flags_adjustedresponse",
 
     "auxiliary": "frotover",
@@ -43,7 +44,8 @@
         "frosic2007": "str",
         "froempment": "int",
         "frotover": "float",
-        "cell_no": "int"},
+        "cell_no": "int",
+        "region": "str"},
 
     "contributors_keep_cols": [
         "period",
@@ -66,6 +68,7 @@
         "froempment",
         "frotover",
         "reference",
+        "region",
         "runame1"
     ],
 
