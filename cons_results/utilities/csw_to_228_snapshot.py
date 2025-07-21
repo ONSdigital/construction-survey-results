@@ -319,7 +319,7 @@ def create_construction_228_snapshot(
             904: [231, 232, 241, 242, 243],
         },
     )
-    qv = qv[~qv["question_no"].isin([902,903,904])]
+    qv = qv[~qv["question_no"].isin([902, 903, 904])]
 
     qv = remove_nil_contributors(
         responses_df=qv,
