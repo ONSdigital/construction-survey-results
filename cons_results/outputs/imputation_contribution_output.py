@@ -38,7 +38,7 @@ def get_imputation_contribution_output(
                 ["fir", "bir", "mc", "fimc", "fic", "c"]
             ),
             "imputed",
-            np.nan,
+            None,  # Use None for missing values instead of np.nan
         ),
     )
 
