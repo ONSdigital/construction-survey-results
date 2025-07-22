@@ -87,6 +87,17 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         how="outer",
     )
 
+    snapshot_name = os.path.basename(snapshot_file_path).split(".")[0]
+
+    responses = filter_out_questions(
+        df=responses,
+        column=staging_config["question_no"],
+        questions_to_filter=staging_config["filter_out_questions"],
+        save_full_path=staging_config["output_path"]
+        + snapshot_name
+        + "_filter_out_questions.csv",
+        **staging_config,
+    )
     df = create_missing_questions(
         contributors=contributors,
         responses=responses,
@@ -109,18 +120,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         responses_keep_col=staging_config["responses_keep_cols"],
         finalsel_keep_col=staging_config["finalsel_keep_cols"],
         imputation_marker_col=staging_config["imputation_marker_col"],
-    )
-
-    snapshot_name = os.path.basename(snapshot_file_path).split(".")[0]
-
-    df = filter_out_questions(
-        df=df,
-        column=staging_config["question_no"],
-        questions_to_filter=staging_config["filter_out_questions"],
-        save_full_path=staging_config["output_path"]
-        + snapshot_name
-        + "_filter_out_questions.csv",
-        **staging_config,
     )
 
     df = run_live_or_frozen(
