@@ -41,7 +41,7 @@ class TestCreateMissingQuestions:
         actual_output = create_missing_questions(
             contributors=contributors,
             responses=responses_input,
-            all_questions=[77, 88, 99],
+            components_questions=[77, 88, 99],
             reference="reference",
             period="period",
             question_col="questioncode",

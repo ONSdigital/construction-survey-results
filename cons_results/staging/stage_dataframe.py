@@ -90,7 +90,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     df = create_missing_questions(
         contributors=contributors,
         responses=responses,
-        all_questions=staging_config["all_questions"],
+        components_questions=staging_config["components_questions"],
         reference=staging_config["reference"],
         period=staging_config["period"],
         question_col=staging_config["question_no"],
@@ -100,7 +100,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     df = create_skipped_questions(
         df=df,
-        all_questions=staging_config["all_questions"],
+        all_questions=staging_config["components_questions"],
         reference=staging_config["reference"],
         period=staging_config["period"],
         question_col=staging_config["question_no"],
