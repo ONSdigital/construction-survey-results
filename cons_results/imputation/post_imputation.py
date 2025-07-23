@@ -60,7 +60,9 @@ def rescale_290_case(
     # want to avoid multiplying with inf and np.nan,
     # np.inf comes from division with 0
 
-    multiple_mask = (df[question_no] != 290) & (np.isfinite(df["ratio"]))
+    multiple_mask = (df[question_no] != 290) & (
+        np.isfinite(df["ratio"]) & (df["290_flag"])
+    )
 
     df.loc[multiple_mask, adjusted_response] = (
         df[multiple_mask]["ratio"] * df[multiple_mask][adjusted_response]
