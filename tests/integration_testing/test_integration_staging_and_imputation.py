@@ -37,7 +37,7 @@ def test_config(filepath):
         "revision_window": 2,
         "state": "frozen",
         "optional_outputs": [""],
-        "all_questions": [1, 2, 3, 4, 5, 6],
+        "components_questions": [1, 2, 3, 4, 5, 6],
     }
 
 
@@ -52,9 +52,6 @@ def load_config_temp():
     return config
 
 
-@pytest.mark.skip(
-    reason="Pending future feature development. Enable when features are implemented."
-)
 @pytest.mark.parametrize(
     "snapshot_file,expected_output_file",
     [
@@ -77,6 +74,7 @@ def test_run_integration_parametrised(
     config["snapshot_file_path"] = str(filepath / snapshot_file)
 
     df, manual_constructions, filter_df = stage_dataframe(config)
+
     df = impute(df, config, manual_constructions, filter_df)
 
     cols_output = [
@@ -89,7 +87,6 @@ def test_run_integration_parametrised(
 
     # Load expected output DataFrame
     expected_output_path = filepath / expected_output_file
-    print(expected_output_path)
     expected_df = pd.read_csv(expected_output_path)
 
     if "total" in snapshot_file:
@@ -98,8 +95,6 @@ def test_run_integration_parametrised(
     # Sort both DataFrames for consistent comparison
     df_sorted = (
         df[cols_output]
-        .assign(derived_zero="FALSE")  # creating a placeholder for column for
-        # derived_zero and assigning it FALSE
         .sort_values(by=["period", "questioncode"])
         .reset_index(drop=True)
     )
