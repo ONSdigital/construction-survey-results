@@ -1,12 +1,12 @@
-reference,period,questioncode,status,imputation_flags_adjustedresponse,derived_zero,290_flag
-1,202501,7,Clear - overridden,r,FALSE,TRUE
-1,202501,1,,bir,FALSE,TRUE
-1,202501,2,,bir,FALSE,TRUE
-1,202501,3,,bir,FALSE,TRUE
-1,202501,4,,bir,FALSE,TRUE
-1,202501,5,,bir,FALSE,TRUE
-1,202501,6,,bir,FALSE,TRUE
-1,202502,290,Clear,r,FALSE,FALSE
+reference,period,questioncode,status,imputation_flags_adjustedresponse,skipped_question,290_flag
+1,202501,290,Clear - overridden,r,FALSE,TRUE
+1,202501,1,Clear - overridden,bir,FALSE,TRUE
+1,202501,2,Clear - overridden,bir,FALSE,TRUE
+1,202501,3,Clear - overridden,bir,FALSE,TRUE
+1,202501,4,Clear - overridden,bir,FALSE,TRUE
+1,202501,5,Clear - overridden,bir,FALSE,TRUE
+1,202501,6,Clear - overridden,bir,FALSE,TRUE
+1,202502,1,Clear,r,FALSE,FALSE
 1,202502,2,Clear,r,FALSE,FALSE
 1,202502,3,Clear,r,FALSE,FALSE
 1,202502,4,Clear,r,TRUE,FALSE

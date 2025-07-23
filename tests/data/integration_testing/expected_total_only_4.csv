@@ -1,4 +1,4 @@
-reference,period,questioncode,status,imputation_flags_adjustedresponse,derived_zero,290_flag
+reference,period,questioncode,status,imputation_flags_adjustedresponse,skipped_question,290_flag
 1,202501,1,Clear,r,FALSE,FALSE
 1,202501,2,Clear,r,FALSE,FALSE
 1,202501,3,Clear,r,FALSE,FALSE
