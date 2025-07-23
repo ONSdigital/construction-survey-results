@@ -109,6 +109,14 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     df = pd.merge(left=df, right=contributors, on=[period, reference], how="left")
 
+    df = run_live_or_frozen(
+        df,
+        staging_config["target"],
+        status=staging_config["status"],
+        state=staging_config["state"],
+        error_values=[201],
+    )
+
     df = create_skipped_questions(
         df=df,
         all_questions=staging_config["components_questions"],
@@ -120,14 +128,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         responses_keep_col=staging_config["responses_keep_cols"],
         finalsel_keep_col=staging_config["finalsel_keep_cols"],
         imputation_marker_col=staging_config["imputation_marker_col"],
-    )
-
-    df = run_live_or_frozen(
-        df,
-        staging_config["target"],
-        status=staging_config["status"],
-        state=staging_config["state"],
-        error_values=[201],
     )
 
     df[staging_config["auxiliary_converted"]] = df[staging_config["auxiliary"]].copy()
