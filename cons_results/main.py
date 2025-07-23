@@ -1,6 +1,6 @@
 import os
-import warnings
 
+import pandas as pd
 from mbs_results.estimation.estimate import estimate
 from mbs_results.outputs.produce_additional_outputs import get_additional_outputs_df
 from mbs_results.utilities.inputs import load_config
@@ -19,6 +19,8 @@ from cons_results.staging.stage_dataframe import stage_dataframe
 # import imputation checks
 # import estimation checks
 
+pd.options.mode.chained_assignment = None
+
 
 def run_pipeline(config_user_dict=None):
     """This is the main function that runs the pipeline"""
@@ -29,34 +31,19 @@ def run_pipeline(config_user_dict=None):
 
     snapshot_file_name = os.path.basename(config["snapshot_file_path"]).split(".")[0]
 
-    warnings.warn("This is a placeholder for config validation, not yet implemented")
-
     df, manual_constructions, filter_df = stage_dataframe(config)
     df.to_csv(f'{config["output_path"]}/{snapshot_file_name}_staging_{tag_name}.csv')
-
-    warnings.warn(
-        "This is a placeholder for staging validation checks,  not yet implemented"
-    )
 
     df = impute(df, config, manual_constructions, filter_df)
 
     df.to_csv(f'{config["output_path"]}/{snapshot_file_name}_impute_{tag_name}.csv')
 
-    warnings.warn("This is a placeholder post-imputation,  not yet implemented")
-
-    warnings.warn(
-        "This is a placeholder for imputation validation checks,  not yet implemented"
-    )
     estimation_output = estimate(
         df=df, method="separate", convert_NI_GB_cells=False, config=config
     )
 
     estimation_output.to_csv(
         f'{config["output_path"]}/{snapshot_file_name}_estimate_{tag_name}.csv'
-    )
-
-    warnings.warn(
-        "This is a placeholder for estimation validation checks,  not yet implemented"
     )
 
     outlier_detection_output = detect_outlier(estimation_output, config)
