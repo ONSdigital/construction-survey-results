@@ -1,6 +1,7 @@
 import os
 import warnings
 
+import numpy as np
 import pandas as pd
 
 
@@ -13,7 +14,7 @@ def rescale_290_case(
 ) -> pd.DataFrame:
 
     """
-    Forward impute and rescale components for flagged 290 special cases
+    Rescale components for flagged 290 special cases
 
     Parameters
     ----------
@@ -34,49 +35,52 @@ def rescale_290_case(
         Output DataFrame with rescaled adjusted responses for flagged 290 special cases.
     """
 
-    flagged_pairs = df[df["290_flag"]].groupby([period, reference]).sum().index
+    # Numerators to use in the rescaling operation
+    numerators = (
+        df[(df["290_flag"]) & (df[question_no] == 290)]
+        .groupby([period, reference])
+        .sum()
+        .reset_index()[[period, reference, adjusted_response]]
+        .rename(columns={adjusted_response: "numers"})
+    )
 
-    all_pairs = pd.MultiIndex.from_frame(df[[period, reference]])
+    # Denominators to use in the rescaling operation
+    denominators = (
+        df[(df["290_flag"]) & (df[question_no] != 290)]
+        .groupby([period, reference])
+        .sum()
+        .reset_index()[[period, reference, adjusted_response]]
+        .rename(columns={adjusted_response: "denoms"})
+    )
 
-    # initialise the failed_rescale imputed column as false
-    # This indicates where components sum to zero and we cannot scale correctly
-    df["failed_rescale"] = False
+    # Combine to generate the rescale factor
+    rescale_factors = pd.merge(
+        numerators, denominators, how="inner", on=[period, reference]
+    )
 
-    for per, ref in flagged_pairs:
+    rescale_factors["290_rescale_factor"] = (
+        rescale_factors["numers"] / rescale_factors["denoms"]
+    )
 
-        impute_source = df[all_pairs.isin([(per, ref)])]
+    # Merge rescale factors back on to the original DataFrame
+    df = df.merge(
+        rescale_factors[[period, reference, "290_rescale_factor"]],
+        how="left",
+        on=[period, reference],
+    )
 
-        numer = impute_source[impute_source[question_no] == 290][
-            adjusted_response
-        ].sum()
+    # Use rescale factors to multiply selected adjusted responses
+    df.loc[
+        (df["290_flag"])
+        & (df[question_no] != 290)
+        & (df["290_rescale_factor"] != np.inf),
+        adjusted_response,
+    ] *= df["290_rescale_factor"]
 
-        denom = impute_source[impute_source[question_no] != 290][
-            adjusted_response
-        ].sum()
+    # Create column containing info on when rescaling failed due to divide by zero
+    df["failed_rescale"] = np.where(df["290_rescale_factor"] == np.inf, True, False)
 
-        if denom != 0:
-            rescale_factor = numer / denom
-
-            imputed_data = impute_source[impute_source[question_no] != 290][
-                [question_no, adjusted_response]
-            ]
-
-            imputed_data[adjusted_response] *= rescale_factor
-
-            for entry in imputed_data.to_dict("records"):
-
-                df.loc[
-                    (all_pairs.isin([(per, ref)]))
-                    & (df[question_no] == entry[question_no]),
-                    [adjusted_response],
-                ] = entry[adjusted_response]
-        else:
-            # If denom is 0, we need to create new flag to stop deriving q290 in
-            # this special case
-            df.loc[
-                (df["period"] == per) & (df["reference"] == ref), "failed_rescale"
-            ] = True
-            print("here")
+    df = df.drop(columns=["290_rescale_factor"])
 
     return df
 
