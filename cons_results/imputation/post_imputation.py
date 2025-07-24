@@ -1,6 +1,7 @@
 import os
 import warnings
 
+import numpy as np
 import pandas as pd
 
 
@@ -13,7 +14,10 @@ def rescale_290_case(
 ) -> pd.DataFrame:
 
     """
-    Forward impute and rescale components for flagged 290 special cases
+    Will re adjust the components questions so their sum will match the question
+    290. The ratio of rescaling is sum of components / question 290, then each
+    component is multipied with the ratio.
+
 
     Parameters
     ----------
@@ -34,49 +38,39 @@ def rescale_290_case(
         Output DataFrame with rescaled adjusted responses for flagged 290 special cases.
     """
 
-    flagged_pairs = df[df["290_flag"]].groupby([period, reference]).sum().index
+    # 290_flag hard coded column from flag_290_cases in staging
+    numer = (
+        df[(df["290_flag"]) & (df[question_no] == 290)]
+        .groupby([period, reference])[adjusted_response]
+        .sum()
+    )
 
-    all_pairs = pd.MultiIndex.from_frame(df[[period, reference]])
+    denom = (
+        df[(df["290_flag"]) & (df[question_no] != 290)]
+        .groupby([period, reference])[adjusted_response]
+        .sum()
+    )
 
-    # initialise the failed_rescale imputed column as false
-    # This indicates where components sum to zero and we cannot scale correctly
-    df["failed_rescale"] = False
+    ratio = numer / denom  # has inf when dem is 0
 
-    for per, ref in flagged_pairs:
+    ratio.name = "ratio"
 
-        impute_source = df[all_pairs.isin([(per, ref)])]
+    df["ratio"] = df.set_index([period, reference]).index.map(ratio)
 
-        numer = impute_source[impute_source[question_no] == 290][
-            adjusted_response
-        ].sum()
+    # want to avoid multiplying with inf and np.nan,
+    # np.inf comes from division with 0
 
-        denom = impute_source[impute_source[question_no] != 290][
-            adjusted_response
-        ].sum()
+    multiple_mask = (df[question_no] != 290) & (
+        np.isfinite(df["ratio"]) & (df["290_flag"])
+    )
 
-        if denom != 0:
-            rescale_factor = numer / denom
+    df.loc[multiple_mask, adjusted_response] = (
+        df[multiple_mask]["ratio"] * df[multiple_mask][adjusted_response]
+    )
 
-            imputed_data = impute_source[impute_source[question_no] != 290][
-                [question_no, adjusted_response]
-            ]
+    df["failed_rescale"] = np.isinf(df["ratio"])
 
-            imputed_data[adjusted_response] *= rescale_factor
-
-            for entry in imputed_data.to_dict("records"):
-
-                df.loc[
-                    (all_pairs.isin([(per, ref)]))
-                    & (df[question_no] == entry[question_no]),
-                    [adjusted_response],
-                ] = entry[adjusted_response]
-        else:
-            # If denom is 0, we need to create new flag to stop deriving q290 in
-            # this special case
-            df.loc[
-                (df["period"] == per) & (df["reference"] == ref), "failed_rescale"
-            ] = True
-            print("here")
+    df.drop(columns=["ratio"], inplace=True)
 
     return df
 

@@ -8,7 +8,7 @@ from pandas.api.types import is_bool_dtype
 def create_missing_questions(
     responses: pd.DataFrame,
     contributors: pd.DataFrame,
-    all_questions: List[int],
+    components_questions: List[int],
     reference: str,
     period: str,
     question_col: str,
@@ -35,8 +35,8 @@ def create_missing_questions(
     contributors : pd.DataFrame
         Dataframe containing contributors.
         Reference,period unique identifiers in contributors.
-    all_questions: List[int]
-        List of all question codes which are expected in the responses.
+    components_questions: List[int]
+        List of components_question codes which are expected in the responses.
     reference : str
         Column name containing reference variable, must exist in both
         responses and contributors.
@@ -88,14 +88,24 @@ def create_missing_questions(
     5    2  202202            91     NaN
     """
 
+    all_questions = components_questions + [290]
+
     contributors = contributors.set_index([reference, period]).index
 
     responses_questions = (
         responses.groupby([reference, period])[question_col].apply(list).to_frame()
     )
+
+    responses_questions[question_col] = [
+        all_questions if value == [290] else value
+        for value in responses_questions[question_col]
+    ]
+
     # Creating a new column to save list of questions to be created
     responses_questions["missing_questions_helper"] = (
-        responses_questions[question_col].map(set(all_questions).intersection).map(list)
+        responses_questions[question_col]
+        .map(set(components_questions).intersection)
+        .map(list)
     )
 
     # Sorting first by reference and then by period, for ffill
@@ -111,7 +121,7 @@ def create_missing_questions(
 
     expected_responses["missing_questions_helper"] = expected_responses[
         "missing_questions_helper"
-    ].fillna({row: all_questions for row in expected_responses.index})
+    ].fillna({row: components_questions for row in expected_responses.index})
 
     # question col now has list of questions which were in the responses
     # if question col is na it means that it was missing and we should use the

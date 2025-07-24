@@ -31,8 +31,10 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
             filename = name
         else:
             filename = get_versioned_filename(output, config)
-        df.to_csv(config["output_path"] + filename, index=False)
-        print(config["output_path"] + filename + " saved")
+
+        if df is not None:
+            df.to_csv(config["output_path"] + filename, index=False)
+            print(config["output_path"] + filename + " saved")
 
 
 def produce_quarterly_extracts(config: dict, df: pd.DataFrame):

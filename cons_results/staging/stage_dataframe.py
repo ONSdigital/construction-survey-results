@@ -6,7 +6,6 @@ from mbs_results.staging.data_cleaning import (  # convert_nil_values,
     convert_annual_thousands,
     enforce_datatypes,
     filter_out_questions,
-    run_live_or_frozen,
 )
 from mbs_results.staging.dfs_from_spp import get_dfs_from_spp
 from mbs_results.staging.stage_dataframe import read_and_combine_colon_sep_files
@@ -15,6 +14,7 @@ from mbs_results.utilities.inputs import read_csv_wrapper
 from cons_results.staging.create_missing_questions import create_missing_questions
 from cons_results.staging.create_skipped_questions import create_skipped_questions
 from cons_results.staging.derive_imputation_class import derive_imputation_class
+from cons_results.staging.live_or_frozen import run_live_or_frozen
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
@@ -87,10 +87,34 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         how="outer",
     )
 
+    snapshot_name = os.path.basename(snapshot_file_path).split(".")[0]
+
+    responses = filter_out_questions(
+        df=responses,
+        column=staging_config["question_no"],
+        questions_to_filter=staging_config["filter_out_questions"],
+        save_full_path=staging_config["output_path"]
+        + snapshot_name
+        + "_filter_out_questions.csv",
+        **staging_config,
+    )
+
+    responses, frozen_responses_in_error = run_live_or_frozen(
+        responses=responses,
+        contributors=contributors,
+        period="period",
+        reference="reference",
+        question_no="questioncode",
+        target=staging_config["target"],
+        status=staging_config["status"],
+        state=staging_config["state"],
+        error_values=[201],
+    )
+
     df = create_missing_questions(
         contributors=contributors,
         responses=responses,
-        all_questions=staging_config["all_questions"],
+        components_questions=staging_config["components_questions"],
         reference=staging_config["reference"],
         period=staging_config["period"],
         question_col=staging_config["question_no"],
@@ -100,7 +124,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     df = create_skipped_questions(
         df=df,
-        all_questions=staging_config["all_questions"],
+        all_questions=staging_config["components_questions"],
         reference=staging_config["reference"],
         period=staging_config["period"],
         question_col=staging_config["question_no"],
@@ -111,24 +135,11 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         imputation_marker_col=staging_config["imputation_marker_col"],
     )
 
-    snapshot_name = os.path.basename(snapshot_file_path).split(".")[0]
-
-    df = filter_out_questions(
-        df=df,
-        column=staging_config["question_no"],
-        questions_to_filter=staging_config["filter_out_questions"],
-        save_full_path=staging_config["output_path"]
-        + snapshot_name
-        + "_filter_out_questions.csv",
-        **staging_config,
-    )
-
-    df = run_live_or_frozen(
-        df,
-        staging_config["target"],
-        status=staging_config["status"],
-        state=staging_config["state"],
-        error_values=[201],
+    df = pd.merge(
+        left=df,
+        right=frozen_responses_in_error,
+        on=["period", "reference", "questioncode"],
+        how="left",
     )
 
     df[staging_config["auxiliary_converted"]] = df[staging_config["auxiliary"]].copy()

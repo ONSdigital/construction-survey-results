@@ -44,7 +44,7 @@ def detect_outlier(
     # Calculate outlier weightsfor q290 rows
     post_win = derive_q290_outlier_weights(
         post_win,
-        config["all_questions"],
+        config["components_questions"],
         config["target"],
         config["question_no"],
         config["reference"],

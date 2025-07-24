@@ -1,4 +1,4 @@
-reference,period,questioncode,status,imputation_flags_adjustedresponse,derived_zero
+reference,period,questioncode,status,imputation_flags_adjustedresponse,skipped_question
 1,202501,1,Clear,r,FALSE
 1,202501,2,Clear,r,FALSE
 1,202501,3,Clear,r,TRUE
@@ -6,3 +6,10 @@ reference,period,questioncode,status,imputation_flags_adjustedresponse,derived_z
 1,202501,5,Clear,r,TRUE
 1,202501,6,Clear,r,TRUE
 1,202501,290,Clear,r,FALSE
+1,202502,1,Clear,r,TRUE
+1,202502,2,Clear,r,TRUE
+1,202502,3,Clear,r,FALSE
+1,202502,4,Clear,r,FALSE
+1,202502,5,Clear,r,TRUE
+1,202502,6,Clear,r,TRUE
+1,202502,290,Clear,r,FALSE

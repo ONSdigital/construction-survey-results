@@ -45,3 +45,10 @@ class TestMain:
     def test_run_pipeline(self, test_config):
         """Run main pipeline based on test_config"""
         run_pipeline(test_config)
+
+    def test_run_pipeline_live(self, test_config):
+        """Run main pipeline based on test_config"""
+
+        test_config["state"] = "live"
+
+        run_pipeline(test_config)

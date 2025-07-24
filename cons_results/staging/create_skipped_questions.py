@@ -144,8 +144,6 @@ def fill_columns_in_created_questions(
         DataFrame with filled columns.
     """
     df.loc[df["skipped_question"], target_col] = 0
-    if imputation_marker_col in df.columns:
-        df.loc[df["skipped_question"], imputation_marker_col] = "r"
 
     # combining and filling columns
     columns_dont_fill = [reference, question_col, target_col, period]
