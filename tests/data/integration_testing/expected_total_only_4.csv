@@ -9,7 +9,7 @@ reference,period,questioncode,status,imputation_flags_adjustedresponse,skipped_q
 1,202502,1,Check needed,fir,FALSE,FALSE
 1,202502,2,Check needed,fir,FALSE,FALSE
 1,202502,3,Check needed,fir,FALSE,FALSE
-1,202502,4,Check needed,fir,FALSE,FALSE
-1,202502,5,Check needed,fir,FALSE,FALSE
-1,202502,6,Check needed,fir,FALSE,FALSE
-1,202502,290,Check needed,d,FALSE,FALSE
+1,202502,4,Check needed,r,TRUE,FALSE
+1,202502,5,Check needed,r,TRUE,FALSE
+1,202502,6,Check needed,r,TRUE,FALSE
+1,202502,290,Check needed,d,,FALSE

@@ -12,4 +12,4 @@ reference,period,questioncode,status,imputation_flags_adjustedresponse,skipped_q
 1,202502,4,Clear,fic,FALSE,FALSE
 1,202502,5,Clear,fic,FALSE,FALSE
 1,202502,6,Clear,fic,FALSE,FALSE
-1,202502,290,Clear,d,FALSE,FALSE
+1,202502,290,Clear,d,,FALSE

@@ -1,4 +1,4 @@
-reference,period,questioncode,status,imputation_flags_adjustedresponse,derived_zero
+reference,period,questioncode,status,imputation_flags_adjustedresponse,skipped_question
 1,202501,1,Clear,r,FALSE
 1,202501,2,Clear,r,FALSE
 1,202501,3,Clear,r,FALSE
@@ -12,4 +12,4 @@ reference,period,questioncode,status,imputation_flags_adjustedresponse,derived_z
 1,202502,4,Form sent out,r,TRUE
 1,202502,5,Form sent out,r,TRUE
 1,202502,6,Form sent out,r,TRUE
-1,202502,290,Form sent out,d,FALSE
+1,202502,290,Form sent out,d,
