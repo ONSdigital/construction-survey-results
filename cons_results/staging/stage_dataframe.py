@@ -6,7 +6,6 @@ from mbs_results.staging.data_cleaning import (  # convert_nil_values,
     convert_annual_thousands,
     enforce_datatypes,
     filter_out_questions,
-    run_live_or_frozen,
 )
 from mbs_results.staging.dfs_from_spp import get_dfs_from_spp
 from mbs_results.staging.stage_dataframe import read_and_combine_colon_sep_files
@@ -15,6 +14,7 @@ from mbs_results.utilities.inputs import read_csv_wrapper
 from cons_results.staging.create_missing_questions import create_missing_questions
 from cons_results.staging.create_skipped_questions import create_skipped_questions
 from cons_results.staging.derive_imputation_class import derive_imputation_class
+from cons_results.staging.live_or_frozen import run_live_or_frozen
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
@@ -98,6 +98,19 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         + "_filter_out_questions.csv",
         **staging_config,
     )
+
+    responses, frozen_responses_in_error = run_live_or_frozen(
+        responses=responses,
+        contributors=contributors,
+        period="period",
+        reference="reference",
+        question_no="questioncode",
+        target=staging_config["target"],
+        status=staging_config["status"],
+        state=staging_config["state"],
+        error_values=[201],
+    )
+
     df = create_missing_questions(
         contributors=contributors,
         responses=responses,
@@ -108,14 +121,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     )
 
     df = pd.merge(left=df, right=contributors, on=[period, reference], how="left")
-
-    df = run_live_or_frozen(
-        df,
-        staging_config["target"],
-        status=staging_config["status"],
-        state=staging_config["state"],
-        error_values=[201],
-    )
 
     df = create_skipped_questions(
         df=df,
@@ -128,6 +133,13 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         responses_keep_col=staging_config["responses_keep_cols"],
         finalsel_keep_col=staging_config["finalsel_keep_cols"],
         imputation_marker_col=staging_config["imputation_marker_col"],
+    )
+
+    df = pd.merge(
+        left=df,
+        right=frozen_responses_in_error,
+        on=["period", "reference", "questioncode"],
+        how="left",
     )
 
     df[staging_config["auxiliary_converted"]] = df[staging_config["auxiliary"]].copy()

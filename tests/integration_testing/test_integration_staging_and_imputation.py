@@ -83,6 +83,7 @@ def test_run_integration_parametrised(
         "questioncode",
         "status",
         "imputation_flags_adjustedresponse",
+        "skipped_question",
     ]
 
     # Load expected output DataFrame
@@ -106,4 +107,9 @@ def test_run_integration_parametrised(
         .reset_index(drop=True)
     )
 
+    df_sorted["skipped_question"] = df_sorted["skipped_question"].astype(str)
+
+    expected_sorted["skipped_question"] = expected_sorted["skipped_question"].astype(
+        str
+    )
     pd.testing.assert_frame_equal(df_sorted, expected_sorted)
