@@ -13,12 +13,57 @@ def create_skipped_questions(
     contributors_keep_col: List[str],
     responses_keep_col: List[str],
     finalsel_keep_col: List[str],
+    status_col: str,
+    status_filter: List[str],
+    flag_col_name: str,
     imputation_marker_col: str = "",
 ):
+    """
+    Creates new rows with 0 on a filtered dataframe based on status value,
+    a new column `flag_col_name` is generated to indicate which rows were
+    affected.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Original dataframe.
+    all_questions : List[int]
+        All components question codes.
+    reference : str
+        Reference column name.
+    period : str
+        Period column name.
+    question_col : str
+        Question no column name.
+    target_col : str
+        Column with target values.
+    contributors_keep_col : List[str]
+        Column names used from contributors source.
+    responses_keep_col : List[str]
+        Column names used from responses source.
+    finalsel_keep_col : List[str]
+        Column names used from final selection source.
+    status_col : str
+        Column containining the filter.
+    status_filter :  List[str]
+        Filter values to apply function.
+    flag_col_name : str
+        Column name to indicate which rows were affected from the function.
+    imputation_marker_col : str, optional
+        COlumn name containing imputation marker. The default is "".
+
+    Returns
+    -------
+    responses_full : pd.DataFrame
+        Original dataframe with new rows with 0 values according to which
+        questions exist in input dataframe.
+
+    """
+    df_filtered = df.loc[df[status_col].isin(status_filter)].copy()
 
     # getting list of all references and period combinations
-    df_index = (
-        df[["reference", "period"]]
+    df_filtered_index = (
+        df_filtered[["reference", "period"]]
         .drop_duplicates()
         .set_index([reference, period])
         .index
@@ -35,7 +80,7 @@ def create_skipped_questions(
 
     # Sorting first by reference and then by period, for ffill
     expected_responses = (
-        responses_questions.reindex(df_index)
+        responses_questions.reindex(df_filtered_index)
         .reset_index()
         .sort_values([reference, period])
     )
@@ -78,7 +123,7 @@ def create_skipped_questions(
         how="left",
     )
     # Assign column true if question no is found in skipped_question_col
-    responses_full["skipped_question"] = responses_full.apply(
+    responses_full[flag_col_name] = responses_full.apply(
         lambda row: row[question_col] in row["skipped_question_col"]
         if isinstance(row["skipped_question_col"], list)
         else False,
@@ -96,7 +141,14 @@ def create_skipped_questions(
         responses_keep_col,
         finalsel_keep_col,
         imputation_marker_col,
+        flag_col_name,
     )
+
+    df_unfiltered = df.loc[~df[status_col].isin(status_filter)].copy()
+
+    df_unfiltered[flag_col_name] = False
+
+    responses_full = pd.concat([responses_full, df_unfiltered], axis=0)
 
     return responses_full
 
@@ -111,6 +163,7 @@ def fill_columns_in_created_questions(
     responses_keep_col: List[str],
     finalsel_keep_col: List[str],
     imputation_marker_col: str,
+    flag_col_name: str,
 ) -> pd.DataFrame:
     """
     filles columns which are information on a contributor level.
@@ -137,13 +190,14 @@ def fill_columns_in_created_questions(
         List of final selection columns to keep.
     imputation_marker_col : str
         Column name for imputation marker.
-
+    flag_col_name : str
+        Column name to indicate which rows were affected from the function.
     Returns
     -------
     pd.DataFrame
         DataFrame with filled columns.
     """
-    df.loc[df["skipped_question"], target_col] = 0
+    df.loc[df[flag_col_name], target_col] = 0
 
     # combining and filling columns
     columns_dont_fill = [reference, question_col, target_col, period]
