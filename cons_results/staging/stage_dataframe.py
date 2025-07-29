@@ -132,9 +132,9 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         contributors_keep_col=staging_config["contributors_keep_cols"],
         responses_keep_col=staging_config["responses_keep_cols"],
         finalsel_keep_col=staging_config["finalsel_keep_cols"],
-        status_col = staging_config["nil_status_col"],
-        status_filter = ["Clear", "Clear - overridden"],
-        flag_col_name = "skipped_question",
+        status_col=staging_config["nil_status_col"],
+        status_filter=["Clear", "Clear - overridden"],
+        flag_col_name="skipped_question",
         imputation_marker_col=staging_config["imputation_marker_col"],
     )
 

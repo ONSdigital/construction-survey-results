@@ -109,5 +109,5 @@ def test_run_integration_parametrised(
     expected_sorted["skipped_question"] = expected_sorted["skipped_question"].astype(
         float
     )
-        
+
     pd.testing.assert_frame_equal(df_sorted, expected_sorted)
