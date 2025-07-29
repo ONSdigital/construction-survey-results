@@ -143,12 +143,15 @@ def create_skipped_questions(
         imputation_marker_col,
         flag_col_name,
     )
+   
+
 
     df_unfiltered = df.loc[~df[status_col].isin(status_filter)].copy()
 
     df_unfiltered[flag_col_name] = False
-
+    
     responses_full = pd.concat([responses_full, df_unfiltered], axis=0)
+    
 
     return responses_full
 

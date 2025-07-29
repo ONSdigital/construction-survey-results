@@ -6,10 +6,10 @@ reference,period,questioncode,status,imputation_flags_adjustedresponse,skipped_q
 1,202501,5,Clear,c,FALSE,TRUE
 1,202501,6,Clear,c,FALSE,TRUE
 1,202501,290,Clear,r,FALSE,TRUE
-1,202502,1,Clear,fic,FALSE,FALSE
-1,202502,2,Clear,fic,FALSE,FALSE
-1,202502,3,Clear,fic,FALSE,FALSE
-1,202502,4,Clear,fic,FALSE,FALSE
-1,202502,5,Clear,fic,FALSE,FALSE
-1,202502,6,Clear,fic,FALSE,FALSE
-1,202502,290,Clear,d,,FALSE
+1,202502,1,Form sent out,fic,FALSE,FALSE
+1,202502,2,Form sent out,fic,FALSE,FALSE
+1,202502,3,Form sent out,fic,FALSE,FALSE
+1,202502,4,Form sent out,fic,FALSE,FALSE
+1,202502,5,Form sent out,fic,FALSE,FALSE
+1,202502,6,Form sent out,fic,FALSE,FALSE
+1,202502,290,Form sent out,d,,FALSE

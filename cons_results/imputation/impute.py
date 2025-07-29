@@ -1,6 +1,8 @@
 import pandas as pd
 from mbs_results.imputation.ratio_of_means import ratio_of_means
 
+from cons_results.staging.create_skipped_questions import create_skipped_questions
+
 from cons_results.imputation.post_imputation import (
     create_q290,
     derive_q290,
@@ -52,11 +54,33 @@ def impute(
             filters=filter_df,
         )
     )
-
+    
     df = df.reset_index(drop=True)  # remove groupby leftovers
-
+    
+    
     df = df[~df["is_backdata"]]  # remove backdata
     df.drop(columns=["is_backdata"], inplace=True)
+
+    df = create_skipped_questions(
+        df=df,
+        all_questions=config["components_questions"],
+        reference=config["reference"],
+        period=config["period"],
+        question_col=config["question_no"],
+        target_col=config["target"],
+        contributors_keep_col=config["contributors_keep_cols"],
+        responses_keep_col=config["responses_keep_cols"],
+        finalsel_keep_col=config["finalsel_keep_cols"],
+        status_col = config["nil_status_col"],
+        status_filter = ["Form sent out","Check needed"],
+        flag_col_name = "derived_zeros",
+        imputation_marker_col=config["imputation_marker_col"],
+    )
+
+
+    # derived zeros types is object, has true fals and na
+    df.loc[df["derived_zeros"]==True,config["imputation_marker_col"]] = "d"
+
 
     df = rescale_290_case(
         df,

@@ -179,7 +179,7 @@ def derive_q290(
     """
 
     imputed_components_mask = (
-        (df[question_no] != 290) & (df[imputation_flag] != "r") & (~df["290_flag"])
+        (df[question_no] != 290) & (df[imputation_flag] != "r") & (df["290_flag"]==False)
     )
 
     imputed_components_sum = (
