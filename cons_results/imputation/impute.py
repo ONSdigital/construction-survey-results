@@ -7,6 +7,7 @@ from cons_results.imputation.post_imputation import (
     rescale_290_case,
     validate_q290,
 )
+from cons_results.staging.create_skipped_questions import create_skipped_questions
 
 
 def impute(
@@ -57,6 +58,26 @@ def impute(
 
     df = df[~df["is_backdata"]]  # remove backdata
     df.drop(columns=["is_backdata"], inplace=True)
+
+    df = create_skipped_questions(
+        df=df,
+        all_questions=config["components_questions"],
+        reference=config["reference"],
+        period=config["period"],
+        question_col=config["question_no"],
+        target_col=config["target"],
+        contributors_keep_col=config["contributors_keep_cols"],
+        responses_keep_col=config["responses_keep_cols"],
+        finalsel_keep_col=config["finalsel_keep_cols"],
+        status_col=config["nil_status_col"],
+        status_filter=["Form sent out", "Check needed"],
+        flag_col_name="derived_zeros",
+        imputation_marker_col=config["imputation_marker_col"],
+    )
+
+    # derived zeros types is object, has true false and na
+    df.loc[df["derived_zeros"] == 1, config["imputation_marker_col"]] = "d"
+    df.loc[df["derived_zeros"] == 1, "290_flag"] = False
 
     df = rescale_290_case(
         df,

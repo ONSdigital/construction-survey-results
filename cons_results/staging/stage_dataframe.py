@@ -2,8 +2,9 @@ import os
 
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
-from mbs_results.staging.data_cleaning import (  # convert_nil_values,
+from mbs_results.staging.data_cleaning import (
     convert_annual_thousands,
+    convert_nil_values,
     enforce_datatypes,
     filter_out_questions,
 )
@@ -122,6 +123,9 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     df = pd.merge(left=df, right=contributors, on=[period, reference], how="left")
 
+    # Skipping questions for clear, clear overridden and nil contributors
+    status_values_to_skip = ["Clear", "Clear - overridden"] + config["nil_values"]
+
     df = create_skipped_questions(
         df=df,
         all_questions=staging_config["components_questions"],
@@ -132,6 +136,9 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         contributors_keep_col=staging_config["contributors_keep_cols"],
         responses_keep_col=staging_config["responses_keep_cols"],
         finalsel_keep_col=staging_config["finalsel_keep_cols"],
+        status_col=staging_config["nil_status_col"],
+        status_filter=status_values_to_skip,
+        flag_col_name="skipped_question",
         imputation_marker_col=staging_config["imputation_marker_col"],
     )
 
@@ -180,14 +187,12 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         staging_config["target"],
     )
 
+    df = convert_nil_values(
+        df, config["nil_status_col"], config["target"], config["nil_values"]
+    )
+
     print("Staging Completed")
 
-    # commenting out code, convert_nil_values is on MBS main
-    # but not in latest release
-
-    # df = convert_nil_values(
-    #    df, config["nil_status_col"], config["target"], config["nil_values"]
-    # )
     return df, manual_constructions, filter_df
 
 

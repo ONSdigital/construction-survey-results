@@ -84,14 +84,12 @@ def test_run_integration_parametrised(
         "status",
         "imputation_flags_adjustedresponse",
         "skipped_question",
+        "290_flag",
     ]
 
     # Load expected output DataFrame
     expected_output_path = filepath / expected_output_file
     expected_df = pd.read_csv(expected_output_path)
-
-    if "total" in snapshot_file:
-        cols_output.append("290_flag")
 
     # Sort both DataFrames for consistent comparison
     df_sorted = (
@@ -107,9 +105,13 @@ def test_run_integration_parametrised(
         .reset_index(drop=True)
     )
 
-    df_sorted["skipped_question"] = df_sorted["skipped_question"].astype(str)
+    df_sorted["skipped_question"] = df_sorted["skipped_question"].astype(float)
+
+    # enforce bool to match testing dtype
+    df_sorted["290_flag"] = df_sorted["290_flag"].astype(bool)
 
     expected_sorted["skipped_question"] = expected_sorted["skipped_question"].astype(
-        str
+        float
     )
+
     pd.testing.assert_frame_equal(df_sorted, expected_sorted)

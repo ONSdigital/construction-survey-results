@@ -1,4 +1,11 @@
 reference,period,questioncode,status,skipped_question,adjustedresponse
+1,202412,1,Clear - overridden,FALSE,100
+1,202412,2,Clear - overridden,FALSE,200
+1,202412,3,Clear - overridden,FALSE,300
+1,202412,4,Clear - overridden,TRUE,0
+1,202412,5,Clear - overridden,TRUE,0
+1,202412,6,Clear - overridden,TRUE,0
+1,202412,7,Clear - overridden,FALSE,700
 1,202501,1,Clear,FALSE,100
 1,202501,2,Clear,FALSE,200
 1,202501,3,Clear,FALSE,300
@@ -6,3 +13,7 @@ reference,period,questioncode,status,skipped_question,adjustedresponse
 1,202501,5,Clear,TRUE,0
 1,202501,6,Clear,TRUE,0
 1,202501,7,Clear,FALSE,700
+1,202502,1,Form sent out,FALSE,100
+1,202502,2,Form sent out,FALSE,200
+1,202502,3,Form sent out,FALSE,300
+1,202502,7,Form sent out,FALSE,700

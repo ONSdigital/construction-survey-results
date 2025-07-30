@@ -1,0 +1,12 @@
+reference,period,questioncode,status,derived_zeros,adjustedresponse
+1,202501,1,Clear,FALSE,100
+1,202501,2,Clear,FALSE,200
+1,202501,3,Clear,FALSE,300
+1,202501,7,Clear,FALSE,700
+1,202502,1,Form sent out,FALSE,100
+1,202502,2,Form sent out,FALSE,200
+1,202502,4,Form sent out,TRUE,0
+1,202502,5,Form sent out,TRUE,0
+1,202502,6,Form sent out,TRUE,0
+1,202502,3,Form sent out,FALSE,300
+1,202502,7,Form sent out,FALSE,700
