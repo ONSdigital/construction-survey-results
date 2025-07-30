@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
 from mbs_results.staging.data_cleaning import (
@@ -112,6 +113,14 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         error_values=[201],
     )
 
+    responses = flag_290_case(
+        responses,
+        staging_config["period"],
+        staging_config["reference"],
+        staging_config["question_no"],
+        staging_config["target"],
+    )
+
     df = create_missing_questions(
         contributors=contributors,
         responses=responses,
@@ -179,14 +188,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     else:
         filter_df = None
 
-    df = flag_290_case(
-        df,
-        staging_config["period"],
-        staging_config["reference"],
-        staging_config["question_no"],
-        staging_config["target"],
-    )
-
     df = convert_nil_values(
         df, config["nil_status_col"], config["target"], config["nil_values"]
     )
@@ -242,13 +243,14 @@ def flag_290_case(
         question_290_df,
         other_questions_df,
         on=[period, reference],
+        how="left",
     )
 
     # Create index of pairs of period and reference numbers which need to be
     # flagged as the special 290 case
     flagged_pairs = df_joined[
         (df_joined[f"{adjusted_response}_x"] != df_joined[f"{adjusted_response}_y"])
-        & (df_joined[f"{adjusted_response}_y"] == 0)
+        & (df_joined[f"{adjusted_response}_y"].isin([0, np.nan]))
     ].index
 
     # Initialise flag
