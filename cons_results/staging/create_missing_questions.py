@@ -139,6 +139,7 @@ def create_missing_questions(
         expected_responses["missing_questions_helper"]
     )
 
+    # We only have NAs for non-responders which should have False for 290_flag
     expected_responses["290_flag"] = expected_responses["290_flag"].fillna(False)
 
     expected_responses = expected_responses.explode(question_col, ignore_index=True)

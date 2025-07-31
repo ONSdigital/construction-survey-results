@@ -27,7 +27,7 @@ def responses_input(filepath):
 
 
 @pytest.fixture(scope="class")
-def responses_espected(filepath):
+def responses_expected(filepath):
     return pd.read_csv(filepath / "responses_expected.csv", index_col=False)
 
 
@@ -36,7 +36,7 @@ class TestCreateMissingQuestions:
         self,
         contributors,
         responses_input,
-        responses_espected,
+        responses_expected,
     ):
         actual_output = create_missing_questions(
             contributors=contributors,
@@ -47,7 +47,14 @@ class TestCreateMissingQuestions:
             question_col="questioncode",
         )
 
-        assert_frame_equal(actual_output, responses_espected)
+        actual_output = actual_output.sort_values(
+            by=["reference", "period", "questioncode"]
+        ).reset_index(drop=True)
+        responses_expected = responses_expected.sort_values(
+            by=["reference", "period", "questioncode"]
+        ).reset_index(drop=True)
+
+        assert_frame_equal(actual_output, responses_expected)
 
 
 class TestConvert_values:

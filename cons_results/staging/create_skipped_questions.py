@@ -70,7 +70,7 @@ def create_skipped_questions(
     )
 
     responses_questions = (
-        df.groupby([reference, period])[question_col].apply(list).to_frame()
+        df_filtered.groupby([reference, period])[question_col].apply(list).to_frame()
     )
 
     # Creating a new column to save list of questions to be created
@@ -149,6 +149,8 @@ def create_skipped_questions(
     df_unfiltered[flag_col_name] = False
 
     responses_full = pd.concat([responses_full, df_unfiltered], axis=0)
+
+    responses_full["290_flag"].fillna(False, inplace=True)
 
     return responses_full
 
