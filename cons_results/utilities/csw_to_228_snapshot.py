@@ -144,7 +144,7 @@ def remove_skipped_questions(
 ) -> pd.DataFrame:
     """
     Removes questions as follows, if a question the route_skipped_questions
-    key is euqal to no_value(2) and there is at least one questions of that route
+    key is equal to no_value(2) and there is at least one questions of that route
     non zero then drop the questions which exist in key
     values.
     e.g.
