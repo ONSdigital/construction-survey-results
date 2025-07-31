@@ -144,7 +144,8 @@ def remove_skipped_questions(
 ) -> pd.DataFrame:
     """
     Removes questions as follows, if a question the route_skipped_questions
-    key is euqal to no_value(2) then drop the questions which exist in key
+    key is euqal to no_value(2) and there is at least one questions of that route
+    non zero then drop the questions which exist in key
     values.
     e.g.
     route_skipped_questions= {
@@ -177,25 +178,33 @@ def remove_skipped_questions(
     """
 
     # placeholder to save reference,period,questioncode
+
     skipped_questions_dfs = []
+
+    df = responses_df.pivot(
+        index=[reference_col, period_col], columns=questioncode_col, values=target_col
+    )
 
     for route_question, skipped_questions in route_skipped_questions.items():
 
-        routed_value_for_no = responses_df[
-            (responses_df[questioncode_col] == route_question)
-            & (responses_df[target_col] == no_value)
-        ]
-        routed_value_for_no_reference_period = routed_value_for_no[
-            [reference_col, period_col]
-        ]
+        sub_df = df[[route_question] + skipped_questions]
 
-        skiped_questions = pd.DataFrame({questioncode_col: skipped_questions})
+        all_zero_mask = sub_df[skipped_questions].sum(axis=1) == 0
+        route_is_no = sub_df[route_question] == no_value
 
-        all_skip_questions_by_reference_period = (
-            routed_value_for_no_reference_period.merge(skiped_questions, how="cross")
+        remove_values = sub_df[all_zero_mask & route_is_no]
+
+        remove_values = remove_values[skipped_questions]
+
+        remove_values = pd.melt(
+            remove_values.reset_index(),
+            id_vars=[period_col, reference_col],
+            value_vars=skipped_questions,
         )
 
-        skipped_questions_dfs.append(all_skip_questions_by_reference_period)
+        remove_values.drop(columns=["value"], axis=1, inplace=True)
+
+        skipped_questions_dfs.append(remove_values)
 
     # has all reference,period,questioncode
     # reference,period,questioncode uniquely identifies a row
