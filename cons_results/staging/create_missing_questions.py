@@ -65,12 +65,13 @@ def create_missing_questions(
         'ref': [1, 1],
         'period': [202201,202201],
         'questioncode':[90,91],
-        'target':[999,999]
+        'target':[999,999],
+        '290_flag':[False,False]
         }
     >>> responses = pd.DataFrame(data=d_responses)
-        ref  period  questioncode  target
-     0    1  202201            90     999
-     1    1  202202            91     999
+        ref  period  questioncode  target   290_flag
+     0    1  202201            90     999   False
+     1    1  202202            91     999   False
     >>> questions = [90,91]
     >>> result = create_missing_questions(
         responses,
@@ -79,13 +80,13 @@ def create_missing_questions(
         "ref",
         "period",
         "questioncode")
-       ref  period  questioncode  target
-    0    1  202201            90   999.0
-    1    1  202201            91   999.0
-    2    1  202202            90     NaN
-    3    1  202202            91     NaN
-    4    2  202202            90     NaN
-    5    2  202202            91     NaN
+       ref  period  questioncode  target    290_flag
+    0    1  202201            90   999.0    False
+    1    1  202201            91   999.0    False
+    2    1  202202            90     NaN    False
+    3    1  202202            91     NaN    False
+    4    2  202202            90     NaN    False
+    5    2  202202            91     NaN    False
     """
 
     all_questions = components_questions + [290]
@@ -96,10 +97,17 @@ def create_missing_questions(
         responses.groupby([reference, period])[question_col].apply(list).to_frame()
     )
 
-    responses_questions[question_col] = [
-        all_questions if value == [290] else value
-        for value in responses_questions[question_col]
-    ]
+    q290 = responses.copy()
+
+    q290 = q290[q290[question_col] == 290].set_index([reference, period])["290_flag"]
+
+    responses_questions = pd.concat([responses_questions, q290], axis=1)
+
+    responses_questions.loc[responses_questions["290_flag"], question_col] = np.nan
+
+    responses_questions[question_col] = responses_questions[question_col].fillna(
+        {row: all_questions for row in responses_questions.index}
+    )
 
     # Creating a new column to save list of questions to be created
     responses_questions["missing_questions_helper"] = (
@@ -131,13 +139,16 @@ def create_missing_questions(
         expected_responses["missing_questions_helper"]
     )
 
+    # We only have NAs for non-responders which should have False for 290_flag
+    expected_responses["290_flag"] = expected_responses["290_flag"].fillna(False)
+
     expected_responses = expected_responses.explode(question_col, ignore_index=True)
 
     expected_rows_index = expected_responses.set_index(
-        [reference, period, question_col]
+        [reference, period, question_col, "290_flag"]
     ).index
 
-    responses = responses.set_index([reference, period, question_col])
+    responses = responses.set_index([reference, period, question_col, "290_flag"])
 
     responses_full = responses.reindex(expected_rows_index).reset_index()
 

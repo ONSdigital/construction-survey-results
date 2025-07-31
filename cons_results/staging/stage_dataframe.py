@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
 from mbs_results.staging.data_cleaning import (
@@ -112,6 +113,15 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         error_values=[201],
     )
 
+    responses = flag_290_case(
+        responses,
+        contributors,
+        staging_config["period"],
+        staging_config["reference"],
+        staging_config["question_no"],
+        staging_config["target"],
+    )
+
     df = create_missing_questions(
         contributors=contributors,
         responses=responses,
@@ -179,14 +189,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     else:
         filter_df = None
 
-    df = flag_290_case(
-        df,
-        staging_config["period"],
-        staging_config["reference"],
-        staging_config["question_no"],
-        staging_config["target"],
-    )
-
     df = convert_nil_values(
         df, config["nil_status_col"], config["target"], config["nil_values"]
     )
@@ -197,7 +199,8 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
 
 def flag_290_case(
-    df: pd.DataFrame,
+    responses: pd.DataFrame,
+    contributors: pd.DataFrame,
     period: str,
     reference: str,
     question_no: str,
@@ -210,8 +213,10 @@ def flag_290_case(
 
     Parameters
     ----------
-    df : pd.Dataframe
-        Input DataFrame which has unflagged 290 special cases.
+    responses : pd.Dataframe
+        Input responses DataFrame which has unflagged 290 special cases.
+    contributors : pd.Dataframe
+        Input contributors dataframe
     period : str
         Column name containing period variable.
     reference : str
@@ -226,6 +231,9 @@ def flag_290_case(
     pd.DataFrame
         Output DataFrame with variable that flags 290 special cases.
     """
+
+    df = responses.merge(contributors, how="left", on=["period", "reference"]).copy()
+    df = df[df["status"].isin(["Clear - overridden"])]
 
     # Group and sum adjusted responses for question 290
     question_290_df = (
@@ -242,23 +250,24 @@ def flag_290_case(
         question_290_df,
         other_questions_df,
         on=[period, reference],
+        how="left",
     )
 
     # Create index of pairs of period and reference numbers which need to be
     # flagged as the special 290 case
     flagged_pairs = df_joined[
         (df_joined[f"{adjusted_response}_x"] != df_joined[f"{adjusted_response}_y"])
-        & (df_joined[f"{adjusted_response}_y"] == 0)
+        & (df_joined[f"{adjusted_response}_y"].isin([0, np.nan]))
     ].index
 
     # Initialise flag
-    df["290_flag"] = False
+    responses["290_flag"] = False
 
     # Set flag based on index
-    df.loc[
-        pd.MultiIndex.from_frame(df[[period, reference]]).isin(flagged_pairs),
+    responses.loc[
+        pd.MultiIndex.from_frame(responses[[period, reference]]).isin(flagged_pairs),
         ["290_flag"],
     ] = True
 
     # Return modified DataFrame
-    return df
+    return responses

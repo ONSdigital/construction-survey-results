@@ -77,7 +77,6 @@ def impute(
 
     # derived zeros types is object, has true false and na
     df.loc[df["derived_zeros"] == 1, config["imputation_marker_col"]] = "d"
-    df.loc[df["derived_zeros"] == 1, "290_flag"] = False
 
     df = rescale_290_case(
         df,

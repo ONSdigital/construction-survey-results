@@ -13,12 +13,20 @@ def filepath():
 
 
 def test_flag_290_case(filepath):
-    expected_output_df = pd.read_csv(filepath / "test_data_290_cases.csv")
+    expected_output_df = pd.read_csv(filepath / "290_flag_expected.csv")
 
-    input_df = expected_output_df.drop(columns=["290_flag"])
+    responses = pd.read_csv(filepath / "290_flag_responses.csv")
+    contributors = pd.read_csv(filepath / "290_flag_contributors.csv")
 
     output_df = flag_290_case(
-        input_df, "period", "reference", "question_no", "adjustedresponse"
+        responses,
+        contributors,
+        "period",
+        "reference",
+        "question_no",
+        "adjustedresponse",
     )
+
+    print(output_df)
 
     assert_frame_equal(output_df, expected_output_df)
