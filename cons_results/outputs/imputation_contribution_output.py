@@ -5,7 +5,7 @@ import pandas as pd
 
 
 def get_imputation_contribution_output(
-    df: pd.DataFrame, imputation_contribution_sics: list, all_questions: list, **config
+    additional_outputs_df: pd.DataFrame, **config
 ):
     """
     Creates imputation contribution output
@@ -14,14 +14,8 @@ def get_imputation_contribution_output(
     ----------
     df : pd.DataFrame
         Outliering output dataframe with relevant variables for output
-    imputation_contribution_sics : list
-        List containing all SICs for imputation contribution output (SICs in
-        construction division)
-    all_questions : list
-        List containing all question numbers in survey. Used in combination with
-        imputation_contribution_sics to create data with sic-questioncode groupings
-        without data.
-
+    config : dict
+        A dictionary containing configuration parameters.
     Returns
     -------
     pd.DataFrame
@@ -29,6 +23,8 @@ def get_imputation_contribution_output(
         SIC-questioncode grouping.
 
     """
+
+    df = additional_outputs_df
 
     df["returned_or_imputed"] = np.where(
         df["imputation_flags_adjustedresponse"] == "r",
@@ -67,7 +63,7 @@ def get_imputation_contribution_output(
     output_sic_qc = set(
         output_df[["frosic2007", "questioncode"]].to_records(index=False).tolist()
     )
-    all_sic_qc = set(itertools.product(imputation_contribution_sics, all_questions))
+    all_sic_qc = set(itertools.product(config["imputation_contribution_sics"], config["components_questions"]))
     missing_sic_qc = list(all_sic_qc - output_sic_qc)
     missing_sic_df = pd.DataFrame(
         missing_sic_qc, columns=["frosic2007", "questioncode"]
