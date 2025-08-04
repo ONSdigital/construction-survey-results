@@ -9,6 +9,7 @@ from cons_results.outputs.qa_output import produce_qa_output
 from cons_results.outputs.quarterly_by_sizeband_output import (
     get_quarterly_by_sizeband_output,
 )
+from cons_results.outputs.imputation_contribution_output import get_imputation_contribution_output
 from cons_results.utilities.utils import get_versioned_filename
 
 
@@ -19,6 +20,7 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
             "imputes_and_constructed_output": get_imputes_and_constructed_output,
             "quarterly_by_sizeband_output": get_quarterly_by_sizeband_output,
             "produce_qa_output": produce_qa_output,
+            "imputation_contribution_output": get_imputation_contribution_output,
         },
         additional_outputs_df,
     )
