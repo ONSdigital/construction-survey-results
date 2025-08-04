@@ -233,7 +233,7 @@ def flag_290_case(
     """
 
     df = responses.merge(contributors, how="left", on=["period", "reference"]).copy()
-    df = df[df["status"].isin(["Clear - overridden"])]
+    df = df[df["status"].isin(["Clear - overridden", "Clear"])]
 
     # Group and sum adjusted responses for question 290
     question_290_df = (
