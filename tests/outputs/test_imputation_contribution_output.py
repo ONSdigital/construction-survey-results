@@ -29,8 +29,11 @@ class TestImputationContributionOutput:
 
         expected_output = output_df
 
-        actual_output = get_imputation_contribution_output(
-            input_df, [41200, 41201, 42000, 42001], [201, 202, 211]
-        )
+        config = {
+            "imputation_contribution_sics": [41200, 41201, 42000, 42001],
+            "components_questions": [201, 202, 211],
+        }
+
+        actual_output = get_imputation_contribution_output(input_df, **config)
 
         assert_frame_equal(actual_output, expected_output)
