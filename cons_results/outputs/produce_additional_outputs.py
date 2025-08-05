@@ -2,6 +2,9 @@ import pandas as pd
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 from mbs_results.utilities.utils import convert_column_to_datetime
 
+from cons_results.outputs.imputation_contribution_output import (
+    get_imputation_contribution_output,
+)
 from cons_results.outputs.imputes_and_constructed_output import (
     get_imputes_and_constructed_output,
 )
@@ -9,7 +12,6 @@ from cons_results.outputs.qa_output import produce_qa_output
 from cons_results.outputs.quarterly_by_sizeband_output import (
     get_quarterly_by_sizeband_output,
 )
-from cons_results.outputs.imputation_contribution_output import get_imputation_contribution_output
 from cons_results.utilities.utils import get_versioned_filename
 
 

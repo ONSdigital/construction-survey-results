@@ -4,9 +4,7 @@ import numpy as np
 import pandas as pd
 
 
-def get_imputation_contribution_output(
-    additional_outputs_df: pd.DataFrame, **config
-):
+def get_imputation_contribution_output(additional_outputs_df: pd.DataFrame, **config):
     """
     Creates imputation contribution output
 
@@ -63,7 +61,11 @@ def get_imputation_contribution_output(
     output_sic_qc = set(
         output_df[["frosic2007", "questioncode"]].to_records(index=False).tolist()
     )
-    all_sic_qc = set(itertools.product(config["imputation_contribution_sics"], config["components_questions"]))
+    all_sic_qc = set(
+        itertools.product(
+            config["imputation_contribution_sics"], config["components_questions"]
+        )
+    )
     missing_sic_qc = list(all_sic_qc - output_sic_qc)
     missing_sic_df = pd.DataFrame(
         missing_sic_qc, columns=["frosic2007", "questioncode"]
