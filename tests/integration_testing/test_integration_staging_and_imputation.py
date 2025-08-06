@@ -86,7 +86,7 @@ def test_run_integration_parametrised(
         "imputation_flags_adjustedresponse",
         "skipped_question",
         "290_flag",
-        "is_total_only_and_zero"
+        "is_total_only_and_zero",
     ]
 
     # Load expected output DataFrame
@@ -113,9 +113,12 @@ def test_run_integration_parametrised(
     df_sorted["290_flag"] = df_sorted["290_flag"].astype(bool)
     expected_sorted["290_flag"] = expected_sorted["290_flag"].astype(bool)
 
-    df_sorted["is_total_only_and_zero"] = df_sorted["is_total_only_and_zero"].astype(bool)
-    expected_sorted["is_total_only_and_zero"] = expected_sorted["is_total_only_and_zero"].astype(bool)
-
+    df_sorted["is_total_only_and_zero"] = df_sorted["is_total_only_and_zero"].astype(
+        bool
+    )
+    expected_sorted["is_total_only_and_zero"] = expected_sorted[
+        "is_total_only_and_zero"
+    ].astype(bool)
 
     expected_sorted["skipped_question"] = expected_sorted["skipped_question"].astype(
         float

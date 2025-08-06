@@ -1,16 +1,17 @@
 import pandas as pd
 
+
 def flag_total_only_and_zero(
-        df: pd.DataFrame,
-        reference: str,
-        period: str,
-        values: str,
-        qcodes: str,
-        total_question_code:str = 290    
-        )-> pd.DataFrame:
+    df: pd.DataFrame,
+    reference: str,
+    period: str,
+    values: str,
+    qcodes: str,
+    total_question_code: str = 290,
+) -> pd.DataFrame:
     """
     Adds a new boolean column `is_total_only_and_zero` indicating if a
-    reference in a specific period has a total (default 290 question code) 
+    reference in a specific period has a total (default 290 question code)
     returned as zero and no returns for other question codes.
 
     Parameters
@@ -31,10 +32,10 @@ def flag_total_only_and_zero(
     Returns
     -------
     df :  pd.DataFrame
-        Original dataframe with `is_total_only_and_zero` column indicating 
+        Original dataframe with `is_total_only_and_zero` column indicating
         which reference per period this condition exists.
         .
-        
+
     Examples
     --------
     >>> data = {
@@ -66,22 +67,25 @@ def flag_total_only_and_zero(
      5  202201          3       4       0                   False
     """
 
-    df_with_conditions = df.groupby([reference,period]).agg(
+    df_with_conditions = df.groupby([reference, period]).agg(
         {
             # check if sum is zero
-            values: lambda x : (sum(x)==0),
-            #check only q290 exists no other questions
-            qcodes: lambda x : (all(x==total_question_code))
-         })
+            values: lambda x: (sum(x) == 0),
+            # check only q290 exists no other questions
+            qcodes: lambda x: (all(x == total_question_code)),
+        }
+    )
 
-    total_only_and_0 = df_with_conditions.loc[(df_with_conditions[values]) & (df_with_conditions[qcodes])]
+    total_only_and_0 = df_with_conditions.loc[
+        (df_with_conditions[values]) & (df_with_conditions[qcodes])
+    ]
 
     # initiliase flag column (default false)
     df["is_total_only_and_zero"] = False
-    
-    df = df.set_index([reference,period])
 
-    #set to true for indices(period,reference) in total_only_and_0
-    df.loc[total_only_and_0.index,"is_total_only_and_zero"] = True
+    df = df.set_index([reference, period])
+
+    # set to true for indices(period,reference) in total_only_and_0
+    df.loc[total_only_and_0.index, "is_total_only_and_zero"] = True
 
     return df.reset_index()

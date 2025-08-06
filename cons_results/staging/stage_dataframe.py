@@ -128,8 +128,8 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         staging_config["reference"],
         staging_config["period"],
         staging_config["target"],
-        staging_config["question_no"]
-        )
+        staging_config["question_no"],
+    )
 
     df = create_missing_questions(
         contributors=contributors,
@@ -144,7 +144,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     # Skipping questions for clear, clear overridden and nil contributors
     status_values_to_skip = ["Clear", "Clear - overridden"] + config["nil_values"]
-    #print(df[["period","reference","questioncode","is_total_only_and_zero"]])
+    # print(df[["period","reference","questioncode","is_total_only_and_zero"]])
     df = create_skipped_questions(
         df=df,
         all_questions=staging_config["components_questions"],
@@ -160,7 +160,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         flag_col_name="skipped_question",
         imputation_marker_col=staging_config["imputation_marker_col"],
     )
-    #print(df[["period","reference","questioncode","is_total_only_and_zero"]])
+    # print(df[["period","reference","questioncode","is_total_only_and_zero"]])
 
     df = pd.merge(
         left=df,
