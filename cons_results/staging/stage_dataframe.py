@@ -17,6 +17,7 @@ from cons_results.staging.create_missing_questions import create_missing_questio
 from cons_results.staging.create_skipped_questions import create_skipped_questions
 from cons_results.staging.derive_imputation_class import derive_imputation_class
 from cons_results.staging.live_or_frozen import run_live_or_frozen
+from cons_results.staging.total_as_zero import flag_total_only_and_zero
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
@@ -122,6 +123,14 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         staging_config["target"],
     )
 
+    responses = flag_total_only_and_zero(
+        responses,
+        staging_config["reference"],
+        staging_config["period"],
+        staging_config["target"],
+        staging_config["question_no"]
+        )
+
     df = create_missing_questions(
         contributors=contributors,
         responses=responses,
@@ -135,7 +144,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     # Skipping questions for clear, clear overridden and nil contributors
     status_values_to_skip = ["Clear", "Clear - overridden"] + config["nil_values"]
-
+    #print(df[["period","reference","questioncode","is_total_only_and_zero"]])
     df = create_skipped_questions(
         df=df,
         all_questions=staging_config["components_questions"],
@@ -151,6 +160,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         flag_col_name="skipped_question",
         imputation_marker_col=staging_config["imputation_marker_col"],
     )
+    #print(df[["period","reference","questioncode","is_total_only_and_zero"]])
 
     df = pd.merge(
         left=df,

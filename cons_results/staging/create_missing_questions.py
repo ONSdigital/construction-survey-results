@@ -98,16 +98,16 @@ def create_missing_questions(
     )
 
     q290 = responses.copy()
-
-    q290 = q290[q290[question_col] == 290].set_index([reference, period])["290_flag"]
+    q290 = q290[q290[question_col] == 290].set_index([reference, period])[["290_flag","is_total_only_and_zero"]]
 
     responses_questions = pd.concat([responses_questions, q290], axis=1)
 
-    responses_questions.loc[responses_questions["290_flag"], question_col] = np.nan
+    responses_questions.loc[(responses_questions["290_flag"]) | (responses_questions["is_total_only_and_zero"]), question_col] = np.nan
 
     responses_questions[question_col] = responses_questions[question_col].fillna(
         {row: all_questions for row in responses_questions.index}
-    )
+    )   
+  
 
     # Creating a new column to save list of questions to be created
     responses_questions["missing_questions_helper"] = (
@@ -115,6 +115,7 @@ def create_missing_questions(
         .map(set(components_questions).intersection)
         .map(list)
     )
+    
 
     # Sorting first by reference and then by period, for ffill
     expected_responses = (
@@ -142,15 +143,23 @@ def create_missing_questions(
     # We only have NAs for non-responders which should have False for 290_flag
     expected_responses["290_flag"] = expected_responses["290_flag"].fillna(False)
 
+    expected_responses["is_total_only_and_zero"] = expected_responses["is_total_only_and_zero"].fillna(False)
+
+
+    expected_responses.loc[expected_responses["is_total_only_and_zero"], question_col] = 290
+
+    print(expected_responses)
+
     expected_responses = expected_responses.explode(question_col, ignore_index=True)
 
     expected_rows_index = expected_responses.set_index(
-        [reference, period, question_col, "290_flag"]
+        [reference, period, question_col, "290_flag","is_total_only_and_zero"]
     ).index
 
-    responses = responses.set_index([reference, period, question_col, "290_flag"])
+    responses = responses.set_index([reference, period, question_col, "290_flag","is_total_only_and_zero"])
 
     responses_full = responses.reindex(expected_rows_index).reset_index()
+
 
     return responses_full
 
