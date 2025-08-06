@@ -32,6 +32,7 @@ class TestImputationContributionOutput:
         config = {
             "imputation_contribution_sics": [41200, 41201, 42000, 42001],
             "components_questions": [201, 202, 211],
+            "question_no": "questioncode",
         }
 
         actual_output = get_imputation_contribution_output(input_df, **config)
