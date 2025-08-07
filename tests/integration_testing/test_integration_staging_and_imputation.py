@@ -63,6 +63,7 @@ def load_config_temp():
         ("total_only_2.json", "expected_total_only_2.csv"),
         ("total_only_3.json", "expected_total_only_3.csv"),
         ("total_only_4.json", "expected_total_only_4.csv"),
+        ("total_as_zero.json", "total_as_zero.csv"),
     ],
 )
 def test_run_integration_parametrised(
@@ -85,6 +86,7 @@ def test_run_integration_parametrised(
         "imputation_flags_adjustedresponse",
         "skipped_question",
         "290_flag",
+        "is_total_only_and_zero",
     ]
 
     # Load expected output DataFrame
@@ -109,6 +111,14 @@ def test_run_integration_parametrised(
 
     # enforce bool to match testing dtype
     df_sorted["290_flag"] = df_sorted["290_flag"].astype(bool)
+    expected_sorted["290_flag"] = expected_sorted["290_flag"].astype(bool)
+
+    df_sorted["is_total_only_and_zero"] = df_sorted["is_total_only_and_zero"].astype(
+        bool
+    )
+    expected_sorted["is_total_only_and_zero"] = expected_sorted[
+        "is_total_only_and_zero"
+    ].astype(bool)
 
     expected_sorted["skipped_question"] = expected_sorted["skipped_question"].astype(
         float

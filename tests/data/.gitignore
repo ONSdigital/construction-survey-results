@@ -1,2 +1,2 @@
 # Ignore anything ending in .csv
-integration_testing*
+integration_testing*.csv

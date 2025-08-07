@@ -1,15 +1,15 @@
-reference,period,questioncode,status,imputation_flags_adjustedresponse,skipped_question,290_flag
-1,202501,1,Clear,r,FALSE,FALSE
-1,202501,2,Clear,r,FALSE,FALSE
-1,202501,3,Clear,r,FALSE,FALSE
-1,202501,4,Clear,r,TRUE,FALSE
-1,202501,5,Clear,r,TRUE,FALSE
-1,202501,6,Clear,r,TRUE,FALSE
-1,202501,290,Clear,r,FALSE,FALSE
-1,202502,1,Check needed,fir,FALSE,FALSE
-1,202502,2,Check needed,fir,FALSE,FALSE
-1,202502,3,Check needed,fir,FALSE,FALSE
-1,202502,4,Check needed,d,,FALSE
-1,202502,5,Check needed,d,,FALSE
-1,202502,6,Check needed,d,,FALSE
-1,202502,290,Check needed,d,,FALSE
+reference,period,questioncode,status,imputation_flags_adjustedresponse,skipped_question,290_flag,is_total_only_and_zero
+1,202501,1,Clear,r,FALSE,FALSE,FALSE
+1,202501,2,Clear,r,FALSE,FALSE,FALSE
+1,202501,3,Clear,r,FALSE,FALSE,FALSE
+1,202501,4,Clear,r,TRUE,FALSE,
+1,202501,5,Clear,r,TRUE,FALSE,
+1,202501,6,Clear,r,TRUE,FALSE,
+1,202501,290,Clear,r,FALSE,FALSE,FALSE
+1,202502,1,Check needed,fir,FALSE,FALSE,FALSE
+1,202502,2,Check needed,fir,FALSE,FALSE,FALSE
+1,202502,3,Check needed,fir,FALSE,FALSE,FALSE
+1,202502,4,Check needed,d,,FALSE,
+1,202502,5,Check needed,d,,FALSE,
+1,202502,6,Check needed,d,,FALSE,
+1,202502,290,Check needed,d,,FALSE,
