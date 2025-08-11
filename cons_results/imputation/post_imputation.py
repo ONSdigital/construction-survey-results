@@ -192,13 +192,16 @@ def derive_q290(
 
     df = df.merge(imputed_components_sum, on=[period, reference], how="left")
 
-    q290_mask = df[question_no] == 290
     df["imputed_components_sum"] = df["imputed_components_sum"].fillna(
         df[adjustedresponse]
     )
-    df.loc[q290_mask, adjustedresponse] = df.loc[q290_mask, "imputed_components_sum"]
 
-    df.loc[(q290_mask) & (df[imputation_flag] != "r"), imputation_flag] = "d"
+    q290_non_response = (df[question_no] == 290) & (df[imputation_flag] != "r")
+    df.loc[q290_non_response, adjustedresponse] = df.loc[
+        q290_non_response, "imputed_components_sum"
+    ]
+
+    df.loc[q290_non_response, imputation_flag] = "d"
 
     df = df.drop(columns=["imputed_components_sum"])
 
