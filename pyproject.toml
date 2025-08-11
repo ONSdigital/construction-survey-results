@@ -25,6 +25,7 @@ testpaths = [
 ]
 filterwarnings = [
     "ignore::UserWarning",
+    "ignore::DeprecationWarning:importlib"
 ]
 
 # `bandit' configurations
