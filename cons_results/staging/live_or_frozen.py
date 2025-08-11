@@ -77,7 +77,7 @@ def run_live_or_frozen(
 
         responses = responses.merge(con_in_error, how="outer", indicator=True)
 
-        frozen_responses_in_error = responses[(responses._merge == "both")]
+        frozen_responses_in_error = responses[(responses._merge == "both")].copy()
 
         frozen_responses_in_error[f"live_{target}"] = frozen_responses_in_error[
             target

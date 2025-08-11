@@ -145,11 +145,13 @@ def create_missing_questions(
     )
 
     # We only have NAs for non-responders which should have False for 290_flag
-    expected_responses["290_flag"] = expected_responses["290_flag"].fillna(False)
+    expected_responses["290_flag"] = (
+        expected_responses["290_flag"].fillna(0).astype(bool)
+    )
 
-    expected_responses["is_total_only_and_zero"] = expected_responses[
-        "is_total_only_and_zero"
-    ].fillna(False)
+    expected_responses["is_total_only_and_zero"] = (
+        expected_responses["is_total_only_and_zero"].fillna(0).astype(bool)
+    )
 
     expected_responses.loc[
         expected_responses["is_total_only_and_zero"], question_col

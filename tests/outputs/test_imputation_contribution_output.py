@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
@@ -10,18 +8,17 @@ from cons_results.outputs.imputation_contribution_output import (
 
 
 @pytest.fixture(scope="class")
-def filepath():
-    return Path("tests/data/outputs/imputation_contribution")
+def input_df(outputs_data_dir):
+    return pd.read_csv(
+        outputs_data_dir / "imputation_contribution" / "input.csv", index_col=False
+    )
 
 
 @pytest.fixture(scope="class")
-def input_df(filepath):
-    return pd.read_csv(filepath / "input.csv", index_col=False)
-
-
-@pytest.fixture(scope="class")
-def output_df(filepath):
-    return pd.read_csv(filepath / "output.csv", index_col=False)
+def output_df(outputs_data_dir):
+    return pd.read_csv(
+        outputs_data_dir / "imputation_contribution" / "output.csv", index_col=False
+    )
 
 
 class TestImputationContributionOutput:

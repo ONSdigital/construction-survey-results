@@ -61,7 +61,7 @@ def produce_quarterly_extracts(config: dict, df: pd.DataFrame):
                 config["question_no"],
                 config["target"],
             ]
-        ]
+        ].copy()
 
         # Create quarter column
         q_extracts_df[config["period"]] = convert_column_to_datetime(

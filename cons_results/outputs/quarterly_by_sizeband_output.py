@@ -39,7 +39,7 @@ def get_quarterly_by_sizeband_output(
             - Columns corresponding to question numbers, with aggregated values for
             each.
     """
-    filtered_data = additional_outputs_df[
+    filtered_data = additional_outputs_df.copy()[
         [
             config["period"],
             config["cell_number"],

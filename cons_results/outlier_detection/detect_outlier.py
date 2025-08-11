@@ -21,7 +21,7 @@ def detect_outlier(
     non_290 = pre_win[pre_win[config["question_no"]] != 290]
     q290_rows = pre_win[pre_win[config["question_no"]] == 290]
 
-    post_win = non_290.groupby(config["question_no"]).apply(
+    post_win = non_290.groupby(config["question_no"])[non_290.columns].apply(
         lambda df: winsorise(
             df,
             config["strata"],
