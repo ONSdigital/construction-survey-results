@@ -138,14 +138,8 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
             staging_config["bucket"],
         )
 
-        cols_to_keep = ["period", "reference", "questioncode"]
-
         manual_constructions = enforce_datatypes(
             manual_constructions, keep_columns=list(manual_constructions), **config
-        )
-
-        responses = responses.merge(
-            manual_constructions[cols_to_keep], on=cols_to_keep, how="outer"
         )
 
     else:
@@ -154,6 +148,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     df = create_missing_questions(
         contributors=contributors,
         responses=responses,
+        manual_constructions=manual_constructions,
         components_questions=staging_config["components_questions"],
         reference=staging_config["reference"],
         period=staging_config["period"],
