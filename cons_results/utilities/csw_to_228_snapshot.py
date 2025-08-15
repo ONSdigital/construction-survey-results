@@ -188,8 +188,8 @@ def remove_skipped_questions(
     for route_question, skipped_questions in route_skipped_questions.items():
 
         sub_df = df[[route_question] + skipped_questions]
-
-        all_zero_mask = sub_df[skipped_questions].sum(axis=1) == 0
+        #if yes/no the values in source will be saved as object and sum will fail
+        all_zero_mask = sub_df[skipped_questions].apply(pd.to_numeric).sum(axis=1) == 0
         route_is_no = sub_df[route_question].isin(no_values)
 
         remove_values = sub_df[all_zero_mask & route_is_no]
@@ -292,7 +292,8 @@ def create_construction_228_snapshot(
     In the below example `D:/con_test/qv_cp/` should have qv cp and sample
     files from 202201 until 202203
 
-    >>> create_construction_228_snapshot("D:/con_test/qv_cp/","D:/", 202303, 15)
+    >>> create_construction_228_snapshot(
+        "D:/con_test/qv_cp/","D:/", 202303, 15,["no",np.nan])
     """
 
     config = {"platform": "network", "bucket": None}
