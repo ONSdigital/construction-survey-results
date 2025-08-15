@@ -150,7 +150,7 @@ def create_skipped_questions(
 
     responses_full = pd.concat([responses_full, df_unfiltered], axis=0)
 
-    responses_full["290_flag"].fillna(False, inplace=True)
+    responses_full["290_flag"] = responses_full["290_flag"].fillna(0).astype(bool)
 
     return responses_full
 

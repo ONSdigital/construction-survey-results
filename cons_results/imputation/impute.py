@@ -38,7 +38,7 @@ def impute(
         imputation
     """
 
-    df = df.groupby(config["question_no"]).apply(
+    df = df.groupby(config["question_no"])[df.columns].apply(
         lambda df_q_code: ratio_of_means(
             df=df_q_code,
             manual_constructions=manual_constructions,
