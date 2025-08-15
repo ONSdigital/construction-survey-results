@@ -1,7 +1,7 @@
 from pathlib import Path
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
@@ -17,8 +17,14 @@ def filepath():
     "input_file,expected_output_file",
     [
         ("remove_skipped_questions_input.csv", "remove_skipped_questions_expected.csv"),
-        ("remove_skipped_questions_with_yes_no_input.csv", "remove_skipped_questions_with_yes_no_expected.csv"),
-        ("remove_skipped_questions_with_empty_input.csv", "remove_skipped_questions_with_empty_expected.csv"),
+        (
+            "remove_skipped_questions_with_yes_no_input.csv",
+            "remove_skipped_questions_with_yes_no_expected.csv",
+        ),
+        (
+            "remove_skipped_questions_with_empty_input.csv",
+            "remove_skipped_questions_with_empty_expected.csv",
+        ),
     ],
 )
 class TestRemoveSkippedQuestions:
@@ -31,7 +37,6 @@ class TestRemoveSkippedQuestions:
         skipped_questions_input = pd.read_csv(str(filepath / input_file))
         skipped_questions_expected = pd.read_csv(str(filepath / expected_output_file))
 
-
         actual_output = remove_skipped_questions(
             responses_df=skipped_questions_input,
             reference_col="reference",
@@ -43,7 +48,7 @@ class TestRemoveSkippedQuestions:
                 903: [221, 222],
                 904: [231, 232, 241, 242, 243],
             },
-            no_values=[2,"no",np.nan],
+            no_values=[2, "no", np.nan],
         )
 
         actual_output.sort_values(["period", "reference", "questioncode"], inplace=True)

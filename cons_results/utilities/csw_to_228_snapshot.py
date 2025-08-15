@@ -188,7 +188,7 @@ def remove_skipped_questions(
     for route_question, skipped_questions in route_skipped_questions.items():
 
         sub_df = df[[route_question] + skipped_questions]
-        #if yes/no the values in source will be saved as object and sum will fail
+        # if yes/no the values in source will be saved as object and sum will fail
         all_zero_mask = sub_df[skipped_questions].apply(pd.to_numeric).sum(axis=1) == 0
         route_is_no = sub_df[route_question].isin(no_values)
 
