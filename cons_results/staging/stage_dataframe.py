@@ -131,9 +131,24 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         staging_config["question_no"],
     )
 
+    if staging_config["manual_constructions_path"]:
+        manual_constructions = read_csv_wrapper(
+            staging_config["manual_constructions_path"],
+            staging_config["platform"],
+            staging_config["bucket"],
+        )
+
+        manual_constructions = enforce_datatypes(
+            manual_constructions, keep_columns=list(manual_constructions), **config
+        )
+
+    else:
+        manual_constructions = None
+
     df = create_missing_questions(
         contributors=contributors,
         responses=responses,
+        manual_constructions=manual_constructions,
         components_questions=staging_config["components_questions"],
         reference=staging_config["reference"],
         period=staging_config["period"],
@@ -178,15 +193,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         staging_config["cell_number"],
         staging_config["imputation_class"],
     )
-
-    if staging_config["manual_constructions_path"]:
-        manual_constructions = read_csv_wrapper(
-            staging_config["manual_constructions_path"],
-            staging_config["platform"],
-            staging_config["bucket"],
-        )
-    else:
-        manual_constructions = None
 
     if staging_config["filter"]:
         filter_df = read_csv_wrapper(
