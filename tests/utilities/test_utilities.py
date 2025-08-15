@@ -42,6 +42,7 @@ class TestRemoveSkippedQuestions:
                 903: [221, 222],
                 904: [231, 232, 241, 242, 243],
             },
+            no_values=[2],
         )
 
         actual_output.sort_values(["period", "reference", "questioncode"], inplace=True)
