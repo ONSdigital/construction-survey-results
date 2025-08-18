@@ -197,8 +197,6 @@ def create_missing_questions(
 
     responses_full = responses.reindex(expected_rows_index).reset_index()
 
-    responses_full.to_csv("question_no_na.csv", index=False)
-
     return responses_full
 
 
