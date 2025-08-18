@@ -40,6 +40,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     period = staging_config["period"]
     reference = staging_config["reference"]
     snapshot_file_path = staging_config["snapshot_file_path"]
+    snapshot_name = os.path.basename(snapshot_file_path).split(".")[0]
 
     contributors, responses = get_dfs_from_spp(
         snapshot_file_path,
@@ -63,11 +64,26 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     )
 
     responses = responses[staging_config["responses_keep_cols"]]
+
     responses = enforce_datatypes(
         responses, keep_columns=staging_config["responses_keep_cols"], **staging_config
     )
 
     responses = append_back_data(responses, staging_config)
+
+    responses = filter_out_questions(
+        df=responses,
+        column=staging_config["question_no"],
+        questions_to_filter=staging_config["filter_out_questions"],
+        save_full_path=staging_config["output_path"]
+        + snapshot_name
+        + "_filter_out_questions.csv",
+        **staging_config,
+    )
+
+    responses = enforce_datatypes(
+        responses, keep_columns=staging_config["responses_keep_cols"], **staging_config
+    )
 
     # Add an extra month to the revison window to include the back data
     staging_config["revision_window"] = config["revision_window"] + 1
@@ -88,18 +104,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         on=[period, reference],
         suffixes=["_spp", "_finalsel"],
         how="outer",
-    )
-
-    snapshot_name = os.path.basename(snapshot_file_path).split(".")[0]
-
-    responses = filter_out_questions(
-        df=responses,
-        column=staging_config["question_no"],
-        questions_to_filter=staging_config["filter_out_questions"],
-        save_full_path=staging_config["output_path"]
-        + snapshot_name
-        + "_filter_out_questions.csv",
-        **staging_config,
     )
 
     responses, frozen_responses_in_error = run_live_or_frozen(
@@ -159,7 +163,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     # Skipping questions for clear, clear overridden and nil contributors
     status_values_to_skip = ["Clear", "Clear - overridden"] + config["nil_values"]
-    # print(df[["period","reference","questioncode","is_total_only_and_zero"]])
+
     df = create_skipped_questions(
         df=df,
         all_questions=staging_config["components_questions"],
@@ -175,7 +179,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         flag_col_name="skipped_question",
         imputation_marker_col=staging_config["imputation_marker_col"],
     )
-    # print(df[["period","reference","questioncode","is_total_only_and_zero"]])
 
     df = pd.merge(
         left=df,
