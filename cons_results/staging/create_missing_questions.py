@@ -133,6 +133,10 @@ def create_missing_questions(
         [reference]
     )["missing_questions_helper"].ffill()
 
+    expected_responses["missing_questions_helper"] = expected_responses[
+        "missing_questions_helper"
+    ].fillna({row: components_questions for row in expected_responses.index})
+
     # Handling expected questions when they exist in manual constructions
     # it adds the manual constructions to expected questions and forwards fill
     if isinstance(manual_constructions, pd.DataFrame):
@@ -161,10 +165,6 @@ def create_missing_questions(
             ),
             axis=1,
         )
-
-    expected_responses["missing_questions_helper"] = expected_responses[
-        "missing_questions_helper"
-    ].fillna({row: components_questions for row in expected_responses.index})
 
     # question col now has list of questions which were in the responses
     # if question col is na it means that it was missing and we should use the
@@ -196,6 +196,8 @@ def create_missing_questions(
     )
 
     responses_full = responses.reindex(expected_rows_index).reset_index()
+
+    responses_full.to_csv("question_no_na.csv", index=False)
 
     return responses_full
 
