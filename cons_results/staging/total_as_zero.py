@@ -2,7 +2,8 @@ import pandas as pd
 
 
 def flag_total_only_and_zero(
-    df: pd.DataFrame,
+    responses: pd.DataFrame,
+    contributors: pd.DataFrame,
     reference: str,
     period: str,
     values: str,
@@ -16,8 +17,10 @@ def flag_total_only_and_zero(
 
     Parameters
     ----------
-    df : pd.DataFrame
-        Original dataframe.
+    responses : pd.DataFrame
+        Dataframe containing response-level data.
+    contributors : pd.DataFrame
+        Dataframe containing contributor-level data.
     reference : str
         Column containing reference values.
     period : str
@@ -67,7 +70,11 @@ def flag_total_only_and_zero(
      5  202201          3       4       0                   False
     """
 
-    df_with_conditions = df.groupby([reference, period]).agg(
+    df = responses.merge(contributors, how="left", on=[period, reference]).copy()
+
+    df_filtered = df[df["status"].isin(["Clear", "Clear - Overridden"])]
+
+    df_with_conditions = df_filtered.groupby([reference, period]).agg(
         {
             # check if sum is zero
             values: lambda x: (sum(x) == 0),
@@ -80,12 +87,12 @@ def flag_total_only_and_zero(
         (df_with_conditions[values]) & (df_with_conditions[qcodes])
     ]
 
-    # initiliase flag column (default false)
-    df["is_total_only_and_zero"] = False
+    # initialise flag column (default false)
+    responses["is_total_only_and_zero"] = False
 
-    df = df.set_index([reference, period])
+    responses = responses.set_index([reference, period])
 
     # set to true for indices(period,reference) in total_only_and_0
-    df.loc[total_only_and_0.index, "is_total_only_and_zero"] = True
+    responses.loc[total_only_and_0.index, "is_total_only_and_zero"] = True
 
-    return df.reset_index()
+    return responses.reset_index()
