@@ -1,23 +1,56 @@
-import pandas as pd
-import numpy as np
-
 def create_standard_errors(additional_outputs_df, **config):
     """
-    
+
 
     Parameters
     ----------
-    additional_outputs_df : TYPE
-        DESCRIPTION.
-    **config : TYPE
-        DESCRIPTION.
+    additional_outputs_df : pd.DataFrame
+        Dataframe with relevant variables for calculating standard errors
+    **config : dict
+        Configuration containing variable names for additional_outputs_df
 
     Returns
     -------
-    None.
+    pd.DataFrame
+        DataFrame containing standard errors, sample variances and coefficients
+        of variation
 
     """
-    
-    #TODO: Std errors created from unweighted or weighted vals?
-    
-    
+
+    df = additional_outputs_df.groupby(
+        [config["period"], config["sic"], config["cell_number"], config["question_no"]]
+    )
+
+    sample_var = (
+        df.var(ddof=1).reset_index().rename(columns={config["target"]: "sample_var"})
+    )
+    standard_error = (
+        df.sem(ddof=1).reset_index().rename(columns={config["target"]: "std_error"})
+    )
+    variation = (
+        df[config["target"]]
+        .agg(lambda x: x.std(ddof=1) / x.mean() * 100)
+        .reset_index()
+        .rename(columns={config["target"]: "cov"})
+    )
+
+    df = sample_var.merge(
+        standard_error,
+        on=[
+            config["period"],
+            config["sic"],
+            config["cell_number"],
+            config["question_no"],
+        ],
+    ).merge(
+        variation,
+        on=[
+            config["period"],
+            config["sic"],
+            config["cell_number"],
+            config["question_no"],
+        ],
+    )
+    df = df.round({"sample_var": 3, "std_error": 3, "cov": 3})
+
+    return df
