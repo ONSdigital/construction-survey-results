@@ -79,12 +79,11 @@ def impute(
     # derived zeros types is object, has true false and na
     df.loc[df["derived_zeros"] == 1, config["imputation_marker_col"]] = "d"
 
-    # Updating derived_zeros with converted auxiliary values
-    # derived_zeros has nans so needs the == True
-    derived_zeros = df[df["derived_zeros"] == True]  # noqa
+    # Updating derived questions with converted auxiliary values
+    null_rows = df[df[config["auxiliary_converted"]].isna()]
 
     updated_rows = convert_annual_thousands(
-        derived_zeros, config["auxiliary_converted"], config["auxiliary"]
+        null_rows, config["auxiliary_converted"], config["auxiliary"]
     )
 
     df.loc[updated_rows.index, config["auxiliary_converted"]] = updated_rows[
