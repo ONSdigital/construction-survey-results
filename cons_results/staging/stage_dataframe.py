@@ -187,8 +187,9 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         how="left",
     )
 
-    df[staging_config["auxiliary_converted"]] = df[staging_config["auxiliary"]].copy()
-    df = convert_annual_thousands(df, staging_config["auxiliary_converted"])
+    df = convert_annual_thousands(
+        df, staging_config["auxiliary_converted"], staging_config["auxiliary"]
+    )
 
     df = derive_imputation_class(
         df,

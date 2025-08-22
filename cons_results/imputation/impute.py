@@ -1,5 +1,6 @@
 import pandas as pd
 from mbs_results.imputation.ratio_of_means import ratio_of_means
+from mbs_results.staging.data_cleaning import convert_annual_thousands
 
 from cons_results.imputation.post_imputation import (
     create_q290,
@@ -77,6 +78,17 @@ def impute(
 
     # derived zeros types is object, has true false and na
     df.loc[df["derived_zeros"] == 1, config["imputation_marker_col"]] = "d"
+
+    # Updating derived questions with converted auxiliary values
+    null_rows = df[df[config["auxiliary_converted"]].isna()]
+
+    updated_rows = convert_annual_thousands(
+        null_rows, config["auxiliary_converted"], config["auxiliary"]
+    )
+
+    df.loc[updated_rows.index, config["auxiliary_converted"]] = updated_rows[
+        config["auxiliary_converted"]
+    ]
 
     df = rescale_290_case(
         df,
