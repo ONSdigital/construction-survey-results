@@ -61,5 +61,5 @@ def test_flag_total_only_and_zero(responses_df, contributors_df, expected_output
     actual_output = flag_total_only_and_zero(
         responses_df, contributors_df, "reference", "period", "values", "qcodes"
     )
-    
+
     assert_frame_equal(actual_output, expected_output_df)
