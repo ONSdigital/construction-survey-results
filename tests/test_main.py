@@ -36,6 +36,11 @@ def test_config(filepath):
         "state": "frozen",
         "optional_outputs": ["all"],
         "produce_quarterly_extracts": True,
+        "period": "period",
+        "sic": "frosic2007",
+        "question_no": "questioncode",
+        "target": "adjustedresponse",
+        "cell_number": "cell_no",
     }
 
 
