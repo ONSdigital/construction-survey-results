@@ -1,6 +1,7 @@
 def create_standard_errors(additional_outputs_df, **config):
     """
-
+    Function to create standard errors, sample variances and coefficients of
+    variation across period-SIC-cell number-question number groupings.
 
     Parameters
     ----------
