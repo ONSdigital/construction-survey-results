@@ -17,6 +17,7 @@ from cons_results.staging.create_missing_questions import create_missing_questio
 from cons_results.staging.create_skipped_questions import create_skipped_questions
 from cons_results.staging.derive_imputation_class import derive_imputation_class
 from cons_results.staging.live_or_frozen import run_live_or_frozen
+from cons_results.staging.total_as_zero import flag_total_only_and_zero
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
@@ -39,6 +40,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     period = staging_config["period"]
     reference = staging_config["reference"]
     snapshot_file_path = staging_config["snapshot_file_path"]
+    snapshot_name = os.path.basename(snapshot_file_path).split(".")[0]
 
     contributors, responses = get_dfs_from_spp(
         snapshot_file_path,
@@ -62,11 +64,26 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     )
 
     responses = responses[staging_config["responses_keep_cols"]]
+
     responses = enforce_datatypes(
         responses, keep_columns=staging_config["responses_keep_cols"], **staging_config
     )
 
     responses = append_back_data(responses, staging_config)
+
+    responses = filter_out_questions(
+        df=responses,
+        column=staging_config["question_no"],
+        questions_to_filter=staging_config["filter_out_questions"],
+        save_full_path=staging_config["output_path"]
+        + snapshot_name
+        + "_filter_out_questions.csv",
+        **staging_config,
+    )
+
+    responses = enforce_datatypes(
+        responses, keep_columns=staging_config["responses_keep_cols"], **staging_config
+    )
 
     # Add an extra month to the revison window to include the back data
     staging_config["revision_window"] = config["revision_window"] + 1
@@ -87,18 +104,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         on=[period, reference],
         suffixes=["_spp", "_finalsel"],
         how="outer",
-    )
-
-    snapshot_name = os.path.basename(snapshot_file_path).split(".")[0]
-
-    responses = filter_out_questions(
-        df=responses,
-        column=staging_config["question_no"],
-        questions_to_filter=staging_config["filter_out_questions"],
-        save_full_path=staging_config["output_path"]
-        + snapshot_name
-        + "_filter_out_questions.csv",
-        **staging_config,
     )
 
     responses, frozen_responses_in_error = run_live_or_frozen(
@@ -122,9 +127,32 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         staging_config["target"],
     )
 
+    responses = flag_total_only_and_zero(
+        responses,
+        staging_config["reference"],
+        staging_config["period"],
+        staging_config["target"],
+        staging_config["question_no"],
+    )
+
+    if staging_config["manual_constructions_path"]:
+        manual_constructions = read_csv_wrapper(
+            staging_config["manual_constructions_path"],
+            staging_config["platform"],
+            staging_config["bucket"],
+        )
+
+        manual_constructions = enforce_datatypes(
+            manual_constructions, keep_columns=list(manual_constructions), **config
+        )
+
+    else:
+        manual_constructions = None
+
     df = create_missing_questions(
         contributors=contributors,
         responses=responses,
+        manual_constructions=manual_constructions,
         components_questions=staging_config["components_questions"],
         reference=staging_config["reference"],
         period=staging_config["period"],
@@ -159,8 +187,9 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         how="left",
     )
 
-    df[staging_config["auxiliary_converted"]] = df[staging_config["auxiliary"]].copy()
-    df = convert_annual_thousands(df, staging_config["auxiliary_converted"])
+    df = convert_annual_thousands(
+        df, staging_config["auxiliary_converted"], staging_config["auxiliary"]
+    )
 
     df = derive_imputation_class(
         df,
@@ -168,15 +197,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         staging_config["cell_number"],
         staging_config["imputation_class"],
     )
-
-    if staging_config["manual_constructions_path"]:
-        manual_constructions = read_csv_wrapper(
-            staging_config["manual_constructions_path"],
-            staging_config["platform"],
-            staging_config["bucket"],
-        )
-    else:
-        manual_constructions = None
 
     if staging_config["filter"]:
         filter_df = read_csv_wrapper(

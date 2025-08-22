@@ -19,3 +19,7 @@ period,reference,question_no,adjustedresponse,imputation_flag,290_flag
 202209,1,211,0,r,True
 202209,1,221,0,r,True
 202209,1,210,0,r,True
+202212,1,290,10,r,False
+202212,1,211,0,d,False
+202212,1,221,5,r,False
+202212,1,201,5,r,False

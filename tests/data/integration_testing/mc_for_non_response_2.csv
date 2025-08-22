@@ -1,0 +1,22 @@
+reference,period,questioncode,status,imputation_flags_adjustedresponse
+1,202501,1,Clear,r
+1,202501,2,Clear,r
+1,202501,3,Clear,r
+1,202501,4,Clear,r
+1,202501,5,Clear,r
+1,202501,6,Clear,r
+1,202501,290,Clear,r
+1,202502,1,Form sent out,mc
+1,202502,2,Form sent out,fir
+1,202502,3,Form sent out,fir
+1,202502,4,Form sent out,d
+1,202502,5,Form sent out,d
+1,202502,6,Form sent out,d
+1,202502,290,Form sent out,d
+1,202503,1,Form sent out,fimc
+1,202503,2,Form sent out,fir
+1,202503,3,Form sent out,fir
+1,202503,4,Form sent out,d
+1,202503,5,Form sent out,d
+1,202503,6,Form sent out,d
+1,202503,290,Form sent out,d
