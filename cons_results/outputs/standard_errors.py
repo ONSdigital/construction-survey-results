@@ -18,7 +18,7 @@ def create_standard_errors(additional_outputs_df, **config):
 
     """
 
-    df = additional_outputs_df.groupby(
+    df = additional_outputs_df.astype({config["target"]: float}).groupby(
         [config["period"], config["sic"], config["cell_number"], config["question_no"]]
     )
 
