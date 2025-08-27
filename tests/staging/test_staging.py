@@ -27,6 +27,4 @@ def test_flag_290_case(filepath):
         "adjustedresponse",
     )
 
-    print(output_df)
-
     assert_frame_equal(output_df, expected_output_df)
