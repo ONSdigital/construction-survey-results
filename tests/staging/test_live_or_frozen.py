@@ -53,6 +53,8 @@ def test_run_live_or_frozen():
         question_no="questioncode",
         target="target",
         status="error_column",
+        current_period=202202,
+        revision_window=2,
         state="frozen",
         error_values=[201],
     )
