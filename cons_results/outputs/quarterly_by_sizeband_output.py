@@ -48,6 +48,13 @@ def get_quarterly_by_sizeband_output(
         ]
     ]
 
+    # selecting only components + q290 (so not to include filtered qs with no cell no)
+    filtered_data = filtered_data[
+        filtered_data[config["question_no"]].isin(
+            config["components_questions"] + [290]
+        )
+    ]
+
     filtered_data["sizeband"] = np.where(
         filtered_data[config["cell_number"]].isna(),
         filtered_data[config["cell_number"]],
