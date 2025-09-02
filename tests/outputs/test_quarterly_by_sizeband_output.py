@@ -35,6 +35,7 @@ def config():
         "question_no": "questioncode",
         "target": "adjustedresponse",
         "cell_number": "cell_no",
+        "components_questions": [1001, 1002],
     }
 
 
