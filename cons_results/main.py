@@ -65,7 +65,7 @@ def run_pipeline(config_user_dict=None):
     )
 
     additional_outputs_df = get_additional_outputs_df(
-        estimation_output, outlier_detection_output
+        estimation_output, outlier_detection_output, config
     )
 
     produce_additional_outputs(config, additional_outputs_df)
