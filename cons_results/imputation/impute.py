@@ -86,9 +86,15 @@ def impute(
         null_rows, config["auxiliary_converted"], config["auxiliary"]
     )
 
+    updated_rows.set_index(["reference", "period", "questioncode"], inplace=True)
+
+    df.set_index(["reference", "period", "questioncode"], inplace=True)
+
     df.loc[updated_rows.index, config["auxiliary_converted"]] = updated_rows[
         config["auxiliary_converted"]
     ]
+
+    df.reset_index(inplace=True)
 
     df = rescale_290_case(
         df,
