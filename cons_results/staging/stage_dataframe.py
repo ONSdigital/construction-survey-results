@@ -131,6 +131,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     responses = flag_total_only_and_zero(
         responses,
+        contributors,
         staging_config["reference"],
         staging_config["period"],
         staging_config["target"],
