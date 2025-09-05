@@ -28,6 +28,8 @@ def get_cord_output(
     cord_output_df = get_growth_rates_output(additional_outputs_df, **config)
 
     # Map sizeband from numeric -> character
+    cord_output_df["sizeband"] = cord_output_df["sizeband"].astype(str)
+
     cord_output_df["sizeband"] = cord_output_df["sizeband"].replace(
         config["sizeband_numeric_to_character"]
     )
