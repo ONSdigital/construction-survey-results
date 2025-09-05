@@ -1,0 +1,35 @@
+import pandas as pd
+from mbs_results.outputs.growth_rates_output import get_growth_rates_output
+
+
+def get_cord_output(
+    additional_outputs_df: pd.DataFrame, **config: dict
+) -> pd.DataFrame:
+    """Generate CORD output DataFrame. Uses MBS' get_growth_rates_output
+    for most of the reformatting since this is doing the same thing.
+
+    Parameters
+    ----------
+    additional_outputs_df : pd.DataFrame
+        DataFrame containing variables needed for additional outputs.
+    config : dict
+        Configuration dictionary containing necessary parameters.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame formatted for CORD output.
+    """
+    # Filter to only components questions
+    additional_outputs_df = additional_outputs_df[
+        additional_outputs_df["questioncode"].isin(config["components_questions"])
+    ]
+
+    cord_output_df = get_growth_rates_output(additional_outputs_df, **config)
+
+    # Map sizeband from numeric -> character
+    cord_output_df["sizeband"] = cord_output_df["sizeband"].replace(
+        config["sizeband_numeric_to_character"]
+    )
+
+    return cord_output_df
