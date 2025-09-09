@@ -64,6 +64,7 @@ def load_config_temp():
         ("total_only_3.json", "expected_total_only_3.csv"),
         ("total_only_4.json", "expected_total_only_4.csv"),
         ("total_as_zero.json", "total_as_zero.csv"),
+        ("dereceipted_status.json", "expected_dereceipted_status.csv"),
     ],
 )
 def test_run_integration_parametrised(
