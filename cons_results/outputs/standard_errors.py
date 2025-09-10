@@ -1,3 +1,6 @@
+from mbs_results.outputs.growth_rates_output import get_growth_rates_output
+
+
 def create_standard_errors(additional_outputs_df, **config):
     """
     Function to create standard errors, sample variances and coefficients of
@@ -18,16 +21,19 @@ def create_standard_errors(additional_outputs_df, **config):
 
     """
 
+    print("Columns in input df: ", additional_outputs_df.columns, sep="\n")
+
+
     df = additional_outputs_df[
         [
             config["period"],
-            config["sic"],
+            "classification",
             config["cell_number"],
             config["question_no"],
             config["target"],
         ]
     ].groupby(
-        [config["period"], config["sic"], config["cell_number"], config["question_no"]]
+        [config["period"], "classification", config["cell_number"], config["question_no"]]
     )
 
     sample_var = (
@@ -47,7 +53,7 @@ def create_standard_errors(additional_outputs_df, **config):
         standard_error,
         on=[
             config["period"],
-            config["sic"],
+            "classification",
             config["cell_number"],
             config["question_no"],
         ],
@@ -55,7 +61,7 @@ def create_standard_errors(additional_outputs_df, **config):
         variation,
         on=[
             config["period"],
-            config["sic"],
+            "classification",
             config["cell_number"],
             config["question_no"],
         ],
