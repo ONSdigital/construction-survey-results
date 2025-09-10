@@ -155,5 +155,17 @@
     "Part year return (NIL8)",
     "No UK activity (NIL9)"],
 
+    "sizeband_numeric_to_character": {
+        "1": "A",
+        "2": "B",
+        "3": "C",
+        "4": "D",
+        "5": "E",
+        "6": "F",
+        "7": "G",
+        "8": "H",
+        "9": "I"
+    },
+
     "pounds_thousands_questions": [201, 202, 211, 212, 221, 222, 231, 232, 241, 242, 243, 290]
 }

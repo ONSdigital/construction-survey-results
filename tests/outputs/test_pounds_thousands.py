@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-
 from mbs_results.utilities.pounds_thousands import create_pounds_thousands_column
 
 
