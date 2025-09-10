@@ -44,6 +44,6 @@ def validate_snapshot(
         warning_message = f"""There are {len(non_response_in_responses)} period and
         reference groupings that are listed as non-response statuses in contributors
         but are present in responses. The first 5 (or less) of these are:
-    {indices[:min(5, len(non_response_in_responses))].to_list()}"""
+    {indices[:min(5, len(non_response_in_responses))].to_list()}"""  # noqa
 
         warnings.warn(warning_message)
