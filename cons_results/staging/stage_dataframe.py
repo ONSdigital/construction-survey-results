@@ -57,7 +57,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         period=staging_config["period"],
         non_response_statuses=["Form sent out", "Excluded from results"]  # noqa
         + config["nil_values"],  # noqa
-    )
+    )  # noqa
 
     # Filter columns and set data types
     contributors = contributors[staging_config["contributors_keep_cols"]]
