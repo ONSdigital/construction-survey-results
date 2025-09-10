@@ -30,7 +30,7 @@ def validate_snapshot(
     non_response_statuses : list
         A list of statuses that should be treated as non-responders. These
         should be present in the `status` column of the contributors dataframe.
-        
+
 
     Raises
     ------
@@ -40,18 +40,23 @@ def validate_snapshot(
     """
     non_responses = contributors[contributors[status].isin(non_response_statuses)]
 
-    non_responses = non_responses.set_index([reference, period])
+    if len(non_responses) > 0:
 
-    responses = responses.set_index([reference, period])
+        non_responses = non_responses.set_index([reference, period])
+        responses = responses.set_index([reference, period])
 
-    non_response_in_responses = responses.loc[non_responses.index]
+        non_response_in_responses = responses.index.intersection(non_responses.index)
 
-    indices = non_response_in_responses.index
+        if len(non_response_in_responses) > 0:
+            warning_message = f"""There are {len(non_response_in_responses)} period and
+            reference groupings that are listed as non-response statuses in contributors
+            but are present in responses. The first 5 (or less) of these are:
+        {non_response_in_responses[:min(5, len(non_response_in_responses))].to_list()}"""  # noqa
 
-    if len(non_response_in_responses) > 0:
-        warning_message = f"""There are {len(non_response_in_responses)} period and
-        reference groupings that are listed as non-response statuses in contributors
-        but are present in responses. The first 5 (or less) of these are:
-    {indices[:min(5, len(non_response_in_responses))].to_list()}"""  # noqa
+            warnings.warn(warning_message)
 
-        warnings.warn(warning_message)
+    else:
+        warnings.warn(
+            f"""No instances of status {','.join(non_response_statuses)}
+                      in the status column in contributors"""
+        )
