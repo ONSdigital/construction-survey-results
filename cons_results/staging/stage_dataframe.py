@@ -52,7 +52,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     validate_snapshot(
         responses=responses,
         contributors=contributors,
-        status=staging_config["status"],
+        status="status",
         reference=staging_config["reference"],
         period=staging_config["period"],
         non_response_statuses=["Form sent out", "De-Receipted"],
