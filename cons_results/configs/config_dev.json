@@ -27,6 +27,7 @@
     "l_value_question_no": "questioncode",
     "froempment": "froempment",
     "nil_status_col": "status",
+    "pound_thousand_col": "adjustedresponse_pounds_thousands",
 
     "master_column_type_dict" : {
         "reference": "int",
@@ -152,5 +153,7 @@
 
     "nil_values" : ["Combined child (NIL2)", "Out of scope (NIL3)", "Ceased trading (NIL4)" ,"Dormant (NIL5)",
     "Part year return (NIL8)",
-    "No UK activity (NIL9)"]
+    "No UK activity (NIL9)"],
+
+    "pounds_thousands_questions": [201, 202, 211, 212, 221, 222, 231, 232, 241, 242, 243, 290]
 }
