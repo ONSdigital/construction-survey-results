@@ -55,7 +55,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         status="status",
         reference=staging_config["reference"],
         period=staging_config["period"],
-        non_response_statuses=["Form sent out", "De-Receipted"],
+        non_response_statuses=["Form sent out", "Excluded from results"],
     )
 
     # Filter columns and set data types

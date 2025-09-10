@@ -41,7 +41,7 @@ class TestValidateSnapshot:
                 status="status",
                 reference="reference",
                 period="period",
-                non_response_statuses=["Form sent out", "De-Receipted"],
+                non_response_statuses=["Form sent out", "Excluded from results"],
             )
 
         assert """There are 2 period and
