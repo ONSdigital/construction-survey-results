@@ -21,8 +21,16 @@ def validate_snapshot(
         DataFrame containing survey responses.
     contributors : pd.DataFrame
         DataFrame containing contributor information.
-    config : dict
-        Configuration dictionary containing column names.
+    status : str
+        The name of the column containing the status variable.
+    reference : str
+        The name of the column containing the reference variable.
+    period : str
+        The name of the column containing the period (date) variable.
+    non_response_statuses : list
+        A list of statuses that should be treated as non-responders. These
+        should be present in the `status` column of the contributors dataframe.
+        
 
     Raises
     ------
