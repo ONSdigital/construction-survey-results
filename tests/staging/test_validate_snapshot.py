@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 
 import pandas as pd
@@ -29,12 +28,15 @@ def responses_input(filepath):
 class TestValidateSnapshot:
     def test_validate_snapshot(
         self,
-        caplog,
         contributors,
         responses_input,
     ):
-
-        with caplog.at_level(logging.WARN):
+        with pytest.warns(
+            Warning,
+            match="""There are 2 period and
+            reference groupings that are listed as non-response statuses in contributors
+            but are present in responses.""",
+        ):
             validate_snapshot(
                 responses=responses_input,
                 contributors=contributors,
@@ -43,7 +45,3 @@ class TestValidateSnapshot:
                 period="period",
                 non_response_statuses=["Form sent out", "Excluded from results"],
             )
-
-        assert """There are 2 period and
-    reference groupings that are listed as non-response statuses in contributors
-    but are present in responses."""
