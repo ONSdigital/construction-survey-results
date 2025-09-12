@@ -27,6 +27,7 @@
     "l_value_question_no": "questioncode",
     "froempment": "froempment",
     "nil_status_col": "status",
+    "pound_thousand_col": "adjustedresponse_pounds_thousands",
 
     "master_column_type_dict" : {
         "reference": "int",
@@ -164,5 +165,7 @@
         "7": "G",
         "8": "H",
         "9": "I"
-    }
+    },
+
+    "pounds_thousands_questions": [201, 202, 211, 212, 221, 222, 231, 232, 241, 242, 243, 290]
 }
