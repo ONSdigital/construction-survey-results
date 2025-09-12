@@ -1,7 +1,0 @@
-period,reference,questioncode,adjustedresponse,imputation_flags_adjustedresponse,adjustedresponse_pounds_thousands
-202201,1,201,25001,fir,25.001
-202201,2,202,10005,bir,10.005
-202201,3,231,100001,bir,100.001
-202202,4,203,123456,r,123456
-202202,5,204,20055,fimc,20055
-202202,5,290,678901,fimc,678.901
