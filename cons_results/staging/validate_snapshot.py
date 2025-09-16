@@ -59,7 +59,7 @@ def validate_snapshot(
                 but are present in responses. The first 5 (or less) of these
                 are: {warning_info}
                 """
-            )  # noqa
+            )
 
     else:
         warning_info = ", ".join(non_response_statuses)
