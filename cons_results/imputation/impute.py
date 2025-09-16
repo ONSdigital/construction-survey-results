@@ -94,7 +94,7 @@ def impute(
         config["auxiliary_converted"]
     ]
 
-    df.reset_index(inplace=True)
+    df.reset_index(drop=True, inplace=True)
 
     df = rescale_290_case(
         df,
