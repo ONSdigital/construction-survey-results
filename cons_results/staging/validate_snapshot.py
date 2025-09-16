@@ -56,9 +56,7 @@ def validate_snapshot(
             warnings.warn(warning_message)
 
     else:
-        warnings.warn(
-            f"""
-            No instances of status {','.join(non_response_statuses)}
-            in the status column in contributors
-            """
-        )
+        warning_message = f"""No instances of status {','.join(non_response_statuses)}
+        in the status column in contributors """
+
+        warnings.warn(warning_message)
