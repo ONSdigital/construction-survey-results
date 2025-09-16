@@ -33,9 +33,7 @@ class TestValidateSnapshot:
     ):
         with pytest.warns(
             Warning,
-            match="""There are 2 period and
-            reference groupings that are listed as non-response statuses in contributors
-            but are present in responses.""",
+            match=r"2 period and reference",
         ):
             validate_snapshot(
                 responses=responses_input,

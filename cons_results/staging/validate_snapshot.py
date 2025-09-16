@@ -48,16 +48,23 @@ def validate_snapshot(
         non_response_in_responses = responses.index.intersection(non_responses.index)
 
         if len(non_response_in_responses) > 0:
-            warning_message = f"""There are {len(non_response_in_responses)} period and
-            reference groupings that are listed as non-response statuses in contributors
-            but are present in responses. The first 5 (or less) of these are:
-        {non_response_in_responses[:min(5, len(non_response_in_responses))].to_list()}"""  # noqa
+            warning_info = non_response_in_responses[
+                : min(5, len(non_response_in_responses))
+            ].to_list()
 
-            warnings.warn(warning_message)
+            warnings.warn(
+                f"""
+                There are {len(non_response_in_responses)} period and reference
+                groupings that are listed as non-response statuses in contributors
+                but are present in responses. The first 5 (or less) of these
+                are: {warning_info}
+                """
+            )  # noqa
 
     else:
-        warning_message = f"""No instances of status
-        {','.join(non_response_statuses)} in
-        the status column in contributors"""
+        warning_info = ", ".join(non_response_statuses)
 
-        warnings.warn(warning_message)
+        warnings.warn(
+            f"""No instances of status {warning_info} in
+            the status column in contributors"""
+        )
