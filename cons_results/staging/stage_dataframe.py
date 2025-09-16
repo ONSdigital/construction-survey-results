@@ -18,6 +18,7 @@ from cons_results.staging.create_skipped_questions import create_skipped_questio
 from cons_results.staging.derive_imputation_class import derive_imputation_class
 from cons_results.staging.live_or_frozen import run_live_or_frozen
 from cons_results.staging.total_as_zero import flag_total_only_and_zero
+from cons_results.staging.validate_snapshot import validate_snapshot
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
@@ -47,6 +48,16 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         staging_config["platform"],
         staging_config["bucket"],
     )
+
+    validate_snapshot(
+        responses=responses,
+        contributors=contributors,
+        status="status",
+        reference=staging_config["reference"],
+        period=staging_config["period"],
+        non_response_statuses=["Form sent out", "Excluded from results"]  # noqa
+        + config["nil_values"],  # noqa
+    )  # noqa
 
     # Filter columns and set data types
     contributors = contributors[staging_config["contributors_keep_cols"]]
