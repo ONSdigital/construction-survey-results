@@ -23,17 +23,17 @@ def create_standard_errors(additional_outputs_df, **config):
     df = additional_outputs_df[
         [
             config["period"],
+            config["question_no"],
             "classification",
             config["cell_number"],
-            config["question_no"],
             config["target"],
         ]
     ].groupby(
         [
             config["period"],
+            config["question_no"],
             "classification",
             config["cell_number"],
-            config["question_no"],
         ]
     )
 
