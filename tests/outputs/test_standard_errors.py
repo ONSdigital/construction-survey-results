@@ -13,7 +13,6 @@ def filepath():
 def sample_config(filepath):
     return {
         "period": "period",
-        "sic": "frosic2007",
         "question_no": "questioncode",
         "target": "adjustedresponse",
         "cell_number": "cell_no",
