@@ -22,7 +22,7 @@ def get_imputation_contribution_output(additional_outputs_df: pd.DataFrame, **co
 
     """
 
-    df = additional_outputs_df
+    df = additional_outputs_df.copy()
 
     question_no = config["question_no"]
 
