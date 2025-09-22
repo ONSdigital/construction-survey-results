@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
@@ -7,27 +8,32 @@ from cons_results.utilities.csw_to_228_snapshot import remove_skipped_questions
 
 @pytest.fixture(scope="class")
 def filepath(utilities_data_dir):
-    return utilities_data_dir / "remove_skipped_questions"
+    return utilities_data_dir / "remove_skipped_questions/"
 
 
-@pytest.fixture(scope="class")
-def skipped_questions_input(filepath):
-    return pd.read_csv(filepath / "remove_skipped_questions_input.csv", index_col=False)
-
-
-@pytest.fixture(scope="class")
-def skipped_questions_expected(filepath):
-    return pd.read_csv(
-        filepath / "remove_skipped_questions_expected.csv", index_col=False
-    )
-
-
+@pytest.mark.parametrize(
+    "input_file,expected_output_file",
+    [
+        ("remove_skipped_questions_input.csv", "remove_skipped_questions_expected.csv"),
+        (
+            "remove_skipped_questions_with_yes_no_input.csv",
+            "remove_skipped_questions_with_yes_no_expected.csv",
+        ),
+        (
+            "remove_skipped_questions_with_empty_input.csv",
+            "remove_skipped_questions_with_empty_expected.csv",
+        ),
+    ],
+)
 class TestRemoveSkippedQuestions:
     def test_remove_skipped_questions(
         self,
-        skipped_questions_input,
-        skipped_questions_expected,
+        filepath,
+        input_file,
+        expected_output_file,
     ):
+        skipped_questions_input = pd.read_csv(str(filepath / input_file))
+        skipped_questions_expected = pd.read_csv(str(filepath / expected_output_file))
 
         actual_output = remove_skipped_questions(
             responses_df=skipped_questions_input,
@@ -40,6 +46,7 @@ class TestRemoveSkippedQuestions:
                 903: [221, 222],
                 904: [231, 232, 241, 242, 243],
             },
+            no_values=[2, "no", np.nan],
         )
 
         actual_output.sort_values(["period", "reference", "questioncode"], inplace=True)

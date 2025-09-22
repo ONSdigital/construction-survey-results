@@ -1,6 +1,7 @@
 from typing import List
 
 import pandas as pd
+from mbs_results.utilities.utils import convert_column_to_datetime
 
 
 def run_live_or_frozen(
@@ -11,6 +12,8 @@ def run_live_or_frozen(
     question_no,
     target: str or list[str],
     status: str,
+    current_period: int,
+    revision_window: int,
     state: str = "live",
     error_values: List[str] = ["Check needed"],
 ) -> (pd.DataFrame, pd.DataFrame):
@@ -38,6 +41,10 @@ def run_live_or_frozen(
         Column name with question_no variable
     status : str
         Column containing error status.
+    current_period : int
+        Current period to in YYYYMM format, this it used to calculate backdata period
+    revision_window : int
+        Revision window in months, this it used to calculate backdata period
     state : str, optional
         Function config parameter. The default is "live". "live" state won't do
         anyting, "frozen" will convert to null the error_values within status
@@ -69,9 +76,18 @@ def run_live_or_frozen(
         columns=[period, reference, question_no, f"live_{target}"]
     )
 
+    # using current period and revision window to calculate backdata period
+    # TODO: look at moving is_backdata flag earlier in pipeline to use here
+    backdata_period = convert_column_to_datetime(current_period) - pd.DateOffset(
+        months=revision_window
+    )
+
     if state == "frozen":
 
-        con_in_error = contributors[contributors[status].isin(error_values)]
+        con_in_error = contributors.loc[
+            (contributors[status].isin(error_values))
+            & (contributors[period] != backdata_period)
+        ]
 
         con_in_error = con_in_error[[period, reference]]
 

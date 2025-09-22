@@ -8,6 +8,7 @@ from pandas.api.types import is_bool_dtype
 def create_missing_questions(
     responses: pd.DataFrame,
     contributors: pd.DataFrame,
+    manual_constructions: pd.DataFrame,
     components_questions: List[int],
     reference: str,
     period: str,
@@ -136,6 +137,35 @@ def create_missing_questions(
         "missing_questions_helper"
     ].fillna({row: components_questions for row in expected_responses.index})
 
+    # Handling expected questions when they exist in manual constructions
+    # it adds the manual constructions to expected questions and forwards fill
+    if isinstance(manual_constructions, pd.DataFrame):
+
+        man_helper = (
+            manual_constructions.groupby([reference, period])[question_col]
+            .apply(list)
+            .to_frame()
+        ).reset_index()
+        expected_responses = expected_responses.merge(
+            man_helper, on=[reference, period], how="left", suffixes=("", "_man")
+        )
+
+        expected_responses[f"{question_col}_man"] = expected_responses.groupby(
+            [reference]
+        )[f"{question_col}_man"].ffill()
+
+        # filling na with empty list to allow concating of 2 lists on next step
+        expected_responses[f"{question_col}_man"] = (
+            expected_responses[f"{question_col}_man"].fillna("").apply(list)
+        )
+
+        expected_responses["missing_questions_helper"] = expected_responses.apply(
+            lambda row: list(
+                set(row["missing_questions_helper"] + row[f"{question_col}_man"])
+            ),
+            axis=1,
+        )
+
     # question col now has list of questions which were in the responses
     # if question col is na it means that it was missing and we should use the
     # list of questions in filling_helper column
@@ -156,8 +186,6 @@ def create_missing_questions(
     expected_responses.loc[
         expected_responses["is_total_only_and_zero"], question_col
     ] = 290
-
-    print(expected_responses)
 
     expected_responses = expected_responses.explode(question_col, ignore_index=True)
 

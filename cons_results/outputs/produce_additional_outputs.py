@@ -2,6 +2,10 @@ import pandas as pd
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 from mbs_results.utilities.utils import convert_column_to_datetime
 
+from cons_results.outputs.cord_output import get_cord_output
+from cons_results.outputs.imputation_contribution_output import (
+    get_imputation_contribution_output,
+)
 from cons_results.outputs.imputes_and_constructed_output import (
     get_imputes_and_constructed_output,
 )
@@ -9,6 +13,7 @@ from cons_results.outputs.qa_output import produce_qa_output
 from cons_results.outputs.quarterly_by_sizeband_output import (
     get_quarterly_by_sizeband_output,
 )
+from cons_results.outputs.standard_errors import create_standard_errors
 from cons_results.utilities.utils import get_versioned_filename
 
 
@@ -19,6 +24,9 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
             "imputes_and_constructed_output": get_imputes_and_constructed_output,
             "quarterly_by_sizeband_output": get_quarterly_by_sizeband_output,
             "produce_qa_output": produce_qa_output,
+            "standard_errors": create_standard_errors,
+            "imputation_contribution_output": get_imputation_contribution_output,
+            "cord_output": get_cord_output,
         },
         additional_outputs_df,
     )

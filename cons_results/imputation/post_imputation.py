@@ -38,6 +38,8 @@ def rescale_290_case(
         Output DataFrame with rescaled adjusted responses for flagged 290 special cases.
     """
 
+    df["adjustedresponse_pre_rescale"] = df[adjusted_response].copy()
+
     # 290_flag hard coded column from flag_290_cases in staging
     numer = (
         df[(df["290_flag"]) & (df[question_no] == 290)]

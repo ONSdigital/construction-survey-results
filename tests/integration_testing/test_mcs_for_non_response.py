@@ -23,8 +23,8 @@ def test_config(filepath):
         "idbr_folder_path": filepath,
         "l_values_path": None,
         "manual_outlier_path": "",
-        "snapshot_file_path": str(filepath / "non_response_1.json"),
-        "manual_constructions_path": None,
+        "snapshot_file_path": "",
+        "manual_constructions_path": str(filepath / "manual_constructions.csv"),
         "filter": None,
         "output_path": str(filepath),
         "population_prefix": None,
@@ -33,8 +33,8 @@ def test_config(filepath):
         "back_data_cp_path": filepath / "test_cp_009_202412.csv",
         "back_data_finalsel_path": str(filepath / "finalsel228_dummy_202412"),
         "sic_domain_mapping_path": "",
-        "current_period": 202502,
-        "revision_window": 2,
+        "current_period": 202503,
+        "revision_window": 3,
         "state": "frozen",
         "optional_outputs": [""],
         "components_questions": [1, 2, 3, 4, 5, 6],
@@ -55,19 +55,11 @@ def load_config_temp():
 @pytest.mark.parametrize(
     "snapshot_file,expected_output_file",
     [
-        ("non_response_1.json", "expected_non_response_1.csv"),
-        ("form_in_error_1.json", "expected_form_in_error_1.csv"),
-        ("form_in_error_2.json", "expected_form_in_error_2.csv"),
-        ("paper_form_1.json", "expected_paper_form_1.csv"),
-        ("total_only_1.json", "expected_total_only_1.csv"),
-        ("total_only_2.json", "expected_total_only_2.csv"),
-        ("total_only_3.json", "expected_total_only_3.csv"),
-        ("total_only_4.json", "expected_total_only_4.csv"),
-        ("total_as_zero.json", "total_as_zero.csv"),
-        ("dereceipted_status.json", "expected_dereceipted_status.csv"),
+        ("mc_for_non_response.json", "mc_for_non_response.csv"),
+        ("mc_for_non_response_2.json", "mc_for_non_response_2.csv"),
     ],
 )
-def test_run_integration_parametrised(
+def test_mc_for_non_response(
     test_config, filepath, snapshot_file, expected_output_file
 ):
     """Run Staging and Imputation based on test_config"""
@@ -85,9 +77,6 @@ def test_run_integration_parametrised(
         "questioncode",
         "status",
         "imputation_flags_adjustedresponse",
-        "skipped_question",
-        "290_flag",
-        "is_total_only_and_zero",
     ]
 
     # Load expected output DataFrame
@@ -106,23 +95,6 @@ def test_run_integration_parametrised(
         expected_df[cols_expected]
         .sort_values(by=["period", "questioncode"])
         .reset_index(drop=True)
-    )
-
-    df_sorted["skipped_question"] = df_sorted["skipped_question"].astype(float)
-
-    # enforce bool to match testing dtype
-    df_sorted["290_flag"] = df_sorted["290_flag"].astype(bool)
-    expected_sorted["290_flag"] = expected_sorted["290_flag"].astype(bool)
-
-    df_sorted["is_total_only_and_zero"] = df_sorted["is_total_only_and_zero"].astype(
-        bool
-    )
-    expected_sorted["is_total_only_and_zero"] = expected_sorted[
-        "is_total_only_and_zero"
-    ].astype(bool)
-
-    expected_sorted["skipped_question"] = expected_sorted["skipped_question"].astype(
-        float
     )
 
     pd.testing.assert_frame_equal(df_sorted, expected_sorted)

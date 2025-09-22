@@ -36,9 +36,12 @@ class TestCreateMissingQuestions:
         responses_input,
         responses_expected,
     ):
+
+        # manual_constructions not na is tested in integration testing
         actual_output = create_missing_questions(
             contributors=contributors,
             responses=responses_input,
+            manual_constructions=None,
             components_questions=[77, 88, 99],
             reference="reference",
             period="period",

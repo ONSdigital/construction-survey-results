@@ -26,7 +26,7 @@ def detect_outlier(
             df,
             config["strata"],
             config["period"],
-            config["auxiliary_converted"],
+            config["auxiliary"],
             config["census"],
             "design_weight",
             "calibration_factor",

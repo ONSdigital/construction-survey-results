@@ -22,7 +22,10 @@ def filepath():
 
 
 def test_rescale_290_case(filepath):
-    expected_output_df = pd.read_csv(filepath / "test_data_rescale_290_output.csv")
+    expected_output_df = pd.read_csv(
+        filepath / "test_data_rescale_290_output.csv",
+        dtype={"adjustedresponse_pre_rescale": float},
+    )
 
     input_df = pd.read_csv(
         filepath / "test_data_rescale_290_input.csv",

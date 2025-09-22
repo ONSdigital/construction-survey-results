@@ -140,7 +140,7 @@ def remove_skipped_questions(
     questioncode_col: str,
     target_col: str,
     route_skipped_questions: dict,
-    no_value: int = 2,
+    no_values: list,
 ) -> pd.DataFrame:
     """
     Removes questions as follows, if a question the route_skipped_questions
@@ -168,7 +168,7 @@ def remove_skipped_questions(
     route_skipped_questions : dict
         map to questions to be removed.
     no_value : int, optional
-        How "no" is defined in routed questions. The default is 2.
+        How "no" is defined in routed questions.
 
 
     Returns
@@ -188,9 +188,9 @@ def remove_skipped_questions(
     for route_question, skipped_questions in route_skipped_questions.items():
 
         sub_df = df[[route_question] + skipped_questions]
-
-        all_zero_mask = sub_df[skipped_questions].sum(axis=1) == 0
-        route_is_no = sub_df[route_question] == no_value
+        # if yes/no the values in source will be saved as object and sum will fail
+        all_zero_mask = sub_df[skipped_questions].apply(pd.to_numeric).sum(axis=1) == 0
+        route_is_no = sub_df[route_question].isin(no_values)
 
         remove_values = sub_df[all_zero_mask & route_is_no]
 
@@ -267,6 +267,7 @@ def create_construction_228_snapshot(
     output_directory: str,
     current_period: int,
     revision_window: int,
+    no_values: list,
 ):
     """
     Creates a json file based on CSW files (qv cp and finalsel), the aim is
@@ -282,6 +283,8 @@ def create_construction_228_snapshot(
         Latest period for the snapshot.
     revision_window : int
         Lengh of period to convert.
+    no_value : int, optional
+        How "no" is defined in routed questions.
 
     Examples
     --------
@@ -289,7 +292,8 @@ def create_construction_228_snapshot(
     In the below example `D:/con_test/qv_cp/` should have qv cp and sample
     files from 202201 until 202203
 
-    >>> create_construction_228_snapshot("D:/con_test/qv_cp/","D:/", 202303, 15)
+    >>> create_construction_228_snapshot(
+        "D:/con_test/qv_cp/","D:/", 202303, 15,["no",np.nan])
     """
 
     config = {"platform": "network", "bucket": None}
@@ -327,6 +331,7 @@ def create_construction_228_snapshot(
             903: [221, 222],
             904: [231, 232, 241, 242, 243],
         },
+        no_values=no_values,
     )
     qv = qv[~qv["question_no"].isin([902, 903, 904])]
 

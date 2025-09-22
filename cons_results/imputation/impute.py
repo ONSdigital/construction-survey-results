@@ -1,5 +1,6 @@
 import pandas as pd
 from mbs_results.imputation.ratio_of_means import ratio_of_means
+from mbs_results.staging.data_cleaning import convert_annual_thousands
 
 from cons_results.imputation.post_imputation import (
     create_q290,
@@ -70,13 +71,30 @@ def impute(
         responses_keep_col=config["responses_keep_cols"],
         finalsel_keep_col=config["finalsel_keep_cols"],
         status_col=config["nil_status_col"],
-        status_filter=["Form sent out", "Check needed"],
+        status_filter=["Form sent out", "Check needed", "Excluded from results"],
         flag_col_name="derived_zeros",
         imputation_marker_col=config["imputation_marker_col"],
     )
 
     # derived zeros types is object, has true false and na
     df.loc[df["derived_zeros"] == 1, config["imputation_marker_col"]] = "d"
+
+    # Updating derived questions with converted auxiliary values
+    null_rows = df[df[config["auxiliary_converted"]].isna()]
+
+    updated_rows = convert_annual_thousands(
+        null_rows, config["auxiliary_converted"], config["auxiliary"]
+    )
+
+    updated_rows.set_index(["reference", "period", "questioncode"], inplace=True)
+
+    df.set_index(["reference", "period", "questioncode"], inplace=True)
+
+    df.loc[updated_rows.index, config["auxiliary_converted"]] = updated_rows[
+        config["auxiliary_converted"]
+    ]
+
+    df.reset_index(inplace=True)
 
     df = rescale_290_case(
         df,
