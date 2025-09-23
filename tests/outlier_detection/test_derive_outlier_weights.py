@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
@@ -10,8 +8,8 @@ from cons_results.outlier_detection.derive_outlier_weights import (
 
 
 @pytest.fixture()
-def filepath():
-    return Path("tests/data/outlier_detection/derive_outlier_weights")
+def filepath(outlier_data_dir):
+    return outlier_data_dir / "derive_outlier_weights"
 
 
 all_questions = [201, 202, 211, 212, 221, 222]
