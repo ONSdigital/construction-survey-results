@@ -71,7 +71,7 @@ def impute(
         responses_keep_col=config["responses_keep_cols"],
         finalsel_keep_col=config["finalsel_keep_cols"],
         status_col=config["nil_status_col"],
-        status_filter=["Form sent out", "Check needed", "Excluded from Results"],
+        status_filter=["Check needed"] + config["non_response_statuses"],
         flag_col_name="derived_zeros",
         imputation_marker_col=config["imputation_marker_col"],
     )
