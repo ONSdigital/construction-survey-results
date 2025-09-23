@@ -64,6 +64,7 @@ As an end user, you will only need to change the user config (named `config_user
 | csw_to_spp_columns | Mapping of CSW to SPP columns. | `{"returned_value":"response", "adjusted_value":"adjustedresponse", "question_no":"questioncode"}` | dict | A dictionary in the format `{"CSW_col_name": "SPP_col_name"}`. |
 | type_to_imputation_marker | A dictionary mapper mapping type to imputation marker. | `{"0": "selected, no return", "1": "r", "2": "derived", "3": "fir", "4": "bir", "5": "c", "6": "mc", "10": "r", "11": "r", "12": "derived", "13": "fir" }` | dict | A dictionary in the format `{"type":"imputation_marker"}` where imputation marker is a value found in the imputation_marker_col. |
 | mandatory_outputs | A list of mandatory outputs to produce after the pipeline has run. | `["produce_qa_output"]` | list | Any of the outputs listed in `cons_results/outputs/produce_additional_outputs.py` within the `produce_additional_outputs` function. |
+| non_response_statuses | A list of status values that refer to non-responses. | `["Form sent out", "Excluded from Results"]` | list | A list of statuses found in the "status" column. |
 | pound_thousand_col | The name of the column containing the target variable expressed in thousands. | `"adjustedresponse_pounds_thousands"` | string | Any valid column name. |
 
 ## Usage
