@@ -155,6 +155,8 @@
     "Part year return (NIL8)",
     "No UK activity (NIL9)"],
 
+    "non_response_statuses": ["Form sent out", "Excluded from Results"],
+
     "sizeband_numeric_to_character": {
         "1": "A",
         "2": "B",
