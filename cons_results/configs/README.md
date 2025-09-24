@@ -66,6 +66,7 @@ As an end user, you will only need to change the user config (named `config_user
 | mandatory_outputs | A list of mandatory outputs to produce after the pipeline has run. | `["produce_qa_output"]` | list | Any of the outputs listed in `cons_results/outputs/produce_additional_outputs.py` within the `produce_additional_outputs` function. |
 | imputation_contribution_sics   | A list of Standard Industry Classification codes (SICs) that should be included in the imputation contribution output. | `["41200", "41201", "41202", "42000", "42110", "42120", "42130", "42210", "42220", "42900", "42910", "42990", "43100", "43110", "43120", "43130", "43210", "43220", "43290", "43310", "43320", "43330", "43340", "43341", "43342", "43390", "43910", "43990", "43991", "43999"]` | list   | A list containing SIC codes.   |
 | imputation_contribution_classification | A list of higher-level classification codes that should be included in the imputation contribution output. | `["41200", "42000", "42900", "43100", "43210", "43220", "43290", "43310", "43320", "43330", "43340", "43390", "43910", "43990"]` | list   | A list containing classification codes. |
+| non_response_statuses | A list of status values that refer to non-responses. | `["Form sent out", "Excluded from Results"]` | list | A list of statuses found in the "status" column. |
 | pound_thousand_col | The name of the column containing the target variable expressed in thousands. | `"adjustedresponse_pounds_thousands"` | string | Any valid column name. |
 
 ## Usage
