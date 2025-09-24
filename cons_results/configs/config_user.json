@@ -22,5 +22,6 @@
     "state": "frozen",
     "optional_outputs": [],
     "produce_quarterly_extracts": null,
-    "sizeband_quarter": []
+    "sizeband_quarter": [],
+    "imputation_contribution_periods": []
 }

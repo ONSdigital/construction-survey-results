@@ -24,6 +24,7 @@
 | state | The name of the column containing the state variable. | string | Any valid column name. |
 | optional_outputs | A list of optional outputs to produce after the pipeline has run. | `[]` | list | Any of the outputs listed in `cons_results/outputs/produce_additional_outputs.py` within the `produce_additional_outputs` function which can be produced. Set to all `["all"]` to produce all outputs. |
 | sizeband_quarter | A list of optional quarters to filter the quarterly_by_sizeband_output on. | `[]` | list | Any quarter in the format `YYYYQX` (e.g. ["2023Q2"]) |
+| imputation_contribution_period | A list of optional periods to filter the imputation_contribution_output on. | `[]` | list | Any period in the format `YYYYMM` (e.g. ["202201"]) |
 
 ## Guidance for use
 As an end user, you will only need to change the user config (named `config_user.json`) - you just need to update the filepaths and period information in the user config. Note: for ONS users, you can find example filepaths in the Confluence documentation.
