@@ -46,7 +46,11 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
             print(config["output_path"] + filename + " saved")
 
 
-def produce_quarterly_extracts(config: dict, additional_outputs_df: pd.DataFrame):
+def produce_quarterly_extracts(
+    config: dict,
+    additional_outputs_df: pd.DataFrame,
+    chosen_quarter: str = None,
+):
     """
     Function to produce the aggregated adjusted responses for questions
     202, 212, 222, 232 and 243 (repair and maintenance) grouped by quarter
@@ -58,6 +62,9 @@ def produce_quarterly_extracts(config: dict, additional_outputs_df: pd.DataFrame
         Dictionary containing configuration parameters
     additional_outputs_df : pd.DataFrame
         DataFrame containing additional outputs
+    chosen_quarter : str, optional
+        Specific quarter to filter the data on, by default None
+        Must be given in the format 'YYYYQX', e.g. '2023Q1'
     """
 
     # todo: the additional outputs df has 2 region columns
@@ -89,13 +96,16 @@ def produce_quarterly_extracts(config: dict, additional_outputs_df: pd.DataFrame
             q_extracts_df[config["period"]], freq="Q"
         )
 
-        latest_quarter = q_extracts_df["quarter"].max()
+        if chosen_quarter is None:
+            chosen_quarter = q_extracts_df["quarter"].max()
+        else:
+            chosen_quarter = pd.Period(chosen_quarter)
 
         # Filter DataFrame
         q_extracts_df = q_extracts_df[
             q_extracts_df[config["question_no"]].isin([202, 212, 222, 232, 243])
         ]
-        q_extracts_df = q_extracts_df[q_extracts_df["quarter"] == latest_quarter]
+        q_extracts_df = q_extracts_df[q_extracts_df["quarter"] == chosen_quarter]
 
         # Map region names onto DataFrame
         region_mapping_df = pd.read_csv(config["region_mapping_path"])
@@ -135,7 +145,7 @@ def produce_quarterly_extracts(config: dict, additional_outputs_df: pd.DataFrame
             key=lambda x: x.map(custom_region_order),
         )
 
-        filename = f"r_and_m_regional_extracts_{latest_quarter}.csv"
+        filename = f"r_and_m_regional_extracts_{chosen_quarter}.csv"
 
         write_csv_wrapper(
             extracts_table,
