@@ -30,7 +30,8 @@ class TestImputationContributionOutput:
         expected_output = output_df
 
         config = {
-            "imputation_contribution_sics": [41200, 41201, 42000, 42001],
+            "imputation_contribution_sics": [41200, 41201, 42000, 42001, 42002],
+            "imputation_contribution_classification": [41200, 42000, 42001],
             "components_questions": [201, 202, 211],
             "question_no": "questioncode",
         }
