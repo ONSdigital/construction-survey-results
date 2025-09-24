@@ -35,7 +35,7 @@ jobs:
       # This will direct MBS installation to GitHub
       # e.g: monthly-business-survey-results==0.0.1 ----> monthly-business-survey-results @ git+https://github.com/ONSdigital/monthly-business-survey-results.git@v0.0.1
     - name: point MBS dependency to GitHub
-      run: perl -pi -e "s,monthly-business-survey-results==,monthly-business-survey-results @ git+https://github.com/ONSdigital/monthly-business-survey-results.git@v,g" setup.cfg
+      run: docker exec container_${{matrix.cml_version}} perl -pi -e "s,monthly-business-survey-results==,monthly-business-survey-results @ git+https://github.com/ONSdigital/monthly-business-survey-results.git@v,g" setup.cfg
     - name: build in dev mode
       run: docker exec container_${{matrix.cml_version}}  pip install ."[dev]"
     - name: check env
