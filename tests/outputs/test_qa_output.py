@@ -45,7 +45,7 @@ def sample_df_and_config():
 def expected_qa_output():
     expected = pd.read_csv(
         "./tests/data/outputs/qa_output/expected_output.csv", header=[0, 1]
-    ).rename(columns={" ": ""})
+    ).rename(columns={"placeholder": ""})
     return expected
 
 
