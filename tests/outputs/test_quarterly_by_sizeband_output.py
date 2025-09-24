@@ -36,6 +36,7 @@ def config():
         "target": "adjustedresponse",
         "cell_number": "cell_no",
         "components_questions": [40, 49],
+        "sizeband_quarter": ["2023Q2"],
     }
 
 
@@ -44,5 +45,8 @@ def test_get_quarterly_by_sizeband_output(input_df, output_df, config):
     expected_output = output_df
 
     actual_output = get_quarterly_by_sizeband_output(input_df, **config)
+
+    print(expected_output)
+    print(actual_output)
 
     assert_frame_equal(actual_output, expected_output)

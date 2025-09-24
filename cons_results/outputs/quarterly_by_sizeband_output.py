@@ -1,3 +1,5 @@
+import re
+
 import numpy as np
 import pandas as pd
 
@@ -48,10 +50,30 @@ def get_quarterly_by_sizeband_output(
         ]
     ]
 
-    # selecting only components + q290 (so not to include filtered qs with no cell no)
+    # selecting only components (so not to include filtered qs with no cell no)
     filtered_data = filtered_data[
         filtered_data[config["question_no"]].isin(config["components_questions"])
     ]
+
+    filtered_data["quarter"] = (
+        pd.to_datetime(filtered_data[config["period"]], format="%Y%m")
+        .dt.to_period("Q")
+        .astype(str)
+    )
+
+    filtered_data.drop(columns=[config["period"]], inplace=True)
+
+    if config["sizeband_quarter"]:
+        pattern = re.compile(r"^\d{4}Q[1-4]$")
+        for quarter in config["sizeband_quarter"]:
+            if not pattern.match(str(quarter)):
+                raise ValueError(
+                    f"Invalid quarter format: {quarter}.",
+                    "Expected format is YYYYQX (e.g., 2023Q1).",
+                )
+        filtered_data = filtered_data[
+            filtered_data["quarter"].isin(config["sizeband_quarter"])
+        ]
 
     filtered_data["sizeband"] = np.where(
         filtered_data[config["cell_number"]].isna(),
@@ -60,12 +82,6 @@ def get_quarterly_by_sizeband_output(
     ).astype(int)
 
     filtered_data.drop(columns=[config["cell_number"]], inplace=True)
-
-    filtered_data["quarter"] = (
-        pd.to_datetime(filtered_data[config["period"]], format="%Y%m")
-        .dt.to_period("Q")
-        .astype(str)
-    )
 
     filtered_data.sort_values(
         ["quarter", "sizeband", config["question_no"]],
