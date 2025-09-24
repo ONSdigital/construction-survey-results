@@ -32,6 +32,8 @@ jobs:
       uses: actions/checkout@v3
     - name: create container
       run:  docker run -id --name container_${{matrix.cml_version}} -v"$(pwd)"://home/cdsw cml:${{matrix.cml_version}}
+    - name: Point MBS depennency to GitHub
+      run: make point_MBS_to_GitHub
     - name: build in dev mode
       run: docker exec container_${{matrix.cml_version}}  pip install ."[dev]"
     - name: check env
