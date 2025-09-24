@@ -46,7 +46,4 @@ def test_get_quarterly_by_sizeband_output(input_df, output_df, config):
 
     actual_output = get_quarterly_by_sizeband_output(input_df, **config)
 
-    print(expected_output)
-    print(actual_output)
-
     assert_frame_equal(actual_output, expected_output)
