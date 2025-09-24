@@ -10,7 +10,7 @@
 	prepare_docs_folder
 	install_MBS_main
 	point_MBS_to_GitHub
-  
+
 .DEFAULT_GOAL := help
 
 
@@ -21,7 +21,7 @@
 
 
 point_MBS_to_GitHub:
-	perl -pi -e "s,monthly-business-survey-results==,git+https://github.com/ONSdigital/monthly-business-survey-results.git@v,g" setup.cfg
+	perl -pi -e "s,monthly-business-survey-results==,monthly-business-survey-results @ git+https://github.com/ONSdigital/monthly-business-survey-results.git@v,g" setup.cfg
 
 install_MBS_main:
 	python -m pip install git+https://github.com/ONSdigital/monthly-business-survey-results.git
