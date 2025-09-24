@@ -1,5 +1,6 @@
 import pandas as pd
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
+from mbs_results.utilities.outputs import write_csv_wrapper
 from mbs_results.utilities.utils import convert_column_to_datetime
 
 from cons_results.outputs.cord_output import get_cord_output
@@ -45,7 +46,7 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
             print(config["output_path"] + filename + " saved")
 
 
-def produce_quarterly_extracts(config: dict, df: pd.DataFrame):
+def produce_quarterly_extracts(config: dict, additional_outputs_df: pd.DataFrame):
     """
     Function to produce the aggregated adjusted responses for questions
     202, 212, 222, 232 and 243 (repair and maintenance) grouped by quarter
@@ -55,14 +56,23 @@ def produce_quarterly_extracts(config: dict, df: pd.DataFrame):
     ----------
     config : dict
         Dictionary containing configuration parameters
-    df : pd.DataFrame
-        Post-imputed DataFrame
+    additional_outputs_df : pd.DataFrame
+        DataFrame containing additional outputs
     """
+
+    # todo: the additional outputs df has 2 region columns
+    # todo: so we need to deal with this merge issue at some point.
+    # todo: For the time being we are using region_y renamed to region
+
+    if set(["region_x", "region_y"]).issubset(additional_outputs_df.columns):
+        additional_outputs_df = additional_outputs_df.rename(
+            columns={"region_y": "region"}
+        ).drop(columns=["region_x"])
 
     if config["produce_quarterly_extracts"] is True:
 
-        # Select columns from post-imputed DataFrame
-        q_extracts_df = df[
+        # Select columns from additional outputs DataFrame
+        q_extracts_df = additional_outputs_df[
             [
                 config["period"],
                 config["region"],
@@ -101,12 +111,38 @@ def produce_quarterly_extracts(config: dict, df: pd.DataFrame):
             .reset_index()
         )
 
+        # Sort by custom ordering of regions
+        custom_region_order = {
+            "North East": 1,
+            "Yorkshire and The Humber": 2,
+            "East Midlands": 3,
+            "East of England": 4,
+            "London": 5,
+            "South East": 6,
+            "South West": 7,
+            "Wales": 8,
+            "West Midlands": 9,
+            "North West": 10,
+            "Scotland": 11,
+        }
+
         extracts_table = extracts_table.pivot(
             index=["quarter", "region_name"],
             columns=config["question_no"],
             values=config["target"],
+        ).sort_values(
+            by=["region_name"],
+            key=lambda x: x.map(custom_region_order),
         )
 
         filename = f"r_and_m_regional_extracts_{latest_quarter}.csv"
-        extracts_table.to_csv(config["output_path"] + filename)
+
+        write_csv_wrapper(
+            extracts_table,
+            config["output_path"] + filename,
+            config["platform"],
+            config["bucket"],
+            header=False,
+        )
+
         print(config["output_path"] + filename + " saved")

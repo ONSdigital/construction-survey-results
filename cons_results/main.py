@@ -70,7 +70,7 @@ def run_pipeline(config_user_dict=None):
 
     produce_additional_outputs(config, additional_outputs_df)
 
-    produce_quarterly_extracts(config, df)
+    produce_quarterly_extracts(config, additional_outputs_df)
 
 
 if __name__ == "__main__":

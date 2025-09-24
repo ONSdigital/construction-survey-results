@@ -14,6 +14,8 @@ def filepath():
 @pytest.fixture
 def sample_config(filepath):
     return {
+        "platform": "network",
+        "bucket": "",
         "period": "period",
         "region": "region",
         "question_no": "questioncode",
@@ -29,9 +31,6 @@ def test_quarterly_extracts(filepath, sample_config):
     input_df = pd.read_csv(filepath + "quarterly_extracts_input.csv")
 
     expected_output_df = pd.read_csv(filepath + "quarterly_extracts_output.csv")
-    expected_output_df = expected_output_df.sort_values("region_name").reset_index(
-        drop=True
-    )
 
     produce_quarterly_extracts(sample_config, input_df)
 
