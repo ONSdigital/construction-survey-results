@@ -23,6 +23,7 @@
 | revision_window | The number of months to use as a revision window. | int | Any int in the form `mm` or `m` (does not need to be zero-padded). |
 | state | The name of the column containing the state variable. | string | Any valid column name. |
 | optional_outputs | A list of optional outputs to produce after the pipeline has run. | `[]` | list | Any of the outputs listed in `cons_results/outputs/produce_additional_outputs.py` within the `produce_additional_outputs` function which can be produced. Set to all `["all"]` to produce all outputs. |
+| quarterly_extracts | The quarter to use to produce quarterly extracts. Must be in 'YYYYQX' format, e.g., '2023Q1' | string | `"YYYYQX"` |
 
 ## Guidance for use
 As an end user, you will only need to change the user config (named `config_user.json`) - you just need to update the filepaths and period information in the user config. Note: for ONS users, you can find example filepaths in the Confluence documentation.
