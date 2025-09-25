@@ -3,6 +3,8 @@ import itertools
 import numpy as np
 import pandas as pd
 
+from cons_results.utilities.utils import get_versioned_filename
+
 
 def get_imputation_contribution_output(additional_outputs_df: pd.DataFrame, **config):
     """
@@ -23,6 +25,9 @@ def get_imputation_contribution_output(additional_outputs_df: pd.DataFrame, **co
     """
 
     df = additional_outputs_df.copy()
+
+    if config["imputation_contribution_periods"]:
+        df = df[df[config["period"]].isin(config["imputation_contribution_periods"])]
 
     question_no = config["question_no"]
 
@@ -86,4 +91,17 @@ def get_imputation_contribution_output(additional_outputs_df: pd.DataFrame, **co
     # classification contains the higher level frosic code
     output_df.rename(columns={"classification": "frosic2007"}, inplace=True)
 
-    return output_df.reset_index(drop=True)
+    # setting filename based on periods
+    if config["imputation_contribution_periods"]:
+        periods_strings = [
+            str(period) for period in config["imputation_contribution_periods"]
+        ]
+        periods_prefix = "_".join(periods_strings)
+        filename_prefix = f"imputation_contribution_output_{periods_prefix}"
+
+        filename = get_versioned_filename(filename_prefix, config)
+
+        return (output_df.reset_index(drop=True), filename)
+
+    else:
+        return output_df.reset_index(drop=True)
