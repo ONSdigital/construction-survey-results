@@ -24,12 +24,17 @@ def run_pipeline(config_user_dict=None):
 
     config = load_config(config_user_dict)
 
+    output_path = config["output_path"]
+
     snapshot_file_name = os.path.basename(config["snapshot_file_path"]).split(".")[0]
 
     warnings.warn("This is a placeholder for config validation, not yet implemented")
 
     df, manual_constructions, filter_df = stage_dataframe(config)
-    df.to_csv(f'{config["output_path"]}/{snapshot_file_name}_staging_{tag_name}.csv')
+    df.to_csv(
+        f"{output_path}/{snapshot_file_name}_staging_{tag_name}.csv",
+        index=False,
+    )
 
     warnings.warn(
         "This is a placeholder for staging validation checks,  not yet implemented"
@@ -37,7 +42,10 @@ def run_pipeline(config_user_dict=None):
 
     df = impute(df, config, manual_constructions, filter_df)
 
-    df.to_csv(f'{config["output_path"]}/{snapshot_file_name}_impute_{tag_name}.csv')
+    df.to_csv(
+        f"{output_path}/{snapshot_file_name}_impute_{tag_name}.csv",
+        index=False,
+    )
 
     warnings.warn("This is a placeholder post-imputation,  not yet implemented")
 
@@ -49,7 +57,8 @@ def run_pipeline(config_user_dict=None):
     )
 
     estimation_output.to_csv(
-        f'{config["output_path"]}/{snapshot_file_name}_estimate_{tag_name}.csv'
+        f"{output_path}/{snapshot_file_name}_estimate_{tag_name}.csv",
+        index=False,
     )
 
     warnings.warn(
@@ -58,7 +67,8 @@ def run_pipeline(config_user_dict=None):
 
     outlier_detection_output = detect_outlier(estimation_output, config)
     outlier_detection_output.to_csv(
-        f'{config["output_path"]}/{snapshot_file_name}_outlier_detection_{tag_name}.csv'
+        f"{output_path}/{snapshot_file_name}_outlier_detection_{tag_name}.csv",
+        index=False,
     )
 
     additional_outputs_df = get_additional_outputs_df(

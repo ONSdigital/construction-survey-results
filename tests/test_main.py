@@ -36,6 +36,8 @@ def test_config(filepath):
         "state": "frozen",
         "optional_outputs": ["all"],
         "quarterly_extract": "",
+        "sizeband_quarter": ["2023Q2"],
+        "imputation_contribution_periods": [202302],
     }
 
 
