@@ -112,10 +112,10 @@ def produce_quarterly_extracts(
 
     q_extracts_df["quarter"] = pd.PeriodIndex(q_extracts_df[config["period"]], freq="Q")
 
-    if config["quarterly_extract"] is None:
+    if config["r_and_m_quarter"] is None:
         chosen_quarter = q_extracts_df["quarter"].max()
     else:
-        chosen_quarter = pd.Period(config["quarterly_extract"])
+        chosen_quarter = pd.Period(config["r_and_m_quarter"])
 
     # Filter DataFrame
     q_extracts_df = q_extracts_df[

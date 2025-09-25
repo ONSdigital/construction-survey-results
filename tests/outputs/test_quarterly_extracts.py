@@ -21,7 +21,7 @@ def sample_config(filepath):
         "produce_quarterly_extracts": True,
         "region_mapping_path": filepath + "region_mapping.csv",
         "output_path": filepath,
-        "quarterly_extract": "2023Q1",
+        "r_and_m_quarter": "2023Q1",
     }
 
 
