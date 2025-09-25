@@ -1,5 +1,3 @@
-import glob
-
 import pandas as pd
 import pytest
 
@@ -23,6 +21,7 @@ def sample_config(filepath):
         "produce_quarterly_extracts": True,
         "region_mapping_path": filepath + "region_mapping.csv",
         "output_path": filepath,
+        "quarterly_extract": "2023Q1",
     }
 
 
@@ -31,12 +30,15 @@ def test_quarterly_extracts(filepath, sample_config):
     input_df = pd.read_csv(filepath + "quarterly_extracts_input.csv")
 
     expected_output_df = pd.read_csv(filepath + "quarterly_extracts_output.csv")
+    expected_output_df["quarter"] = pd.PeriodIndex(
+        expected_output_df["quarter"], freq="Q"
+    )
 
-    produce_quarterly_extracts(sample_config, input_df)
+    output_df, _ = produce_quarterly_extracts(input_df, **sample_config)
 
-    pattern = glob.glob(filepath + "r_and_m_regional_extracts*")
-
-    for p in pattern:
-        output_df = pd.read_csv(p)
+    # We need to do this to the actual output, because
+    # it comes pivoted from the function call
+    output_df = output_df.reset_index()
+    output_df.columns = ["quarter", "region_name", "202", "212", "222", "232", "243"]
 
     pd.testing.assert_frame_equal(output_df, expected_output_df)

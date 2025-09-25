@@ -28,6 +28,7 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
             "standard_errors": create_standard_errors,
             "imputation_contribution_output": get_imputation_contribution_output,
             "cord_output": get_cord_output,
+            "quarterly_extracts": produce_quarterly_extracts,
         },
         additional_outputs_df,
     )
@@ -47,9 +48,8 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
 
 
 def produce_quarterly_extracts(
-    config: dict,
     additional_outputs_df: pd.DataFrame,
-    chosen_quarter: str = None,
+    **config,
 ):
     """
     Function to produce the aggregated adjusted responses for questions
@@ -62,9 +62,6 @@ def produce_quarterly_extracts(
         Dictionary containing configuration parameters
     additional_outputs_df : pd.DataFrame
         DataFrame containing additional outputs
-    chosen_quarter : str, optional
-        Specific quarter to filter the data on, by default None
-        Must be given in the format 'YYYYQX', e.g. '2023Q1'
     """
 
     # todo: the additional outputs df has 2 region columns
@@ -76,83 +73,89 @@ def produce_quarterly_extracts(
             columns={"region_y": "region"}
         ).drop(columns=["region_x"])
 
-    if config["produce_quarterly_extracts"] is True:
+    # Create weighted adjusted response
+    additional_outputs_df["weighted adjusted value"] = (
+        additional_outputs_df[config["target"]]
+        * additional_outputs_df["design_weight"]
+        * additional_outputs_df["outlier_weight"]
+        * additional_outputs_df["calibration_factor"]
+    )
 
-        # Select columns from additional outputs DataFrame
-        q_extracts_df = additional_outputs_df[
-            [
-                config["period"],
-                config["region"],
-                config["question_no"],
-                config["target"],
-            ]
+    # Select columns from additional outputs DataFrame
+    q_extracts_df = additional_outputs_df[
+        [
+            config["period"],
+            config["region"],
+            config["question_no"],
+            "weighted adjusted value",
         ]
+    ]
 
-        # Create quarter column
-        q_extracts_df[config["period"]] = convert_column_to_datetime(
-            q_extracts_df[config["period"]]
-        )
-        q_extracts_df["quarter"] = pd.PeriodIndex(
-            q_extracts_df[config["period"]], freq="Q"
-        )
+    # Create quarter column
+    q_extracts_df[config["period"]] = convert_column_to_datetime(
+        q_extracts_df[config["period"]]
+    )
+    q_extracts_df["quarter"] = pd.PeriodIndex(q_extracts_df[config["period"]], freq="Q")
 
-        if chosen_quarter is None:
-            chosen_quarter = q_extracts_df["quarter"].max()
-        else:
-            chosen_quarter = pd.Period(chosen_quarter)
+    if config["quarterly_extract"] is None:
+        chosen_quarter = q_extracts_df["quarter"].max()
+    else:
+        chosen_quarter = pd.Period(config["quarterly_extract"])
 
-        # Filter DataFrame
-        q_extracts_df = q_extracts_df[
-            q_extracts_df[config["question_no"]].isin([202, 212, 222, 232, 243])
-        ]
-        q_extracts_df = q_extracts_df[q_extracts_df["quarter"] == chosen_quarter]
+    # Filter DataFrame
+    q_extracts_df = q_extracts_df[
+        q_extracts_df[config["question_no"]].isin([202, 212, 222, 232, 243])
+    ]
+    q_extracts_df = q_extracts_df[q_extracts_df["quarter"] == chosen_quarter]
 
-        # Map region names onto DataFrame
-        region_mapping_df = pd.read_csv(config["region_mapping_path"])
+    # Map region names onto DataFrame
+    region_mapping_df = pd.read_csv(config["region_mapping_path"])
 
-        q_extracts_df = q_extracts_df.merge(
-            region_mapping_df, left_on=config["region"], right_on="region_code"
-        )
+    q_extracts_df = q_extracts_df.merge(
+        region_mapping_df, left_on=config["region"], right_on="region_code"
+    )
 
-        # Produce output table
-        extracts_table = (
-            q_extracts_df.groupby(["quarter", "region_name", config["question_no"]])
-            .sum(config["target"])
-            .reset_index()
-        )
+    # Produce output table
+    extracts_table = (
+        q_extracts_df.groupby(["quarter", "region_name", config["question_no"]])
+        .sum("weighted adjusted value")
+        .reset_index()
+    )
 
-        # Sort by custom ordering of regions
-        custom_region_order = {
-            "North East": 1,
-            "Yorkshire and The Humber": 2,
-            "East Midlands": 3,
-            "East of England": 4,
-            "London": 5,
-            "South East": 6,
-            "South West": 7,
-            "Wales": 8,
-            "West Midlands": 9,
-            "North West": 10,
-            "Scotland": 11,
-        }
+    # Sort by custom ordering of regions
+    custom_region_order = {
+        "North East": 1,
+        "Yorkshire and The Humber": 2,
+        "East Midlands": 3,
+        "East of England": 4,
+        "London": 5,
+        "South East": 6,
+        "South West": 7,
+        "Wales": 8,
+        "West Midlands": 9,
+        "North West": 10,
+        "Scotland": 11,
+    }
 
-        extracts_table = extracts_table.pivot(
-            index=["quarter", "region_name"],
-            columns=config["question_no"],
-            values=config["target"],
-        ).sort_values(
-            by=["region_name"],
-            key=lambda x: x.map(custom_region_order),
-        )
+    extracts_table = extracts_table.pivot(
+        index=["quarter", "region_name"],
+        columns=config["question_no"],
+        values="weighted adjusted value",
+    ).sort_values(
+        by=["region_name"],
+        key=lambda x: x.map(custom_region_order),
+    )
 
-        filename = f"r_and_m_regional_extracts_{chosen_quarter}.csv"
+    filename = f"r_and_m_regional_extracts_{chosen_quarter}.csv"
 
-        write_csv_wrapper(
-            extracts_table,
-            config["output_path"] + filename,
-            config["platform"],
-            config["bucket"],
-            header=False,
-        )
+    write_csv_wrapper(
+        extracts_table,
+        config["output_path"] + filename,
+        config["platform"],
+        config["bucket"],
+        header=False,
+    )
 
-        print(config["output_path"] + filename + " saved")
+    print(config["output_path"] + filename + " saved")
+
+    return extracts_table, filename

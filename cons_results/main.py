@@ -9,10 +9,7 @@ from cons_results.imputation.impute import impute
 
 # import estimation
 from cons_results.outlier_detection.detect_outlier import detect_outlier
-from cons_results.outputs.produce_additional_outputs import (
-    produce_additional_outputs,
-    produce_quarterly_extracts,
-)
+from cons_results.outputs.produce_additional_outputs import produce_additional_outputs
 from cons_results.staging.stage_dataframe import stage_dataframe
 
 # import staging validation checks
@@ -69,8 +66,6 @@ def run_pipeline(config_user_dict=None):
     )
 
     produce_additional_outputs(config, additional_outputs_df)
-
-    produce_quarterly_extracts(config, additional_outputs_df)
 
 
 if __name__ == "__main__":
