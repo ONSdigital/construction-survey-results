@@ -4,6 +4,7 @@ import warnings
 from mbs_results.estimation.estimate import estimate
 from mbs_results.outputs.produce_additional_outputs import get_additional_outputs_df
 from mbs_results.utilities.inputs import load_config
+from mbs_results.utilities.outputs import write_csv_wrapper
 
 from cons_results.imputation.impute import impute
 
@@ -27,15 +28,17 @@ def run_pipeline(config_user_dict=None):
 
     config = load_config(config_user_dict)
 
-    output_path = config["output_path"]
-
     snapshot_file_name = os.path.basename(config["snapshot_file_path"]).split(".")[0]
 
     warnings.warn("This is a placeholder for config validation, not yet implemented")
 
     df, manual_constructions, filter_df = stage_dataframe(config)
-    df.to_csv(
-        f"{output_path}/{snapshot_file_name}_staging_{tag_name}.csv",
+
+    write_csv_wrapper(
+        df=df,
+        save_path=f'{config["output_path"]}/{snapshot_file_name}_staging_{tag_name}.csv',  # noqa  E501
+        import_platform=config["platform"],
+        bucket_name=config["bucket"],
         index=False,
     )
 
@@ -45,8 +48,12 @@ def run_pipeline(config_user_dict=None):
 
     df = impute(df, config, manual_constructions, filter_df)
 
-    df.to_csv(
-        f"{output_path}/{snapshot_file_name}_impute_{tag_name}.csv",
+    # adding no qa for long lines for now
+    write_csv_wrapper(
+        df=df,
+        save_path=f'{config["output_path"]}/{snapshot_file_name}_impute_{tag_name}.csv',  # noqa  E501
+        import_platform=config["platform"],
+        bucket_name=config["bucket"],
         index=False,
     )
 
@@ -59,8 +66,11 @@ def run_pipeline(config_user_dict=None):
         df=df, method="separate", convert_NI_GB_cells=False, config=config
     )
 
-    estimation_output.to_csv(
-        f"{output_path}/{snapshot_file_name}_estimate_{tag_name}.csv",
+    write_csv_wrapper(
+        df=estimation_output,
+        save_path=f'{config["output_path"]}/{snapshot_file_name}_estimate_{tag_name}.csv',  # noqa  E501
+        import_platform=config["platform"],
+        bucket_name=config["bucket"],
         index=False,
     )
 
@@ -69,8 +79,12 @@ def run_pipeline(config_user_dict=None):
     )
 
     outlier_detection_output = detect_outlier(estimation_output, config)
-    outlier_detection_output.to_csv(
-        f"{output_path}/{snapshot_file_name}_outlier_detection_{tag_name}.csv",
+
+    write_csv_wrapper(
+        df=outlier_detection_output,
+        save_path=f'{config["output_path"]}/{snapshot_file_name}_outlier_detection_{tag_name}.csv',  # noqa  E501
+        import_platform=config["platform"],
+        bucket_name=config["bucket"],
         index=False,
     )
 

@@ -14,6 +14,8 @@ def filepath():
 @pytest.fixture
 def sample_config(filepath):
     return {
+        "platform": "network",
+        "bucket": "",
         "period": "period",
         "region": "region",
         "question_no": "questioncode",

@@ -1,5 +1,6 @@
 import pandas as pd
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
+from mbs_results.utilities.outputs import write_csv_wrapper
 from mbs_results.utilities.utils import convert_column_to_datetime
 
 from cons_results.outputs.cord_output import get_cord_output
@@ -42,7 +43,16 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
 
         if df is not None:
             header = False if output in ["quarterly_by_sizeband_output"] else True
-            df.to_csv(config["output_path"] + filename, index=False, header=header)
+
+            write_csv_wrapper(
+                df=df,
+                save_path=config["output_path"] + filename,
+                import_platform=config["platform"],
+                bucket_name=config["bucket"],
+                index=False,
+                header=header,
+            )
+
             print(config["output_path"] + filename + " saved")
 
 
@@ -109,5 +119,12 @@ def produce_quarterly_extracts(config: dict, df: pd.DataFrame):
         )
 
         filename = f"r_and_m_regional_extracts_{latest_quarter}.csv"
-        extracts_table.to_csv(config["output_path"] + filename)
+
+        write_csv_wrapper(
+            df=extracts_table,
+            save_path=config["output_path"] + filename,
+            import_platform=config["platform"],
+            bucket_name=config["bucket"],
+        )
+
         print(config["output_path"] + filename + " saved")
