@@ -21,5 +21,7 @@
     "revision_window": 13,
     "state": "frozen",
     "optional_outputs": [],
-    "produce_quarterly_extracts": null
+    "produce_quarterly_extracts": null,
+    "sizeband_quarter": [],
+    "imputation_contribution_periods": []
 }

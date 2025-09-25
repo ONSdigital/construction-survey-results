@@ -36,6 +36,7 @@ def config():
         "target": "adjustedresponse",
         "cell_number": "cell_no",
         "components_questions": [40, 49],
+        "sizeband_quarter": ["2023Q2"],
     }
 
 

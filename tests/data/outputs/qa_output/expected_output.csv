@@ -1,5 +1,4 @@
-question_no,,,,,,,1,1,1,1,2,2,2,2,3,3,3,3
-,,,,,,,weighted adjusted value,imputation_marker_col,outlier_weight,target,weighted adjusted value,imputation_marker_col,outlier_weight,target,weighted adjusted value,imputation_marker_col,outlier_weight,target
-period,sic,reference,cell_number,auxiliary,froempment,runame1,,,,,,,,,,,,
-2023-01,100,101,1,100,3,A,10,r,1,10,20,i,1,20,30,c,1,30
-2023-01,200,102,2,200,4,B,,,,,352,i,2,44,,,,
+period,sic,reference,cell_number,auxiliary,froempment,runame1,1,1,1,1,2,2,2,2,3,3,3,3,calibration_factor,design_weight,nil_status_col
+placeholder,placeholder,placeholder,placeholder,placeholder,placeholder,placeholder,weighted adjusted value,imputation_marker_col,outlier_weight,target,weighted adjusted value,imputation_marker_col,outlier_weight,target,weighted adjusted value,imputation_marker_col,outlier_weight,target,placeholder,placeholder,placeholder
+2023-01,100,101,1,100,3,A,10,r,1,10,20,i,1,20,30,c,1,30,1,1,N
+2023-01,200,102,2,200,4,B,,,,,320,i,2,40,,,,,2,2,Y

@@ -47,8 +47,7 @@ def produce_qa_output(
         config["cell_number"],
         config["auxiliary"],  # check if aux or converted aux
         config["froempment"],
-        "runame1"
-        # potentially add entname1?
+        "runame1",
     ]
 
     # Create value for adj_targer*a*o*g weights
@@ -67,7 +66,13 @@ def produce_qa_output(
         "weighted adjusted value",  #
     ]
 
+    additional_outputs_df = additional_outputs_df.loc[
+        additional_outputs_df[config["question_no"]] != 290
+    ].copy()
+
     # creating pivot table
+    # Converting question no to string, this becomes a column name
+    # and should be a string
     qa_output_df = additional_outputs_df.pivot_table(
         index=index_columns,
         columns=config["question_no"],
@@ -75,5 +80,31 @@ def produce_qa_output(
         aggfunc="first",
     )
 
-    # swapping index levels to have question_no as the top level as requested in task
-    return qa_output_df.swaplevel(axis=1).sort_index(axis=1, level=0)
+    main_pivot = (
+        qa_output_df.swaplevel(axis=1).sort_index(axis=1, level=0).reset_index()
+    )
+    extra_information_columns = [
+        config["period"],
+        config["reference"],
+        "design_weight",
+        "calibration_factor",
+        config["nil_status_col"],
+    ]
+    extra_information = additional_outputs_df[
+        extra_information_columns
+    ].drop_duplicates()
+    extra_information.columns = pd.MultiIndex.from_tuples(
+        [(col, "") for col in extra_information.columns]
+    )
+    main_pivot = pd.merge(
+        main_pivot,
+        extra_information.sort_index(axis=1),
+        on=[config["period"], config["reference"]],
+        how="left",
+    )
+    # convert question_no column names to strings
+    main_pivot.columns = pd.MultiIndex.from_tuples(
+        [(str(l0), l1) for l0, l1 in main_pivot.columns]
+    )
+
+    return main_pivot
