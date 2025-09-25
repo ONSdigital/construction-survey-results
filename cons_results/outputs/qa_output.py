@@ -47,6 +47,7 @@ def produce_qa_output(
         config["cell_number"],
         config["auxiliary"],  # check if aux or converted aux
         config["froempment"],
+        "classification",
         "runame1",
     ]
 
