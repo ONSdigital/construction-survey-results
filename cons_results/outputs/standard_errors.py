@@ -18,8 +18,6 @@ def create_standard_errors(additional_outputs_df, **config):
 
     """
 
-    print("Columns in input df: ", additional_outputs_df.columns, sep="\n")
-
     df = additional_outputs_df[
         [
             config["period"],
