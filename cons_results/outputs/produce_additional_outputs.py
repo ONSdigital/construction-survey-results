@@ -43,8 +43,21 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
             filename = get_versioned_filename(output, config)
 
         if df is not None:
-            header = False if output in ["quarterly_by_sizeband_output"] else True
-            df.to_csv(config["output_path"] + filename, index=False, header=header)
+            header = (
+                False
+                if output in ["quarterly_by_sizeband_output", "quarterly_extracts"]
+                else True
+            )
+
+            write_csv_wrapper(
+                df,
+                config["output_path"] + filename,
+                config["platform"],
+                config["bucket"],
+                index=False,
+                header=header,
+            )
+
             print(config["output_path"] + filename + " saved")
 
 
@@ -96,6 +109,7 @@ def produce_quarterly_extracts(
     q_extracts_df[config["period"]] = convert_column_to_datetime(
         q_extracts_df[config["period"]]
     )
+
     q_extracts_df["quarter"] = pd.PeriodIndex(q_extracts_df[config["period"]], freq="Q")
 
     if config["quarterly_extract"] is None:
@@ -147,15 +161,9 @@ def produce_quarterly_extracts(
         key=lambda x: x.map(custom_region_order),
     )
 
-    filename = f"r_and_m_regional_extracts_{chosen_quarter}.csv"
+    file_suffix = str(chosen_quarter)
 
-    write_csv_wrapper(
-        extracts_table,
-        config["output_path"] + filename,
-        config["platform"],
-        config["bucket"],
-        header=False,
-    )
+    filename = f"r_and_m_regional_extracts_{file_suffix}.csv"
 
     print(config["output_path"] + filename + " saved")
 
