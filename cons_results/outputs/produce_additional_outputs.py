@@ -41,7 +41,12 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
             filename = get_versioned_filename(output, config)
 
         if df is not None:
-            df.to_csv(config["output_path"] + filename, index=False)
+            header = (
+                False
+                if output in ["quarterly_by_sizeband_output", "cord_output"]
+                else True
+            )
+            df.to_csv(config["output_path"] + filename, index=False, header=header)
             print(config["output_path"] + filename + " saved")
 
 
