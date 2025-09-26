@@ -30,11 +30,15 @@ class TestImputationContributionOutput:
         expected_output = output_df
 
         config = {
-            "imputation_contribution_sics": [41200, 41201, 42000, 42001],
+            "period": "period",
+            "imputation_contribution_periods": [202302],
+            "imputation_contribution_sics": [41200, 41201, 42000, 42001, 42002],
+            "imputation_contribution_classification": [41200, 42000, 42001],
             "components_questions": [201, 202, 211],
             "question_no": "questioncode",
+            "snapshot_file_path": "test_snapshot",
         }
 
-        actual_output = get_imputation_contribution_output(input_df, **config)
+        actual_output = get_imputation_contribution_output(input_df, **config)[0]
 
         assert_frame_equal(actual_output, expected_output)

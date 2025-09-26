@@ -151,9 +151,16 @@
         "43342", "43390", "43910", "43990", "43991", "43999"
     ],
 
+    "imputation_contribution_classification": [
+        "41200", "42000", "42900", "43100", "43210", "43220", "43290", "43310",
+        "43320", "43330", "43340", "43390", "43910", "43990"
+    ],
+
     "nil_values" : ["Combined child (NIL2)", "Out of scope (NIL3)", "Ceased trading (NIL4)" ,"Dormant (NIL5)",
     "Part year return (NIL8)",
     "No UK activity (NIL9)"],
+
+    "non_response_statuses": ["Form sent out", "Excluded from Results"],
 
     "sizeband_numeric_to_character": {
         "1": "A",
@@ -162,9 +169,7 @@
         "4": "D",
         "5": "E",
         "6": "F",
-        "7": "G",
-        "8": "H",
-        "9": "I"
+        "7": "G"
     },
 
     "pounds_thousands_questions": [201, 202, 211, 212, 221, 222, 231, 232, 241, 242, 243, 290]

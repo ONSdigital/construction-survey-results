@@ -55,7 +55,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         status="status",
         reference=staging_config["reference"],
         period=staging_config["period"],
-        non_response_statuses=["Form sent out", "Excluded from results"]  # noqa
+        non_response_statuses=config["non_response_statuses"]  # noqa
         + config["nil_values"],  # noqa
     )  # noqa
 

@@ -21,13 +21,18 @@ def create_standard_errors(additional_outputs_df, **config):
     df = additional_outputs_df[
         [
             config["period"],
-            config["sic"],
-            config["cell_number"],
             config["question_no"],
+            "classification",
+            config["cell_number"],
             config["target"],
         ]
     ].groupby(
-        [config["period"], config["sic"], config["cell_number"], config["question_no"]]
+        [
+            config["period"],
+            config["question_no"],
+            "classification",
+            config["cell_number"],
+        ]
     )
 
     sample_var = (
@@ -47,7 +52,7 @@ def create_standard_errors(additional_outputs_df, **config):
         standard_error,
         on=[
             config["period"],
-            config["sic"],
+            "classification",
             config["cell_number"],
             config["question_no"],
         ],
@@ -55,7 +60,7 @@ def create_standard_errors(additional_outputs_df, **config):
         variation,
         on=[
             config["period"],
-            config["sic"],
+            "classification",
             config["cell_number"],
             config["question_no"],
         ],
