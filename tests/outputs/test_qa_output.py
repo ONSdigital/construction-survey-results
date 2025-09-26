@@ -120,5 +120,4 @@ def test_produce_qa_output_index(sample_df_and_config, expected_qa_output):
         result.sort_index(axis=1),
         expected.sort_index(axis=1),
         check_like=True,
-        check_dtype=False,
     )

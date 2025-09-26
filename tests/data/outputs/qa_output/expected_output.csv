@@ -1,4 +1,4 @@
 period,sic,reference,cell_number,auxiliary,froempment,classification,runame1,region,1,1,1,1,2,2,2,2,3,3,3,3,calibration_factor,design_weight,nil_status_col
 placeholder,placeholder,placeholder,placeholder,placeholder,placeholder,placeholder,placeholder,placeholder,imputation_marker_col,outlier_weight,target,weighted adjusted value,imputation_marker_col,outlier_weight,target,weighted adjusted value,imputation_marker_col,outlier_weight,target,weighted adjusted value,placeholder,placeholder,placeholder
-2023-01,100,101,1,100,3,100,A,North,r,1,10,10,i,1,20,20,c,1,30,30,1,1,N
-2023-01,200,102,2,200,4,100,B,South,,,,,i,2,40,320,,,,,2,2,Y
+2023-01,100,101,1,100,3,100,A,North,r,1.0,10.0,10.0,i,1.0,20.0,20.0,c,1.0,30.0,30.0,1.0,1.0,N
+2023-01,200,102,2,200,4,100,B,South,,,,,i,2.0,40.0,320.0,,,,,2.0,2.0,Y
