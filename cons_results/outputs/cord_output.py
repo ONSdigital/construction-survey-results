@@ -1,3 +1,5 @@
+import itertools
+
 import pandas as pd
 from mbs_results.outputs.growth_rates_output import get_growth_rates_output
 
@@ -33,5 +35,32 @@ def get_cord_output(
     cord_output_df["sizeband"] = cord_output_df["sizeband"].replace(
         config["sizeband_numeric_to_character"]
     )
+
+    # add missing sizebands
+    missing_sizebands = set(config["sizeband_numeric_to_character"].values()) - set(
+        cord_output_df["sizeband"]
+    )
+    if missing_sizebands:
+
+        missing_groups = set(
+            itertools.product(
+                list(map(int, config["imputation_contribution_classification"])),
+                config["components_questions"],
+                missing_sizebands,
+            )
+        )
+        missing_df = pd.DataFrame(
+            missing_groups,
+            columns=["classification", config["question_no"], "sizeband"],
+        )
+
+        cord_output_df = pd.concat([cord_output_df, missing_df]).fillna(0)
+
+    # Change sort order
+    cord_output_df = cord_output_df.sort_values(
+        by=["classification", "sizeband", config["question_no"]]
+    ).reset_index(drop=True)
+
+    # Remove headings - not sure how to do?
 
     return cord_output_df

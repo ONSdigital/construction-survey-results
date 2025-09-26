@@ -45,7 +45,8 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
         if df is not None:
             header = (
                 False
-                if output in ["quarterly_by_sizeband_output", "quarterly_extracts"]
+                if output
+                in ["quarterly_by_sizeband_output", "quarterly_extracts", "cord_output"]
                 else True
             )
 
