@@ -24,6 +24,7 @@ def sample_df_and_config():
         "runame1": ["A", "A", "A", "B"],
         "nil_status_col": ["N", "N", "N", "Y"],
         "classification": [100, 100, 100, 100],
+        "region": ["North", "North", "North", "South"],
     }
     df = pd.DataFrame(data)
     config = {
@@ -71,6 +72,7 @@ def test_produce_qa_output_shape_and_columns(sample_df_and_config):
         "runame1",
         "cell_number",
         "classification",
+        "region",
     }
     assert set(result.columns.get_level_values(1)) == {
         "target",

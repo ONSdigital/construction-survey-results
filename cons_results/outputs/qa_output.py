@@ -49,6 +49,7 @@ def produce_qa_output(
         config["froempment"],
         "classification",
         "runame1",
+        "region",
     ]
 
     # Create value for adj_targer*a*o*g weights
