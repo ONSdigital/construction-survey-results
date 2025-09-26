@@ -56,11 +56,15 @@ def get_cord_output(
 
         cord_output_df = pd.concat([cord_output_df, missing_df]).fillna(0)
 
+    cord_output_df["classification"] = cord_output_df["classification"].astype(int)
+    cord_output_df["sizeband"] = cord_output_df["sizeband"].astype(str)
+    cord_output_df[config["question_no"]] = cord_output_df[
+        config["question_no"]
+    ].astype(int)
+
     # Change sort order
     cord_output_df = cord_output_df.sort_values(
         by=["classification", "sizeband", config["question_no"]]
     ).reset_index(drop=True)
-
-    # Remove headings - not sure how to do?
 
     return cord_output_df
