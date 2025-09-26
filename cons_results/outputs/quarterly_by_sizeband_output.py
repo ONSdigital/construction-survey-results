@@ -47,8 +47,18 @@ def get_quarterly_by_sizeband_output(
             config["cell_number"],
             config["question_no"],
             config["target"],
+            "design_weight",
+            "outlier_weight",
+            "calibration_factor",
         ]
     ]
+
+    filtered_data["weighted_adjustedvalue"] = (
+        filtered_data[config["target"]]
+        * filtered_data["design_weight"]
+        * filtered_data["outlier_weight"]
+        * filtered_data["calibration_factor"]
+    )
 
     # selecting only components (so not to include filtered qs with no cell no)
     filtered_data = filtered_data[
@@ -92,7 +102,7 @@ def get_quarterly_by_sizeband_output(
         filtered_data.pivot_table(
             index=["quarter", "sizeband"],
             columns=config["question_no"],
-            values=config["target"],
+            values="weighted_adjustedvalue",
             aggfunc="sum",
             dropna=False,
         )
