@@ -40,7 +40,7 @@ def get_cord_output(
     missing_sizebands = set(config["sizeband_numeric_to_character"].values()) - set(
         cord_output_df["sizeband"]
     )
-    if missing_sizebands != set():
+    if missing_sizebands:
 
         missing_groups = set(
             itertools.product(
