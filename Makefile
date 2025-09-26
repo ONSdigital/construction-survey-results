@@ -8,8 +8,23 @@
 	install
 	install_dev
 	prepare_docs_folder
+	install_MBS_main
+	point_MBS_to_GitHub
 
 .DEFAULT_GOAL := help
+
+
+## This will change the setup.cfg the text with monthly-business-survey-results==
+## E.g. "monthly-business-survey-results==0.0.1" will be converted to
+## "git+https://github.com/ONSdigital/monthly-business-survey-results.git@v0.0.1"
+## The main application is for github workflows so they will install MBS from GitHub
+
+
+point_MBS_to_GitHub:
+	perl -pi -e "s,monthly-business-survey-results==,monthly-business-survey-results @ git+https://github.com/ONSdigital/monthly-business-survey-results.git@,g" setup.cfg
+
+install_MBS_main:
+	python -m pip install git+https://github.com/ONSdigital/monthly-business-survey-results.git
 
 ## Install the Python package for contributors, and install pre-commit hooks
 install_dev:
