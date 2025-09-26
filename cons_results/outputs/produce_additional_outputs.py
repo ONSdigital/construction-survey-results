@@ -1,5 +1,6 @@
 import pandas as pd
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
+from mbs_results.utilities.inputs import read_csv_wrapper
 from mbs_results.utilities.outputs import write_csv_wrapper
 from mbs_results.utilities.utils import convert_column_to_datetime
 
@@ -99,7 +100,9 @@ def produce_quarterly_extracts(config: dict, df: pd.DataFrame):
         q_extracts_df = q_extracts_df[q_extracts_df["quarter"] == latest_quarter]
 
         # Map region names onto DataFrame
-        region_mapping_df = pd.read_csv(config["region_mapping_path"])
+        region_mapping_df = read_csv_wrapper(
+            config["region_mapping_path"], config["platform"], config["bucket"]
+        )
 
         q_extracts_df = q_extracts_df.merge(
             region_mapping_df, left_on=config["region"], right_on="region_code"
