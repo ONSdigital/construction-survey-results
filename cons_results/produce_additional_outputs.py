@@ -14,6 +14,10 @@ def produce_additional_outputs_wrapper(config_user_dict=None):
         bucket_name=config["bucket"],
     )
 
+    target = config.get("target")
+    df[f"{target}_actual"] = df[target].copy()
+    df[target] = df["adjustedresponse_pounds_thousands"]
+
     produce_additional_outputs(
         additional_outputs_df=df, qa_outputs=False, optional_outputs=True, config=config
     )

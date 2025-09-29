@@ -238,6 +238,7 @@ def get_additional_outputs_df(
         "status",
         "runame1",
         "region",
+        "adjustedresponse_pounds_thousands",
     ]
     if not config["filter"]:
         count_variables = [f"b_match_{target}_count", f"f_match_{target}_count"]
