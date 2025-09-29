@@ -33,12 +33,7 @@ def test_config(filepath):
         "region_mapping_path": filepath / "region_code_name_mapping.csv",
         "current_period": 202303,
         "revision_window": 3,
-        "state": "frozen",
-        "optional_outputs": ["all"],
-        "r_and_m_quarter": None,
-        "sizeband_quarter": ["2023Q2"],
-        "imputation_contribution_periods": [202302],
-        "debug_mode": False,
+        "debug_mode": False
     }
 
 

@@ -19,9 +19,5 @@
     "region_mapping_path": "",
     "current_period": 202303,
     "revision_window": 13,
-    "state": "frozen",
-    "optional_outputs": [],
-    "r_and_m_quarter": null,
-    "sizeband_quarter": [],
-    "imputation_contribution_periods": [],
+    "debug_mode": false
 }
