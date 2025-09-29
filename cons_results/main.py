@@ -43,7 +43,7 @@ def run_pipeline(config_user_dict=None):
 
     write_csv_wrapper(
         df,
-        config["output_path"] + mbs_filename,
+        config["output_path"] + cons_filename,
         config["platform"],
         config["bucket"],
         index=False,
