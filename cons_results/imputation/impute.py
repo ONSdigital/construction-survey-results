@@ -131,6 +131,8 @@ def impute(
         adjustedresponse=config["target"],
         output_path=config["output_path"],
         output_file_name="validate_q290_output.csv",
+        import_platform=config["platform"],
+        bucket_name=config["bucket"],
     )
 
     df[config["period"]] = df[config["period"]].dt.strftime("%Y%m").astype("int")
