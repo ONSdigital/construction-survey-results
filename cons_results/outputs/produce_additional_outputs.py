@@ -1,6 +1,5 @@
 import pandas as pd
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
-from mbs_results.utilities.inputs import read_csv_wrapper
 from mbs_results.utilities.outputs import write_csv_wrapper
 from mbs_results.utilities.utils import convert_column_to_datetime
 
