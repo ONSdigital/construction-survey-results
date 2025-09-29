@@ -23,6 +23,8 @@ def sample_df_and_config():
         "sic": [100, 100, 100, 200],
         "runame1": ["A", "A", "A", "B"],
         "nil_status_col": ["N", "N", "N", "Y"],
+        "classification": [100, 100, 100, 100],
+        "region": ["North", "North", "North", "South"],
     }
     df = pd.DataFrame(data)
     config = {
@@ -69,6 +71,8 @@ def test_produce_qa_output_shape_and_columns(sample_df_and_config):
         "froempment",
         "runame1",
         "cell_number",
+        "classification",
+        "region",
     }
     assert set(result.columns.get_level_values(1)) == {
         "target",
@@ -111,9 +115,9 @@ def test_produce_qa_output_index(sample_df_and_config, expected_qa_output):
     assert set(result.columns) == set(expected.columns)
     # Check that the dataframes are roughly equal (allowing for column order
     # differences)
+
     pd.testing.assert_frame_equal(
         result.sort_index(axis=1),
         expected.sort_index(axis=1),
         check_like=True,
-        check_dtype=False,
     )

@@ -47,7 +47,9 @@ def produce_qa_output(
         config["cell_number"],
         config["auxiliary"],  # check if aux or converted aux
         config["froempment"],
+        "classification",
         "runame1",
+        "region",
     ]
 
     # Create value for adj_targer*a*o*g weights
