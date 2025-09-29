@@ -38,6 +38,7 @@ def test_config(filepath):
         "r_and_m_quarter": None,
         "sizeband_quarter": ["2023Q2"],
         "imputation_contribution_periods": [202302],
+        "debug_mode": False,
     }
 
 

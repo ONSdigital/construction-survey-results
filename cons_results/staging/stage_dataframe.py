@@ -1,5 +1,3 @@
-import os
-
 import numpy as np
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
@@ -41,7 +39,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     period = staging_config["period"]
     reference = staging_config["reference"]
     snapshot_file_path = staging_config["snapshot_file_path"]
-    snapshot_name = os.path.basename(snapshot_file_path).split(".")[0]
 
     contributors, responses = get_dfs_from_spp(
         snapshot_file_path,
@@ -82,14 +79,10 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     responses = append_back_data(responses, staging_config)
 
-    responses = filter_out_questions(
+    responses, unprocessed_data = filter_out_questions(
         df=responses,
         column=staging_config["question_no"],
         questions_to_filter=staging_config["filter_out_questions"],
-        save_full_path=staging_config["output_path"]
-        + snapshot_name
-        + "_filter_out_questions.csv",
-        **staging_config,
     )
 
     responses = enforce_datatypes(
@@ -175,6 +168,14 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     df = pd.merge(left=df, right=contributors, on=[period, reference], how="left")
 
+    unprocessed_data = enforce_datatypes(
+        unprocessed_data, list(unprocessed_data), **staging_config
+    )
+    # Get extra variables for unprocessed_data too
+    unprocessed_data = pd.merge(
+        left=unprocessed_data, right=contributors, on=[period, reference], how="left"
+    )
+
     # Skipping questions for clear, clear overridden and nil contributors
     status_values_to_skip = ["Clear", "Clear - overridden"] + config["nil_values"]
 
@@ -229,7 +230,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     print("Staging Completed")
 
-    return df, manual_constructions, filter_df
+    return df, unprocessed_data, manual_constructions, filter_df
 
 
 def flag_290_case(
