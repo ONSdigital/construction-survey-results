@@ -39,7 +39,7 @@ def run_pipeline(config_user_dict=None):
 
     df = get_additional_outputs_df(df, unprocessed_data, config)
 
-    mbs_filename = get_versioned_filename("mbs_results", config)
+    mbs_filename = get_versioned_filename("cons_results", config)
 
     write_csv_wrapper(
         df,
