@@ -46,8 +46,7 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
 
             header = (
                 False
-                if output
-                in ["quarterly_by_sizeband_output", "quarterly_extracts", "cord_output"]
+                if output in ["quarterly_by_sizeband_output", "quarterly_extracts"]
                 else True
             )
 
@@ -154,13 +153,17 @@ def produce_quarterly_extracts(
         "Scotland": 11,
     }
 
-    extracts_table = extracts_table.pivot(
-        index=["quarter", "region_name"],
-        columns=config["question_no"],
-        values="weighted adjusted value",
-    ).sort_values(
-        by=["region_name"],
-        key=lambda x: x.map(custom_region_order),
+    extracts_table = (
+        extracts_table.pivot(
+            index=["quarter", "region_name"],
+            columns=config["question_no"],
+            values="weighted adjusted value",
+        )
+        .sort_values(
+            by=["region_name"],
+            key=lambda x: x.map(custom_region_order),
+        )
+        .reset_index()
     )
 
     file_suffix = str(chosen_quarter)

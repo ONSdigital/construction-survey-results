@@ -38,7 +38,7 @@ def test_quarterly_extracts(filepath, sample_config):
 
     # We need to do this to the actual output, because
     # it comes pivoted from the function call
-    output_df = output_df.reset_index()
+    output_df = output_df.reset_index(drop=True)
     output_df.columns = ["quarter", "region_name", "202", "212", "222", "232", "243"]
 
     pd.testing.assert_frame_equal(output_df, expected_output_df)
