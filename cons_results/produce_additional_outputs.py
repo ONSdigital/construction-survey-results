@@ -1,4 +1,3 @@
-
 from mbs_results.utilities.inputs import load_config, read_csv_wrapper
 
 from cons_results.outputs.produce_additional_outputs import produce_additional_outputs

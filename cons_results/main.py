@@ -1,7 +1,6 @@
 from mbs_results.estimation.estimate import estimate
 from mbs_results.utilities.inputs import load_config
 from mbs_results.utilities.outputs import write_csv_wrapper
-from cons_results.utilities.utils import get_versioned_filename
 from mbs_results.utilities.validation_checks import (
     validate_config,
     validate_estimation,
@@ -17,6 +16,7 @@ from cons_results.outputs.produce_additional_outputs import (
     produce_additional_outputs,
 )
 from cons_results.staging.stage_dataframe import stage_dataframe
+from cons_results.utilities.utils import get_versioned_filename
 
 
 def run_pipeline(config_user_dict=None):
