@@ -1,7 +1,7 @@
 from mbs_results.estimation.estimate import estimate
 from mbs_results.utilities.inputs import load_config
 from mbs_results.utilities.outputs import write_csv_wrapper
-from mbs_results.utilities.utils import get_versioned_filename
+from cons_results.utilities.utils import get_versioned_filename
 from mbs_results.utilities.validation_checks import (
     validate_config,
     validate_estimation,
