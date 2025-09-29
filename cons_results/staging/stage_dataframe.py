@@ -167,6 +167,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     )
 
     df = pd.merge(left=df, right=contributors, on=[period, reference], how="left")
+unprocessed_data = unprocessed_data[~unprocessed_data[config["question_no"]].isin([902, 903, 904])]
 
     unprocessed_data = enforce_datatypes(
         unprocessed_data, list(unprocessed_data), **staging_config
