@@ -3,6 +3,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from mbs_results.utilities.outputs import write_csv_wrapper
 
 
 def rescale_290_case(
@@ -216,6 +217,8 @@ def validate_q290(
     adjustedresponse: str,
     output_path: str = "",
     output_file_name: str = "",
+    import_platform: str = "network",
+    bucket_name: str = "",
 ) -> None:
     """
     validation function to check q290 values and raise warnings if they
@@ -250,6 +253,13 @@ def validate_q290(
             # Only output file if a name is provided
             output_file = os.path.join(output_path, output_file_name)
             print(f"Saving mismatched q290 totals to {output_file}")
-            mismatched_totals.to_csv(output_file, index=False)
+
+            write_csv_wrapper(
+                df=mismatched_totals,
+                save_path=output_file,
+                import_platform=import_platform,
+                bucket_name=bucket_name,
+                index=False,
+            )
     else:
         print("q290 values match the sum of components for all periods and references.")

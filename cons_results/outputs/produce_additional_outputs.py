@@ -43,6 +43,7 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
             filename = get_versioned_filename(output, config)
 
         if df is not None:
+
             header = (
                 False
                 if output
