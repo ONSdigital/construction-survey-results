@@ -34,7 +34,7 @@ def test_config(filepath):
         "back_data_finalsel_path": str(filepath / "finalsel228_dummy_202212"),
         "current_period": 202303,
         "revision_window": 3,
-        "debug_mode": False,
+        "debug_mode": True,
     }
 
 

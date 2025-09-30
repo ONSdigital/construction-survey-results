@@ -1,6 +1,5 @@
 from mbs_results.estimation.estimate import estimate
 from mbs_results.utilities.inputs import load_config
-from mbs_results.utilities.outputs import write_csv_wrapper
 from mbs_results.utilities.validation_checks import (
     validate_config,
     validate_estimation,
@@ -16,7 +15,7 @@ from cons_results.outputs.produce_additional_outputs import (
     produce_additional_outputs,
 )
 from cons_results.staging.stage_dataframe import stage_dataframe
-from cons_results.utilities.utils import get_versioned_filename
+from cons_results.utilities.utils import save_df
 
 
 def run_pipeline(config_user_dict=None):
@@ -30,24 +29,18 @@ def run_pipeline(config_user_dict=None):
 
     df = impute(df, config, manual_constructions, filter_df)
     validate_imputation(df, config)
+    save_df(df, "imputation", config, config["debug_mode"])
 
     df = estimate(df=df, method="separate", convert_NI_GB_cells=False, config=config)
     validate_estimation(df, config)
+    save_df(df, "estimation_output", config, config["debug_mode"])
 
     df = detect_outlier(df, config)
     validate_outlier_detection(df, config)
+    save_df(df, "outlier_output", config, config["debug_mode"])
 
     df = get_additional_outputs_df(df, unprocessed_data, config)
-
-    cons_filename = get_versioned_filename("cons_results", config)
-
-    write_csv_wrapper(
-        df,
-        config["output_path"] + cons_filename,
-        config["platform"],
-        config["bucket"],
-        index=False,
-    )
+    save_df(df, "cons_results", config)
 
     produce_additional_outputs(
         additional_outputs_df=df, qa_outputs=True, optional_outputs=False, config=config
