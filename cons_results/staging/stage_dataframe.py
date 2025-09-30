@@ -8,7 +8,10 @@ from mbs_results.staging.data_cleaning import (
     filter_out_questions,
 )
 from mbs_results.staging.dfs_from_spp import get_dfs_from_spp
-from mbs_results.staging.stage_dataframe import read_and_combine_colon_sep_files
+from mbs_results.staging.stage_dataframe import (
+    exclude_from_results,
+    read_and_combine_colon_sep_files,
+)
 from mbs_results.utilities.inputs import read_csv_wrapper
 
 from cons_results.staging.create_missing_questions import create_missing_questions
@@ -53,6 +56,18 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         reference=staging_config["reference"],
         period=staging_config["period"],
         non_response_statuses=config["non_response_statuses"] + config["nil_values"],
+    )
+
+    responses = exclude_from_results(
+        responses=responses,
+        contributors=contributors,
+        non_response_statuses=config["non_response_statuses"],
+        reference=config["reference"],
+        period=config["period"],
+        status="status",
+        target=config["target"],
+        question_no=config["question_no"],
+        output_path=config["output_path"],
     )
 
     # Filter columns and set data types
