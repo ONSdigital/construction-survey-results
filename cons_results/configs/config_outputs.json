@@ -1,0 +1,13 @@
+{
+    "bucket": "",
+    "idbr_folder_path": "",
+    "snapshot_file_path": "",
+    "cons_output_path": "",
+    "output_path": "",
+    "current_period": 202303,
+    "revision_window": 13,
+    "region_mapping_path": "",
+    "r_and_m_quarter": null,
+    "sizeband_quarter": [""],
+    "imputation_contribution_periods": []
+}

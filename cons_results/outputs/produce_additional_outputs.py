@@ -1,6 +1,7 @@
 import pandas as pd
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 from mbs_results.utilities.outputs import write_csv_wrapper
+from mbs_results.utilities.pounds_thousands import create_pounds_thousands_column
 from mbs_results.utilities.utils import convert_column_to_datetime
 
 from cons_results.outputs.cord_output import get_cord_output
@@ -18,7 +19,13 @@ from cons_results.outputs.standard_errors import create_standard_errors
 from cons_results.utilities.utils import get_versioned_filename
 
 
-def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame):
+def produce_additional_outputs(
+    additional_outputs_df: pd.DataFrame,
+    qa_outputs: bool,
+    optional_outputs: bool,
+    config: dict,
+):
+
     additional_outputs = get_additional_outputs(
         config,
         {
@@ -31,6 +38,8 @@ def produce_additional_outputs(config: dict, additional_outputs_df: pd.DataFrame
             "quarterly_extracts": produce_quarterly_extracts,
         },
         additional_outputs_df,
+        qa_outputs,
+        optional_outputs,
     )
 
     if additional_outputs is None:
@@ -173,3 +182,99 @@ def produce_quarterly_extracts(
     print(config["output_path"] + filename + " saved")
 
     return extracts_table, filename
+
+
+def get_additional_outputs_df(
+    df: pd.DataFrame, unprocessed_data: pd.DataFrame, config: dict
+):
+    """
+    Creating dataframe that contains all variables needed for producing additional
+    outputs.
+    Create adjustedresponse_pounds_thousands column based on question numbers in config.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Dataframe output from the outliering stage of the pipeline
+    unprocessed_data : pd.DataFrame
+        Dataframe with all question codes which weren't processed through
+        mbs methods like qcode 11, 12, 146.
+    config : dict
+        main pipeline configuration.
+
+    Returns
+    -------
+    pd.DataFrame
+
+    """
+    questions_to_apply = config.get("pounds_thousands_questions")
+    question_col = config.get("question_no")
+    dest_col = config.get("pound_thousand_col")
+    target = config.get("target")
+
+    # below needed for mandotary and optional outputs
+    final_cols = [
+        config["reference"],
+        config["period"],
+        config["sic"],
+        "classification",
+        config["cell_number"],
+        config["auxiliary"],
+        "froempment",
+        "formtype",
+        question_col,
+        config["status"],
+        "design_weight",
+        config["calibration_factor"],
+        "outlier_weight",
+        f"imputation_flags_{target}",
+        "imputation_class",
+        f"f_link_{target}",
+        f"default_link_f_match_{target}",
+        f"b_link_{target}",
+        f"default_link_b_match_{target}",
+        "construction_link",
+        "flag_construction_matches_count",
+        "default_link_flag_construction_matches",
+        target,
+        "response",
+        "status",
+        "runame1",
+        "region",
+        "adjustedresponse_pounds_thousands",
+    ]
+    if not config["filter"]:
+        count_variables = [f"b_match_{target}_count", f"f_match_{target}_count"]
+    else:
+        count_variables = [
+            f"b_match_filtered_{target}_count",
+            f"f_match_filtered_{target}_count",
+        ]
+
+    final_cols += count_variables
+
+    df = create_pounds_thousands_column(
+        df,
+        question_col=question_col,
+        source_col=target,
+        dest_col=dest_col,
+        questions_to_apply=questions_to_apply,
+        ensure_at_end=True,
+    )
+
+    # converting cell_number to int
+    # needed for outputs that use cell_number for sizebands
+
+    df = df.astype({"classification": str, config["cell_number"]: int})
+
+    unprocessed_data["period"] = (
+        unprocessed_data["period"].dt.strftime("%Y%m").astype("int")
+    )
+
+    df = pd.concat([df, unprocessed_data])
+
+    df = df[final_cols]
+
+    df.reset_index(drop=True, inplace=True)
+
+    return df

@@ -15,13 +15,7 @@
     "back_data_cp_path":"",
     "back_data_qv_cp_json_path":"",
     "back_data_finalsel_path":"",
-    "sic_domain_mapping_path": "",
-    "region_mapping_path": "",
     "current_period": 202303,
     "revision_window": 13,
-    "state": "frozen",
-    "optional_outputs": [],
-    "r_and_m_quarter": null,
-    "sizeband_quarter": [],
-    "imputation_contribution_periods": [],
+    "debug_mode": false
 }

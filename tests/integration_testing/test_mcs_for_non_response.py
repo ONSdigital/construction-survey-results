@@ -38,6 +38,7 @@ def test_config(filepath):
         "state": "frozen",
         "optional_outputs": [""],
         "components_questions": [1, 2, 3, 4, 5, 6],
+        "debug_mode": False,
     }
 
 
@@ -67,7 +68,7 @@ def test_mc_for_non_response(
     config.update(test_config)
     config["snapshot_file_path"] = str(filepath / snapshot_file)
 
-    df, manual_constructions, filter_df = stage_dataframe(config)
+    df, unprocessed_data, manual_constructions, filter_df = stage_dataframe(config)
 
     df = impute(df, config, manual_constructions, filter_df)
 

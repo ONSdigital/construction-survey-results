@@ -1,6 +1,9 @@
+from glob import glob
 from pathlib import Path
 
+import pandas as pd
 import pytest
+from pandas.testing import assert_frame_equal
 
 from cons_results.main import run_pipeline
 
@@ -29,15 +32,9 @@ def test_config(filepath):
         "back_data_qv_path": filepath / "test_qv_009_202212.csv",
         "back_data_cp_path": filepath / "test_cp_009_202212.csv",
         "back_data_finalsel_path": str(filepath / "finalsel228_dummy_202212"),
-        "sic_domain_mapping_path": "",
-        "region_mapping_path": filepath / "region_code_name_mapping.csv",
         "current_period": 202303,
         "revision_window": 3,
-        "state": "frozen",
-        "optional_outputs": ["all"],
-        "r_and_m_quarter": None,
-        "sizeband_quarter": ["2023Q2"],
-        "imputation_contribution_periods": [202302],
+        "debug_mode": False,
     }
 
 
@@ -47,6 +44,16 @@ class TestMain:
     def test_run_pipeline(self, test_config):
         """Run main pipeline based on test_config"""
         run_pipeline(test_config)
+
+        out_path = "tests/data/test_main/output/"
+
+        # check pattern due different version in file name
+        patern = glob(out_path + "cons_results_*.csv")
+
+        actual = pd.read_csv(patern[0])
+        expected = pd.read_csv(out_path + "expected_from_cons_main.csv")
+
+        assert_frame_equal(actual, expected)
 
     def test_run_pipeline_live(self, test_config):
         """Run main pipeline based on test_config"""
