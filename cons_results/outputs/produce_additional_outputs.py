@@ -1,4 +1,5 @@
 import pandas as pd
+from mbs_results import logger
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 from mbs_results.outputs.scottish_welsh_gov_outputs import generate_devolved_outputs
 from mbs_results.utilities.outputs import write_csv_wrapper
@@ -61,14 +62,35 @@ def produce_additional_outputs(
                 else True
             )
 
-            write_csv_wrapper(
-                df,
-                config["output_path"] + filename,
-                config["platform"],
-                config["bucket"],
-                index=False,
-                header=header,
-            )
+            print(df)
+
+            if isinstance(df, dict):
+                # if the output is a dictionary (e.g. from generate_devolved_outputs),
+                # we need to save each DataFrame in the dictionary
+                for nation, df in df.items():
+                    nation_filename = (
+                        f"{config['output_path']}{nation.lower()}_{filename}"
+                    )
+                    write_csv_wrapper(
+                        df,
+                        nation_filename,
+                        config["platform"],
+                        config["bucket"],
+                        index=False,
+                    )
+
+                    logger.info(nation_filename + " saved")
+
+            else:
+
+                write_csv_wrapper(
+                    df,
+                    config["output_path"] + filename,
+                    config["platform"],
+                    config["bucket"],
+                    index=False,
+                    header=header,
+                )
 
             print(config["output_path"] + filename + " saved")
 
@@ -244,6 +266,7 @@ def get_additional_outputs_df(
         "runame1",
         "region",
         "adjustedresponse_pounds_thousands",
+        "winsorised_value",
     ]
     if not config["filter"]:
         count_variables = [f"b_match_{target}_count", f"f_match_{target}_count"]

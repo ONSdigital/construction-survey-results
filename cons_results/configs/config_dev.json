@@ -157,6 +157,12 @@
         "43320", "43330", "43340", "43390", "43910", "43990"
     ],
 
+    "local_unit_columns": ["ruref", "entref", "lu ref", "check letter", "sic03", "sic07",
+    "employees", "employment", "fte", "Name1", "Name2", "Name3", "Address1", "Address2",
+    "Address3", "Address4", "Address5", "Postcode", "trading as 1", "trading as 2",
+    "trading as 3", "region"
+    ],
+
     "nil_values" : ["Combined child (NIL2)", "Out of scope (NIL3)", "Ceased trading (NIL4)" ,"Dormant (NIL5)",
     "Part year return (NIL8)",
     "No UK activity (NIL9)"],

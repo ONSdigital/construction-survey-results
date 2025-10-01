@@ -20,5 +20,6 @@
         222: "infrastructure",
         232: "public_non_housing",
         243: "private_non_housing"
-    }
+    },
+    "devolved_nations": ["Scotland", "Wales"]
 }
