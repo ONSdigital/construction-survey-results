@@ -59,7 +59,13 @@ def expected_output_df():
 def test_flag_total_only_and_zero(responses_df, contributors_df, expected_output_df):
 
     actual_output = flag_total_only_and_zero(
-        responses_df, contributors_df, "reference", "period", "values", "qcodes"
+        responses_df,
+        contributors_df,
+        "reference",
+        "period",
+        "values",
+        "qcodes",
+        ["Clear", "Clear - overridden"],
     )
 
     assert_frame_equal(actual_output, expected_output_df)

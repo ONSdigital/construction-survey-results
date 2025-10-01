@@ -8,6 +8,7 @@ def flag_total_only_and_zero(
     period: str,
     values: str,
     qcodes: str,
+    clear_statuses: list,
     total_question_code: str = 290,
 ) -> pd.DataFrame:
     """
@@ -29,6 +30,8 @@ def flag_total_only_and_zero(
         Column containing values.
     qcodes : str
         Column containing question code values.
+    clear_statuses : list
+        List of clear statuses.
     total_question_code : str, optional
         Question code value which represents total. The default is 290.
 
@@ -72,7 +75,7 @@ def flag_total_only_and_zero(
 
     df = responses.merge(contributors, how="left", on=[period, reference]).copy()
 
-    df_filtered = df[df["status"].isin(["Clear", "Clear - Overridden"])]
+    df_filtered = df[df["status"].isin(clear_statuses)]
 
     df_with_conditions = df_filtered.groupby([reference, period]).agg(
         {
