@@ -92,9 +92,10 @@ def produce_qa_output(
         "calibration_factor",
         config["nil_status_col"],
     ]
+
     extra_information = additional_outputs_df[
         extra_information_columns
-    ].drop_duplicates()
+    ].drop_duplicates(subset=[config["period"], config["reference"]])
     extra_information.columns = pd.MultiIndex.from_tuples(
         [(col, "") for col in extra_information.columns]
     )
