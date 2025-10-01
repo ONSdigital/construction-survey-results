@@ -154,6 +154,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         staging_config["period"],
         staging_config["target"],
         staging_config["question_no"],
+        config["clear_statuses"],
     )
 
     if staging_config["manual_constructions_path"]:
