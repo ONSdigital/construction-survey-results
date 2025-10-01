@@ -4,10 +4,21 @@
     "snapshot_file_path": "",
     "cons_output_path": "",
     "output_path": "",
+    "ludets_prefix": "",
     "current_period": 202303,
     "revision_window": 13,
     "region_mapping_path": "",
     "r_and_m_quarter": null,
     "sizeband_quarter": [""],
-    "imputation_contribution_periods": []
+    "imputation_contribution_periods": [],
+    "devolved_questions": [11, 12, 202, 212, 222, 232, 243],
+    "question_no_plaintext": {
+        11: "start_date",
+        12: "end_date",
+        202: "public_housing",
+        212: "private_housing",
+        222: "infrastructure",
+        232: "public_non_housing",
+        243: "private_non_housing"
+    }
 }
