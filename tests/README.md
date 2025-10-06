@@ -7,7 +7,7 @@ Key and commonly used mocked / patched functions have been included as well. If 
 
 ## Key Points
 - Use classes to group tests and fixtures together, especially when we have multiple functions tested in same file.
-- Single functions / tests can still be written as functions, but if you find fixtures are being being repeated think about switching to a class
+- Single functions / tests can still be written as functions, but if you find fixtures are being repeated think about switching to a class
 - Each module has its own data folder fixture to reduce repetition, these can be found in the [conftest.py][fixtures]
 - Fix any pandas warning messages before merging
 - User warnings and warnings from importlib have been suppressed when running the unit tests (these will still appear when running the main pipeline!)
