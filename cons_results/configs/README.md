@@ -5,27 +5,45 @@
 | bucket | The path to the bucket. | string | Any filepath. |
 | calibration_group_map_path | The filepath to the calibration group mapping file. | string | Any filepath. |
 | classification_values_path | The filepath to the file containing SIC classification values. | string | Any filepath. |
-| folder_path | The path to the folder containing input data. | string | Any filepath. |
+| idbr_folder_path | The path to the folder containing input data. | string | Any filepath. |
 | l_values_path | The filepath to the file containing l values. | string | Any filepath. |
+| manual_outlier_path | The filepath to the file containing manual outliers data. | string | Any filepath. |
+| snapshot_file_path | The filepath to the input data. | string | Any filepath. |
 | manual_constructions_path | The filepath to the file containing manual constructions data. | string | Any filepath. |
-| mbs_file_name | The filepath to the input data. | string | Any filepath. |
+| filter | The filepath to the file containing filter data. | string | Any filepath. |
 | output_path | The filepath where outputs should be saved to. | string | Any filepath. |
-| population_path | The filepath to the file containing population frame data. | string | Any filepath. |
-| sample_path | The filepath for the file containing sample data. | string | Any filepath. |
+| population_path | The prefix text for population frame data. | string | Any text. |
+| sample_prefix | The prefix text for sample frame data | string | Any text. |
 | back_data_qv_path | The filepath for the file containing QV backdata. | string | Any filepath. |
 | back_data_cp_path | The filepath for the file containing CP backdata. | string | Any filepath. |
+| back_data_qv_cp_json_path | The filepath for the file containing the backdata snapshot. | string | Any filepath. |
 | back_data_finalsel_path | The filepath for the file containing final selection backdata. | string | Any filepath. |
-| sic_domain_mapping_path | The filepath for the data containing the mapping from SIC codes to domains. | string | Any filepath. |
-| threshold_filepath | The filepath for the data containing thresholds for selective editing. | string | Any filepath. |
 | period_selected | The most recent period to include in the outputs. | int | Any int in the form `yyyymm`. |
 | current_period | The most recent period to include in the outputs (same as above). | int | Any int in the form `yyyymm`. |
-| previous_period | The previous period to use as a reference | int | Any int in the form `yyyymm`. |
 | revision_window | The number of months to use as a revision window. | int | Any int in the form `mm` or `m` (does not need to be zero-padded). |
-| state | The name of the column containing the state variable. | string | Any valid column name. |
-| optional_outputs | A list of optional outputs to produce after the pipeline has run. | `[]` | list | Any of the outputs listed in `cons_results/outputs/produce_additional_outputs.py` within the `produce_additional_outputs` function which can be produced. Set to all `["all"]` to produce all outputs. |
+| debug_mode | Whether to export all the intermediate methods outputs (imputation, estimation, winsorisation) . | bool | Either `true` or `false`. |
 
 ## Guidance for use
 As an end user, you will only need to change the user config (named `config_user.json`) - you just need to update the filepaths and period information in the user config. Note: for ONS users, you can find example filepaths in the Confluence documentation.
+
+# Config outputs
+| Parameter | Description | Data Type | Acceptable Values |
+|---|---|---|---|
+| bucket | The path to the bucket. | string | Any filepath. |
+| idbr_folder_path | The path to the folder containing the IDBR data. | string | Any filepath. |
+| snapshot_file_path | The full filepath to the snapshot data | string | Any filepath. |
+| cons_output_path | The filepath to the file containing the methods output. | string | Any filepath. |
+| output_path | The filepath where outputs should be saved to. | string | Any filepath. |
+| current_period | The most recent period to include in the outputs (same as above). | int | Any int in the form `yyyymm`. |
+| revision_window | The number of months to use as a revision window. | int | Any int in the form `mm` or `m` (does not need to be zero-padded). |
+| region_mapping_path | The filepath to the region mapping file. | string | Any filepath. |
+| r_and_m_quarter | The quarter to use to produce regional R&M extracts. Must be in 'YYYYQX' format, e.g., '2023Q1' | string | `"YYYYQX"` |
+| sizeband_quarter | A list of optional quarters to filter the quarterly_by_sizeband_output on. | `[]` | list | Any quarter in the format `YYYYQX` (e.g. ["2023Q2"]) |
+| imputation_contribution_period | A list of optional periods to filter the imputation_contribution_output on. | `[]` | list | Any period in the format `YYYYMM` (e.g. ["202201"]) |
+
+## Guidance for additional outputs
+As an end user, you will only need to change the outputs config (named `config_outputs.json`) - you just need to update the filepaths and period information in the output config. Note: for ONS users, you can find example filepaths in the Confluence documentation.
+
 
 # Dev Config
 | Parameter | Description | Default | Data Type | Acceptable Values |
@@ -64,6 +82,9 @@ As an end user, you will only need to change the user config (named `config_user
 | csw_to_spp_columns | Mapping of CSW to SPP columns. | `{"returned_value":"response", "adjusted_value":"adjustedresponse", "question_no":"questioncode"}` | dict | A dictionary in the format `{"CSW_col_name": "SPP_col_name"}`. |
 | type_to_imputation_marker | A dictionary mapper mapping type to imputation marker. | `{"0": "selected, no return", "1": "r", "2": "derived", "3": "fir", "4": "bir", "5": "c", "6": "mc", "10": "r", "11": "r", "12": "derived", "13": "fir" }` | dict | A dictionary in the format `{"type":"imputation_marker"}` where imputation marker is a value found in the imputation_marker_col. |
 | mandatory_outputs | A list of mandatory outputs to produce after the pipeline has run. | `["produce_qa_output"]` | list | Any of the outputs listed in `cons_results/outputs/produce_additional_outputs.py` within the `produce_additional_outputs` function. |
+| imputation_contribution_sics   | A list of Standard Industry Classification codes (SICs) that should be included in the imputation contribution output. | `["41200", "41201", "41202", "42000", "42110", "42120", "42130", "42210", "42220", "42900", "42910", "42990", "43100", "43110", "43120", "43130", "43210", "43220", "43290", "43310", "43320", "43330", "43340", "43341", "43342", "43390", "43910", "43990", "43991", "43999"]` | list   | A list containing SIC codes.   |
+| imputation_contribution_classification | A list of higher-level classification codes that should be included in the imputation contribution output. | `["41200", "42000", "42900", "43100", "43210", "43220", "43290", "43310", "43320", "43330", "43340", "43390", "43910", "43990"]` | list   | A list containing classification codes. |
+| non_response_statuses | A list of status values that refer to non-responses. | `["Form sent out", "Excluded from Results"]` | list | A list of statuses found in the "status" column. |
 | pound_thousand_col | The name of the column containing the target variable expressed in thousands. | `"adjustedresponse_pounds_thousands"` | string | Any valid column name. |
 
 ## Usage

@@ -41,5 +41,5 @@ class TestValidateSnapshot:
                 status="status",
                 reference="reference",
                 period="period",
-                non_response_statuses=["Form sent out", "Excluded from results"],
+                non_response_statuses=["Form sent out", "Excluded from Results"],
             )

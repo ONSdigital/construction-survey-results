@@ -38,22 +38,12 @@ class TestCordOutput:
                 "5": "E",
                 "6": "F",
                 "7": "G",
-                "8": "H",
-                "9": "I",
             },
             "components_questions": [
                 201,
                 202,
-                211,
-                212,
-                221,
-                222,
-                231,
-                232,
-                241,
-                242,
-                243,
             ],
+            "imputation_contribution_classification": ["1", "2", "3"],
         }
 
         expected_output = output_df

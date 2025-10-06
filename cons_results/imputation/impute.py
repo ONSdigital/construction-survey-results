@@ -71,7 +71,7 @@ def impute(
         responses_keep_col=config["responses_keep_cols"],
         finalsel_keep_col=config["finalsel_keep_cols"],
         status_col=config["nil_status_col"],
-        status_filter=["Form sent out", "Check needed", "Excluded from results"],
+        status_filter=["Check needed"] + config["non_response_statuses"],
         flag_col_name="derived_zeros",
         imputation_marker_col=config["imputation_marker_col"],
     )
@@ -131,6 +131,8 @@ def impute(
         adjustedresponse=config["target"],
         output_path=config["output_path"],
         output_file_name="validate_q290_output.csv",
+        import_platform=config["platform"],
+        bucket_name=config["bucket"],
     )
 
     df[config["period"]] = df[config["period"]].dt.strftime("%Y%m").astype("int")

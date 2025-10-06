@@ -1,5 +1,3 @@
-import os
-
 import numpy as np
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
@@ -10,7 +8,10 @@ from mbs_results.staging.data_cleaning import (
     filter_out_questions,
 )
 from mbs_results.staging.dfs_from_spp import get_dfs_from_spp
-from mbs_results.staging.stage_dataframe import read_and_combine_colon_sep_files
+from mbs_results.staging.stage_dataframe import (
+    exclude_from_results,
+    read_and_combine_colon_sep_files,
+)
 from mbs_results.utilities.inputs import read_csv_wrapper
 
 from cons_results.staging.create_missing_questions import create_missing_questions
@@ -41,7 +42,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     period = staging_config["period"]
     reference = staging_config["reference"]
     snapshot_file_path = staging_config["snapshot_file_path"]
-    snapshot_name = os.path.basename(snapshot_file_path).split(".")[0]
 
     contributors, responses = get_dfs_from_spp(
         snapshot_file_path,
@@ -55,9 +55,20 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         status="status",
         reference=staging_config["reference"],
         period=staging_config["period"],
-        non_response_statuses=["Form sent out", "Excluded from results"]  # noqa
-        + config["nil_values"],  # noqa
-    )  # noqa
+        non_response_statuses=config["non_response_statuses"] + config["nil_values"],
+    )
+
+    responses = exclude_from_results(
+        responses=responses,
+        contributors=contributors,
+        non_response_statuses=config["non_response_statuses"],
+        reference=config["reference"],
+        period=config["period"],
+        status="status",
+        target=config["target"],
+        question_no=config["question_no"],
+        output_path=config["output_path"],
+    )
 
     # Filter columns and set data types
     contributors = contributors[staging_config["contributors_keep_cols"]]
@@ -82,14 +93,10 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     responses = append_back_data(responses, staging_config)
 
-    responses = filter_out_questions(
+    responses, unprocessed_data = filter_out_questions(
         df=responses,
         column=staging_config["question_no"],
         questions_to_filter=staging_config["filter_out_questions"],
-        save_full_path=staging_config["output_path"]
-        + snapshot_name
-        + "_filter_out_questions.csv",
-        **staging_config,
     )
 
     responses = enforce_datatypes(
@@ -147,6 +154,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         staging_config["period"],
         staging_config["target"],
         staging_config["question_no"],
+        config["clear_statuses"],
     )
 
     if staging_config["manual_constructions_path"]:
@@ -174,6 +182,18 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     )
 
     df = pd.merge(left=df, right=contributors, on=[period, reference], how="left")
+
+    unprocessed_data = unprocessed_data[
+        ~unprocessed_data[config["question_no"]].isin([902, 903, 904])
+    ]
+
+    unprocessed_data = enforce_datatypes(
+        unprocessed_data, list(unprocessed_data), **staging_config
+    )
+    # Get extra variables for unprocessed_data too
+    unprocessed_data = pd.merge(
+        left=unprocessed_data, right=contributors, on=[period, reference], how="left"
+    )
 
     # Skipping questions for clear, clear overridden and nil contributors
     status_values_to_skip = ["Clear", "Clear - overridden"] + config["nil_values"]
@@ -229,7 +249,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
 
     print("Staging Completed")
 
-    return df, manual_constructions, filter_df
+    return df, unprocessed_data, manual_constructions, filter_df
 
 
 def flag_290_case(

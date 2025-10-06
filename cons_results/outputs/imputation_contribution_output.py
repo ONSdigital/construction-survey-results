@@ -3,6 +3,8 @@ import itertools
 import numpy as np
 import pandas as pd
 
+from cons_results.utilities.utils import get_versioned_filename
+
 
 def get_imputation_contribution_output(additional_outputs_df: pd.DataFrame, **config):
     """
@@ -23,6 +25,9 @@ def get_imputation_contribution_output(additional_outputs_df: pd.DataFrame, **co
     """
 
     df = additional_outputs_df.copy()
+
+    if config["imputation_contribution_periods"]:
+        df = df[df[config["period"]].isin(config["imputation_contribution_periods"])]
 
     question_no = config["question_no"]
 
@@ -51,34 +56,52 @@ def get_imputation_contribution_output(additional_outputs_df: pd.DataFrame, **co
         pd.pivot_table(
             df,
             values="curr_grossed_value",
-            index=["frosic2007", question_no],
+            index=["classification", question_no],
             columns="returned_or_imputed",
             aggfunc="sum",
         )
         .reset_index()
-        .rename_axis(None, axis=1)[["frosic2007", question_no, "returned", "imputed"]]
+        .rename_axis(None, axis=1)[
+            ["classification", question_no, "returned", "imputed"]
+        ]
     )
 
-    # Adding in missing SIC-questioncode combinations
-    output_sic_qc = set(
-        output_df[["frosic2007", question_no]].to_records(index=False).tolist()
-    )
-    all_sic_qc = set(
-        itertools.product(
-            config["imputation_contribution_sics"], config["components_questions"]
-        )
-    )
-    missing_sic_qc = list(all_sic_qc - output_sic_qc)
-    missing_sic_df = pd.DataFrame(missing_sic_qc, columns=["frosic2007", question_no])
-    output_df = pd.concat([output_df, missing_sic_df], axis=0)
+    # low level sics that don't match the higher level classification
+    low_level_sics = [
+        sic
+        for sic in config["imputation_contribution_sics"]
+        if sic not in config["imputation_contribution_classification"]
+    ]
 
-    # Totals for each SIC are given by Q290
-    q290_totals = output_df.groupby("frosic2007").sum().reset_index()
-    q290_totals[question_no] = 290
+    # creating a low level sic for each question code
+    low_level_sic_qc = set(
+        itertools.product(low_level_sics, config["components_questions"])
+    )
 
-    output_df = pd.concat([output_df, q290_totals], axis=0).fillna(0)
+    low_level_sic_df = pd.DataFrame(
+        low_level_sic_qc, columns=["classification", question_no]
+    )
+
+    output_df = pd.concat([output_df, low_level_sic_df], axis=0).fillna(0)
 
     output_df.insert(2, "total", output_df["imputed"] + output_df["returned"])
-    output_df.sort_values([question_no, "frosic2007"], inplace=True)
+    output_df.sort_values([question_no, "classification"], inplace=True)
 
-    return output_df.reset_index(drop=True)
+    # renaming classification to frosic to match the extract
+    # classification contains the higher level frosic code
+    output_df.rename(columns={"classification": "frosic2007"}, inplace=True)
+
+    # setting filename based on periods
+    if config["imputation_contribution_periods"]:
+        periods_strings = [
+            str(period) for period in config["imputation_contribution_periods"]
+        ]
+        periods_prefix = "_".join(periods_strings)
+        filename_prefix = f"imputation_contribution_output_{periods_prefix}"
+
+        filename = get_versioned_filename(filename_prefix, config)
+
+        return (output_df.reset_index(drop=True), filename)
+
+    else:
+        return output_df.reset_index(drop=True)
