@@ -2,7 +2,7 @@
     "platform" : "s3",
 
     "back_data_type":"type",
-    "back_data_format": "csv",
+    "back_data_format": "json",
     "imputation_marker_col":"imputation_flags_adjustedresponse",
     "state": "frozen",
 
