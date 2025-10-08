@@ -68,9 +68,8 @@ def produce_additional_outputs(
                 # if the output is a dictionary (e.g. from generate_devolved_outputs),
                 # we need to save each DataFrame in the dictionary
                 for nation, df in df.items():
-                    nation_filename = (
-                        f"{config['output_path']}{nation.lower()}_{filename}"
-                    )
+                    nation_name = nation.lower().replace(" ", "_")
+                    nation_filename = f"{config['output_path']}{nation_name}_{filename}"
                     write_csv_wrapper(
                         df,
                         nation_filename,
