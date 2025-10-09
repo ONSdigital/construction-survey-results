@@ -9,19 +9,18 @@
 | l_values_path | The filepath to the file containing l values. | string | Any filepath. |
 | manual_outlier_path | The filepath to the file containing manual outliers data. | string | Any filepath. |
 | snapshot_file_path | The filepath to the input data. | string | Any filepath. |
-| manual_constructions_path | The filepath to the file containing manual constructions data. | string | Any filepath. |
-| filter | The filepath to the file containing filter data. | string | Any filepath. |
+| manual_constructions_path | The filepath to the file containing manual constructions data. | string or null | Any filepath or null. |
+| filter | The filepath to the file containing filter data. | string or null | Any filepath or null. |
 | output_path | The filepath where outputs should be saved to. | string | Any filepath. |
-| population_path | The prefix text for population frame data. | string | Any text. |
-| sample_prefix | The prefix text for sample frame data | string | Any text. |
+| population_prefix | The prefix text for population frame data. | string | Any text. |
+| sample_prefix | The prefix text for sample frame data. | string | Any text. |
 | back_data_qv_path | The filepath for the file containing QV backdata. | string | Any filepath. |
 | back_data_cp_path | The filepath for the file containing CP backdata. | string | Any filepath. |
 | back_data_qv_cp_json_path | The filepath for the file containing the backdata snapshot. | string | Any filepath. |
 | back_data_finalsel_path | The filepath for the file containing final selection backdata. | string | Any filepath. |
-| period_selected | The most recent period to include in the outputs. | int | Any int in the form `yyyymm`. |
-| current_period | The most recent period to include in the outputs (same as above). | int | Any int in the form `yyyymm`. |
+| current_period | The most recent period to include in the outputs. | int | Any int in the form `yyyymm`. |
 | revision_window | The number of months to use as a revision window. | int | Any int in the form `mm` or `m` (does not need to be zero-padded). |
-| debug_mode | Whether to export all the intermediate methods outputs (imputation, estimation, winsorisation) . | bool | Either `true` or `false`. |
+| debug_mode | Whether to export all the intermediate methods outputs (imputation, estimation, winsorisation). | bool | Either `true` or `false`. |
 
 ## Guidance for use
 As an end user, you will only need to change the user config (named `config_user.json`) - you just need to update the filepaths and period information in the user config. Note: for ONS users, you can find example filepaths in the Confluence documentation.
@@ -37,9 +36,9 @@ As an end user, you will only need to change the user config (named `config_user
 | current_period | The most recent period to include in the outputs (same as above). | int | Any int in the form `yyyymm`. |
 | revision_window | The number of months to use as a revision window. | int | Any int in the form `mm` or `m` (does not need to be zero-padded). |
 | region_mapping_path | The filepath to the region mapping file. | string | Any filepath. |
-| r_and_m_quarter | The quarter to use to produce regional R&M extracts. Must be in 'YYYYQX' format, e.g., '2023Q1' | string | `"YYYYQX"` |
-| sizeband_quarter | A list of optional quarters to filter the quarterly_by_sizeband_output on. | `[]` | list | Any quarter in the format `YYYYQX` (e.g. ["2023Q2"]) |
-| imputation_contribution_period | A list of optional periods to filter the imputation_contribution_output on. | `[]` | list | Any period in the format `YYYYMM` (e.g. ["202201"]) |
+| r_and_m_quarter | The quarter to use to produce regional R&M extracts. Must be in 'YYYYQX' format, e.g., '2023Q1' | string or null | `"YYYYQX"` or null |
+| sizeband_quarter | A list of optional quarters to filter the quarterly_by_sizeband_output on. | list | A list containing any quarter in the format `YYYYQX` (e.g. ["2023Q2"]) or an empty list. |
+| imputation_contribution_periods | A list of optional periods to filter the imputation_contribution_output on. | list | Any period in the format `YYYYMM` (e.g. ["202201"]) or an empty list. |
 
 ## Guidance for additional outputs
 As an end user, you will only need to change the outputs config (named `config_outputs.json`) - you just need to update the filepaths and period information in the output config. Note: for ONS users, you can find example filepaths in the Confluence documentation.
@@ -58,7 +57,7 @@ As an end user, you will only need to change the outputs config (named `config_o
 | design_weight | The name of the column containing the design weight variable. | `"design_weight"` | string | Any valid column name. |
 | status | The name of the column containing the status variable. | `"statusencoded"` | string | Any valid column name. |
 | form_id_idbr | The name of the column containing the form type (IDBR) variable. | `"formtype"` | string | Any valid column name. |
-| calibration_group | The name of the column containing the calibration group variable. | `"calibration_group"` | string | Any valid column name. |
+| calibration_group | The name of the column containing the calibration group variable. | `"cell_no"` | string | Any valid column name. |
 | period | The name of the column containing the period variable. | `"period"` | string | Any valid column name. |
 | question_no | The name of the column containing the question number/code variable. | `"questioncode"` | string | Any valid column name. |
 | reference | The name of the column containing the reference variable. | `"reference"` | string | Any valid column name. |
@@ -71,14 +70,14 @@ As an end user, you will only need to change the outputs config (named `config_o
 | master_column_type_dict | Defines the expected data types for various columns. | `{"reference": "int", "period": "date", "response": "str", "questioncode": "int", "adjustedresponse": "float", "frozensic": "str", "frozenemployees": "int", "frozenturnover": "float", "cellnumber": "int", "formtype": "str", "status": "str", "statusencoded": "int", "frosic2007": "str", "froempment": "int", "frotover": "float", "cell_no": "int"}` | dict | Any dictionary in the format `{"column_name": "data_type"}` where column name is a valid column and data_type is one of `"bool"`, `"int"`, `"str"` or `"float"`. Both key and value should be enclosed in quotation marks. |
 | contributors_keep_cols | Columns to keep for contributors. | `["period", "reference", "status", "statusencoded"]` | list | A list of valid column names. |
 | responses_keep_cols | Columns to keep for responses. | `["adjustedresponse", "period", "questioncode", "reference", "response"]` | list | A list of valid column names. |
-| finalsel_keep_cols | Columns to keep for final selection. | `["formtype", "cell_no", "froempment", "frosic2007", "frotover", "period", "reference"]` | list | A list of valid column names. |
+| finalsel_keep_cols | Columns to keep for final selection. | `["formtype", "cell_no", "froempment", "frotover", "reference", "region", "runame1"]` | list | A list of valid column names. |
 | temporarily_remove_cols | Columns to temporarily remove. | [] | list | A list of valid column names. |
 | non_sampled_strata | Non-sampled strata values. | `["5141", "5142", "5143", "5371", "5372", "5373", "5661", "5662", "5663"]` | list | A list of cell numbers/strata. |
 | population_column_names | Column names in the population frame. | `["reference", "checkletter", "inqcode", "entref", "wowentref", "frosic2003", "rusic2003", "frosic2007", "rusic2007", "froempees", "employees", "froempment", "employment", "froFTEempt", "FTEempt", "frotover", "turnover", "entrepmkr", "legalstatus", "inqstop", "entzonemkr", "region", "live_lu", "live_vat", "live_paye", "immfoc", "ultfoc", "cell_no", "selmkr", "inclexcl" ]` | list | A list of valid column names in the population frame dataset. |
 | population_keep_columns | Population columns to keep. | `["reference", "region", "frotover", "cell_no", "period", "frosic2007"]` | list | A list of valid column names in the population frame dataset. |
 | sample_column_names | Column names in the sample data. | `["reference", "checkletter", "frosic2003", "rusic2003", "frosic2007", "rusic2007", "froempees", "employees", "froempment", "employment", "froFTEempt", "FTEempt", "frotover", "turnover", "entref", "wowentref", "vatref", "payeref", "crn", "live_lu", "live_vat", "live_paye","legalstatus", "entrepmkr", "region", "birthdate", "entname1", "entname2", "entname3", "runame1", "runame2","runame3", "ruaddr1", "ruaddr2", "ruaddr3", "ruaddr4", "ruaddr5", "rupostcode", "tradstyle1", "tradstyle2","tradstyle3", "contact", "telephone", "fax", "seltype", "inclexcl", "cell_no", "formtype", "cso_tel", "currency"]` | list | A list of valid column names in the sample data. |
-| sample_keep_columns | Sample columns to keep. | `["reference", "period"]` | list | A list of valid column names in the sample data. |
-| filter_out_questions | A list of questions to filter out when running the pipeline. | `[11, 12 , 146]` | list | A list of ints where each int refers to a question. |
+| sample_keep_columns | Sample columns to keep. | `["reference", "runame1"]` | list | A list of valid column names in the sample data. |
+| filter_out_questions | A list of questions to filter out when running the pipeline. | `[11, 12, 146, 902, 903, 904]` | list | A list of ints where each int refers to a question. |
 | csw_to_spp_columns | Mapping of CSW to SPP columns. | `{"returned_value":"response", "adjusted_value":"adjustedresponse", "question_no":"questioncode"}` | dict | A dictionary in the format `{"CSW_col_name": "SPP_col_name"}`. |
 | type_to_imputation_marker | A dictionary mapper mapping type to imputation marker. | `{"0": "selected, no return", "1": "r", "2": "derived", "3": "fir", "4": "bir", "5": "c", "6": "mc", "10": "r", "11": "r", "12": "derived", "13": "fir" }` | dict | A dictionary in the format `{"type":"imputation_marker"}` where imputation marker is a value found in the imputation_marker_col. |
 | mandatory_outputs | A list of mandatory outputs to produce after the pipeline has run. | `["produce_qa_output"]` | list | Any of the outputs listed in `cons_results/outputs/produce_additional_outputs.py` within the `produce_additional_outputs` function. |
