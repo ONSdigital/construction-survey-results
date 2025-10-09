@@ -35,7 +35,6 @@ def test_config(filepath):
         "current_period": 202303,
         "revision_window": 3,
         "debug_mode": True,
-        "back_data_format": "csv",
     }
 
 
