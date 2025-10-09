@@ -68,6 +68,8 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         target=config["target"],
         question_no=config["question_no"],
         output_path=config["output_path"],
+        platform=config["platform"],
+        bucket=config["bucket"],
     )
 
     # Filter columns and set data types
