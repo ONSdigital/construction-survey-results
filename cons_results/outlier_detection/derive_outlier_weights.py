@@ -62,7 +62,7 @@ def derive_q290_outlier_weights(
     """
 
     # Using the formula to calculate q290 outlier weights
-    components = df[df[question_no].isin(all_questions)]
+    components = df.copy()[df[question_no].isin(all_questions)]
     components.loc[:, "o_weight_times_value"] = (
         components["outlier_weight"] * components[target]
     )
