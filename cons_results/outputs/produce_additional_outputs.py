@@ -242,6 +242,7 @@ def get_additional_outputs_df(
         "runame1",
         "region",
         "adjustedresponse_pounds_thousands",
+        "winsorised_value",
     ]
     if not config["filter"]:
         count_variables = [f"b_match_{target}_count", f"f_match_{target}_count"]
