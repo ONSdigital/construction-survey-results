@@ -53,7 +53,9 @@ class TestMain:
         actual = pd.read_csv(patern[0])
         expected = pd.read_csv(out_path + "expected_from_cons_main.csv")
 
-        assert_frame_equal(actual, expected)
+        actual.to_csv("actual_output_test_main.csv", index=False)
+
+        assert_frame_equal(actual, expected, check_like=False)
 
     def test_run_pipeline_live(self, test_config):
         """Run main pipeline based on test_config"""
