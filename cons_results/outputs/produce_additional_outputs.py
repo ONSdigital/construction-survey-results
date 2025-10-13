@@ -263,6 +263,7 @@ def get_additional_outputs_df(
         "response",
         "status",
         "runame1",
+        "entname1",
         "region",
         "adjustedresponse_pounds_thousands",
         "winsorised_value",
