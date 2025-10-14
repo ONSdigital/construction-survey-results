@@ -1,2 +1,3 @@
 include cons_results/configs/config_dev.json
 include cons_results/configs/config_user.json
+include cons_results/configs/config_outputs.json
