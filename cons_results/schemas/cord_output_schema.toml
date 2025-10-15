@@ -1,0 +1,71 @@
+[classification]
+old_name = "classification"
+Deduced_Data_Type = "int64"
+
+[questioncode]
+old_name = "questioncode"
+Deduced_Data_Type = "int64"
+
+[sizeband]
+old_name = "sizeband"
+Deduced_Data_Type = "object"
+
+[2022JAN]
+old_name = "2022JAN"
+Deduced_Data_Type = "float64"
+
+[2022FEB]
+old_name = "2022FEB"
+Deduced_Data_Type = "float64"
+
+[2022MAR]
+old_name = "2022MAR"
+Deduced_Data_Type = "float64"
+
+[2022APR]
+old_name = "2022APR"
+Deduced_Data_Type = "float64"
+
+[2022MAY]
+old_name = "2022MAY"
+Deduced_Data_Type = "float64"
+
+[2022JUN]
+old_name = "2022JUN"
+Deduced_Data_Type = "float64"
+
+[2022JUL]
+old_name = "2022JUL"
+Deduced_Data_Type = "float64"
+
+[2022AUG]
+old_name = "2022AUG"
+Deduced_Data_Type = "float64"
+
+[2022SEP]
+old_name = "2022SEP"
+Deduced_Data_Type = "float64"
+
+[2022OCT]
+old_name = "2022OCT"
+Deduced_Data_Type = "float64"
+
+[2022NOV]
+old_name = "2022NOV"
+Deduced_Data_Type = "float64"
+
+[2022DEC]
+old_name = "2022DEC"
+Deduced_Data_Type = "float64"
+
+[2023JAN]
+old_name = "2023JAN"
+Deduced_Data_Type = "float64"
+
+[2023FEB]
+old_name = "2023FEB"
+Deduced_Data_Type = "float64"
+
+[2023MAR]
+old_name = "2023MAR"
+Deduced_Data_Type = "float64"
