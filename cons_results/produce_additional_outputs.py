@@ -16,7 +16,7 @@ def produce_additional_outputs_wrapper(config_user_dict=None):
 
     target = config.get("target")
     df[f"{target}_actual"] = df[target].copy()
-    df.loc[~df[config["question_no"]].isin([11, 12]), target] = df[
+    df.loc[~df[config["question_no"]].isin([11, 12, 146, 901, 902, 902]), target] = df[
         "adjustedresponse_pounds_thousands"
     ].copy()
 
