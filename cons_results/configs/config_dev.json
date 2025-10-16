@@ -71,7 +71,8 @@
         "frotover",
         "reference",
         "region",
-        "runame1"
+        "runame1",
+        "entname1"
     ],
 
     "temporarily_remove_cols": [],
@@ -102,7 +103,7 @@
         "tradstyle2","tradstyle3","contact","telephone","fax","seltype","inclexcl",
         "cell_no","formtype","cso_tel","currency"
     ],
-    "sample_keep_columns": ["reference", "runame1"],
+    "sample_keep_columns": ["reference", "runame1", "entname1"],
 
      "filter_out_questions": [11, 12 ,146,902, 903, 904],
      "csw_to_spp_columns":{
@@ -155,6 +156,12 @@
     "imputation_contribution_classification": [
         "41200", "42000", "42900", "43100", "43210", "43220", "43290", "43310",
         "43320", "43330", "43340", "43390", "43910", "43990"
+    ],
+
+    "local_unit_columns": ["ruref", "entref", "lu ref", "check letter", "sic03", "sic07",
+    "employees", "employment", "fte", "Name1", "Name2", "Name3", "Address1", "Address2",
+    "Address3", "Address4", "Address5", "Postcode", "trading as 1", "trading as 2",
+    "trading as 3", "region"
     ],
 
     "nil_values" : ["Combined child (NIL2)", "Out of scope (NIL3)", "Ceased trading (NIL4)" ,"Dormant (NIL5)",
