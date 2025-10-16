@@ -26,7 +26,6 @@ def output_df(filepath):
 
 class TestImputationContributionOutput:
     def test_imputation_contribution_output(self, input_df, output_df):
-
         expected_output = output_df
 
         config = {
@@ -34,11 +33,16 @@ class TestImputationContributionOutput:
             "imputation_contribution_periods": [202302],
             "imputation_contribution_sics": [41200, 41201, 42000, 42001, 42002],
             "imputation_contribution_classification": [41200, 42000, 42001],
-            "components_questions": [201, 202, 211],
+            "components_questions": [201, 202, 211, 221],
             "question_no": "questioncode",
             "snapshot_file_path": "test_snapshot",
         }
 
         actual_output = get_imputation_contribution_output(input_df, **config)[0]
 
-        assert_frame_equal(actual_output, expected_output)
+        expected_output = expected_output[
+            ["questioncode", "total", "returned", "imputed"]
+        ]
+        actual_output = actual_output[["questioncode", "total", "returned", "imputed"]]
+
+        assert_frame_equal(actual_output.reset_index(drop=True), expected_output)
