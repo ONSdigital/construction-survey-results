@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -12,8 +10,8 @@ from cons_results.staging.create_missing_questions import (
 
 
 @pytest.fixture(scope="class")
-def filepath():
-    return Path("tests/data/staging/create_missing_questions")
+def filepath(staging_data_dir):
+    return staging_data_dir / "create_missing_questions"
 
 
 @pytest.fixture(scope="class")

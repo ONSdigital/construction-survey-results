@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
@@ -10,22 +8,24 @@ from cons_results.outputs.imputes_and_constructed_output import (
 
 
 @pytest.fixture(scope="class")
-def filepath():
-    return Path("tests/data/outputs/imputes_and_constructed_output")
-
-
-@pytest.fixture(scope="class")
-def input_df(filepath):
+def input_df(outputs_data_dir):
     return pd.read_csv(
-        filepath / "imputes_and_constructed_input.csv",
+        outputs_data_dir
+        / "imputes_and_constructed_output"
+        / "imputes_and_constructed_input.csv",
         index_col=False,
         dtype={"period": str},
     )
 
 
 @pytest.fixture(scope="class")
-def output_df(filepath):
-    return pd.read_csv(filepath / "imputes_and_constructed_output.csv", index_col=False)
+def output_df(outputs_data_dir):
+    return pd.read_csv(
+        outputs_data_dir
+        / "imputes_and_constructed_output"
+        / "imputes_and_constructed_output.csv",
+        index_col=False,
+    )
 
 
 @pytest.fixture

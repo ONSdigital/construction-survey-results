@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
@@ -10,8 +8,8 @@ from cons_results.outputs.quarterly_by_sizeband_output import (
 
 
 @pytest.fixture
-def filepath():
-    return Path("tests/data/outputs/quarterly_by_sizeband")
+def filepath(outputs_data_dir):
+    return outputs_data_dir / "quarterly_by_sizeband"
 
 
 @pytest.fixture

@@ -134,7 +134,7 @@ def produce_quarterly_extracts(
             config["question_no"],
             "weighted adjusted value",
         ]
-    ]
+    ].copy()
 
     # Create quarter column
     q_extracts_df[config["period"]] = convert_column_to_datetime(
