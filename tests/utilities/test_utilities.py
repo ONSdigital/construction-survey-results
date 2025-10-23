@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -9,8 +7,8 @@ from cons_results.utilities.csw_to_228_snapshot import remove_skipped_questions
 
 
 @pytest.fixture(scope="class")
-def filepath():
-    return Path("tests/data/utilities/remove_skipped_questions/")
+def filepath(utilities_data_dir):
+    return utilities_data_dir / "remove_skipped_questions/"
 
 
 @pytest.mark.parametrize(

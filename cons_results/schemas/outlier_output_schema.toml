@@ -1,0 +1,203 @@
+[reference]
+old_name = "reference"
+Deduced_Data_Type = "int64"
+
+[period]
+old_name = "period"
+Deduced_Data_Type = "int64"
+
+[questioncode]
+old_name = "questioncode"
+Deduced_Data_Type = "int64"
+
+[290_flag]
+old_name = "290_flag"
+Deduced_Data_Type = "bool"
+
+[is_total_only_and_zero]
+old_name = "is_total_only_and_zero"
+Deduced_Data_Type = "object"
+
+[adjustedresponse]
+old_name = "adjustedresponse"
+Deduced_Data_Type = "float64"
+
+[response]
+old_name = "response"
+Deduced_Data_Type = "float64"
+
+[imputation_flags_adjustedresponse]
+old_name = "imputation_flags_adjustedresponse"
+Deduced_Data_Type = "object"
+
+[status]
+old_name = "status"
+Deduced_Data_Type = "object"
+
+[statusencoded]
+old_name = "statusencoded"
+Deduced_Data_Type = "float64"
+
+[frosic2007]
+old_name = "frosic2007"
+Deduced_Data_Type = "int64"
+
+[froempment]
+old_name = "froempment"
+Deduced_Data_Type = "float64"
+
+[frotover]
+old_name = "frotover"
+Deduced_Data_Type = "float64"
+
+[region]
+old_name = "region"
+Deduced_Data_Type = "object"
+
+[runame1]
+old_name = "runame1"
+Deduced_Data_Type = "object"
+
+[cell_no]
+old_name = "cell_no"
+Deduced_Data_Type = "float64"
+
+[formtype]
+old_name = "formtype"
+Deduced_Data_Type = "int64"
+
+[skipped_question]
+old_name = "skipped_question"
+Deduced_Data_Type = "object"
+
+[live_adjustedresponse]
+old_name = "live_adjustedresponse"
+Deduced_Data_Type = "float64"
+
+[converted_frotover]
+old_name = "converted_frotover"
+Deduced_Data_Type = "float64"
+
+[imputation_class]
+old_name = "imputation_class"
+Deduced_Data_Type = "float64"
+
+[backdata_adjustedresponse]
+old_name = "backdata_adjustedresponse"
+Deduced_Data_Type = "float64"
+
+[backdata_flags_adjustedresponse]
+old_name = "backdata_flags_adjustedresponse"
+Deduced_Data_Type = "float64"
+
+[adjustedresponse_man]
+old_name = "adjustedresponse_man"
+Deduced_Data_Type = "float64"
+
+[f_match_adjustedresponse]
+old_name = "f_match_adjustedresponse"
+Deduced_Data_Type = "object"
+
+[b_match_adjustedresponse]
+old_name = "b_match_adjustedresponse"
+Deduced_Data_Type = "object"
+
+[f_link_adjustedresponse]
+old_name = "f_link_adjustedresponse"
+Deduced_Data_Type = "float64"
+
+[default_link_f_match_adjustedresponse]
+old_name = "default_link_f_match_adjustedresponse"
+Deduced_Data_Type = "object"
+
+[b_link_adjustedresponse]
+old_name = "b_link_adjustedresponse"
+Deduced_Data_Type = "float64"
+
+[default_link_b_match_adjustedresponse]
+old_name = "default_link_b_match_adjustedresponse"
+Deduced_Data_Type = "object"
+
+[construction_link]
+old_name = "construction_link"
+Deduced_Data_Type = "float64"
+
+[default_link_flag_construction_matches]
+old_name = "default_link_flag_construction_matches"
+Deduced_Data_Type = "object"
+
+[f_match_adjustedresponse_count]
+old_name = "f_match_adjustedresponse_count"
+Deduced_Data_Type = "float64"
+
+[b_match_adjustedresponse_count]
+old_name = "b_match_adjustedresponse_count"
+Deduced_Data_Type = "float64"
+
+[flag_construction_matches_count]
+old_name = "flag_construction_matches_count"
+Deduced_Data_Type = "float64"
+
+[derived_zeros]
+old_name = "derived_zeros"
+Deduced_Data_Type = "object"
+
+[adjustedresponse_pre_rescale]
+old_name = "adjustedresponse_pre_rescale"
+Deduced_Data_Type = "float64"
+
+[failed_rescale]
+old_name = "failed_rescale"
+Deduced_Data_Type = "object"
+
+[is_sampled]
+old_name = "is_sampled"
+Deduced_Data_Type = "bool"
+
+[design_weight]
+old_name = "design_weight"
+Deduced_Data_Type = "float64"
+
+[calibration_factor]
+old_name = "calibration_factor"
+Deduced_Data_Type = "float64"
+
+[is_census]
+old_name = "is_census"
+Deduced_Data_Type = "bool"
+
+[sic_5_digit]
+old_name = "sic_5_digit"
+Deduced_Data_Type = "int64"
+
+[classification]
+old_name = "classification"
+Deduced_Data_Type = "int64"
+
+[l_value]
+old_name = "l_value"
+Deduced_Data_Type = "float64"
+
+[nw_ag_flag]
+old_name = "nw_ag_flag"
+Deduced_Data_Type = "object"
+
+[predicted_unit_value]
+old_name = "predicted_unit_value"
+Deduced_Data_Type = "float64"
+
+[ratio_estimation_treshold]
+old_name = "ratio_estimation_treshold"
+Deduced_Data_Type = "float64"
+
+[new_target_variable]
+old_name = "new_target_variable"
+Deduced_Data_Type = "float64"
+
+[outlier_weight]
+old_name = "outlier_weight"
+Deduced_Data_Type = "float64"
+
+[winsorised_value]
+old_name = "winsorised_value"
+Deduced_Data_Type = "float64"

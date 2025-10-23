@@ -1,0 +1,223 @@
+[period]
+old_name = "period"
+Deduced_Data_Type = "float64"
+
+[frosic2007]
+old_name = "frosic2007"
+Deduced_Data_Type = "float64"
+
+[reference]
+old_name = "reference"
+Deduced_Data_Type = "float64"
+
+[cell_no]
+old_name = "cell_no"
+Deduced_Data_Type = "float64"
+
+[frotover]
+old_name = "frotover"
+Deduced_Data_Type = "float64"
+
+[froempment]
+old_name = "froempment"
+Deduced_Data_Type = "float64"
+
+[classification]
+old_name = "classification"
+Deduced_Data_Type = "float64"
+
+[runame1]
+old_name = "runame1"
+Deduced_Data_Type = "object"
+
+[region]
+old_name = "region"
+Deduced_Data_Type = "object"
+
+[201]
+old_name = "201"
+Deduced_Data_Type = "object"
+
+["201.1"]
+old_name = "201.1"
+Deduced_Data_Type = "object"
+
+["201.2"]
+old_name = "201.2"
+Deduced_Data_Type = "object"
+
+["201.3"]
+old_name = "201.3"
+Deduced_Data_Type = "object"
+
+[202]
+old_name = "202"
+Deduced_Data_Type = "object"
+
+["202.1"]
+old_name = "202.1"
+Deduced_Data_Type = "object"
+
+["202.2"]
+old_name = "202.2"
+Deduced_Data_Type = "object"
+
+["202.3"]
+old_name = "202.3"
+Deduced_Data_Type = "object"
+
+[211]
+old_name = "211"
+Deduced_Data_Type = "object"
+
+["211.1"]
+old_name = "211.1"
+Deduced_Data_Type = "object"
+
+["211.2"]
+old_name = "211.2"
+Deduced_Data_Type = "object"
+
+["211.3"]
+old_name = "211.3"
+Deduced_Data_Type = "object"
+
+[212]
+old_name = "212"
+Deduced_Data_Type = "object"
+
+["212.1"]
+old_name = "212.1"
+Deduced_Data_Type = "object"
+
+["212.2"]
+old_name = "212.2"
+Deduced_Data_Type = "object"
+
+["212.3"]
+old_name = "212.3"
+Deduced_Data_Type = "object"
+
+[221]
+old_name = "221"
+Deduced_Data_Type = "object"
+
+["221.1"]
+old_name = "221.1"
+Deduced_Data_Type = "object"
+
+["221.2"]
+old_name = "221.2"
+Deduced_Data_Type = "object"
+
+["221.3"]
+old_name = "221.3"
+Deduced_Data_Type = "object"
+
+[222]
+old_name = "222"
+Deduced_Data_Type = "object"
+
+["222.1"]
+old_name = "222.1"
+Deduced_Data_Type = "object"
+
+["222.2"]
+old_name = "222.2"
+Deduced_Data_Type = "object"
+
+["222.3"]
+old_name = "222.3"
+Deduced_Data_Type = "object"
+
+[231]
+old_name = "231"
+Deduced_Data_Type = "object"
+
+["231.1"]
+old_name = "231.1"
+Deduced_Data_Type = "object"
+
+["231.2"]
+old_name = "231.2"
+Deduced_Data_Type = "object"
+
+["231.3"]
+old_name = "231.3"
+Deduced_Data_Type = "object"
+
+[232]
+old_name = "232"
+Deduced_Data_Type = "object"
+
+["232.1"]
+old_name = "232.1"
+Deduced_Data_Type = "object"
+
+["232.2"]
+old_name = "232.2"
+Deduced_Data_Type = "object"
+
+["232.3"]
+old_name = "232.3"
+Deduced_Data_Type = "object"
+
+[241]
+old_name = "241"
+Deduced_Data_Type = "object"
+
+["241.1"]
+old_name = "241.1"
+Deduced_Data_Type = "object"
+
+["241.2"]
+old_name = "241.2"
+Deduced_Data_Type = "object"
+
+["241.3"]
+old_name = "241.3"
+Deduced_Data_Type = "object"
+
+[242]
+old_name = "242"
+Deduced_Data_Type = "object"
+
+["242.1"]
+old_name = "242.1"
+Deduced_Data_Type = "object"
+
+["242.2"]
+old_name = "242.2"
+Deduced_Data_Type = "object"
+
+["242.3"]
+old_name = "242.3"
+Deduced_Data_Type = "object"
+
+[243]
+old_name = "243"
+Deduced_Data_Type = "object"
+
+["243.1"]
+old_name = "243.1"
+Deduced_Data_Type = "object"
+
+["243.2"]
+old_name = "243.2"
+Deduced_Data_Type = "object"
+
+["243.3"]
+old_name = "243.3"
+Deduced_Data_Type = "object"
+
+[calibration_factor]
+old_name = "calibration_factor"
+Deduced_Data_Type = "float64"
+
+[design_weight]
+old_name = "design_weight"
+Deduced_Data_Type = "float64"
+
+[status]
+old_name = "status"
+Deduced_Data_Type = "object"

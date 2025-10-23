@@ -36,6 +36,8 @@ def test_config(filepath):
         "revision_window": 3,
         "debug_mode": True,
         "back_data_format": "csv",
+        "generate_schemas": True,
+        "schema_path": "tests/data/test_main/schemas/",
     }
 
 
@@ -54,7 +56,7 @@ class TestMain:
         actual = pd.read_csv(patern[0])
         expected = pd.read_csv(out_path + "expected_from_cons_main.csv")
 
-        assert_frame_equal(actual, expected)
+        assert_frame_equal(actual, expected, check_like=False)
 
     def test_run_pipeline_live(self, test_config):
         """Run main pipeline based on test_config"""

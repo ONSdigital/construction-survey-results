@@ -1,5 +1,8 @@
 import pandas as pd
+from mbs_results import logger
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
+from mbs_results.outputs.scottish_welsh_gov_outputs import generate_devolved_outputs
+from mbs_results.utilities.inputs import read_csv_wrapper
 from mbs_results.utilities.outputs import write_csv_wrapper
 from mbs_results.utilities.pounds_thousands import create_pounds_thousands_column
 from mbs_results.utilities.utils import convert_column_to_datetime
@@ -36,6 +39,7 @@ def produce_additional_outputs(
             "imputation_contribution_output": get_imputation_contribution_output,
             "cord_output": get_cord_output,
             "quarterly_extracts": produce_quarterly_extracts,
+            "devolved_outputs": generate_devolved_outputs,
         },
         additional_outputs_df,
         qa_outputs,
@@ -59,14 +63,32 @@ def produce_additional_outputs(
                 else True
             )
 
-            write_csv_wrapper(
-                df,
-                config["output_path"] + filename,
-                config["platform"],
-                config["bucket"],
-                index=False,
-                header=header,
-            )
+            if isinstance(df, dict):
+                # if the output is a dictionary (e.g. from generate_devolved_outputs),
+                # we need to save each DataFrame in the dictionary
+                for nation, df in df.items():
+                    nation_name = nation.lower().replace(" ", "_")
+                    nation_filename = f"{config['output_path']}{nation_name}_{filename}"
+                    write_csv_wrapper(
+                        df,
+                        nation_filename,
+                        config["platform"],
+                        config["bucket"],
+                        index=False,
+                    )
+
+                    logger.info(nation_filename + " saved")
+
+            else:
+
+                write_csv_wrapper(
+                    df,
+                    config["output_path"] + filename,
+                    config["platform"],
+                    config["bucket"],
+                    index=False,
+                    header=header,
+                )
 
             print(config["output_path"] + filename + " saved")
 
@@ -113,7 +135,7 @@ def produce_quarterly_extracts(
             config["question_no"],
             "weighted adjusted value",
         ]
-    ]
+    ].copy()
 
     # Create quarter column
     q_extracts_df[config["period"]] = convert_column_to_datetime(
@@ -134,7 +156,9 @@ def produce_quarterly_extracts(
     q_extracts_df = q_extracts_df[q_extracts_df["quarter"] == chosen_quarter]
 
     # Map region names onto DataFrame
-    region_mapping_df = pd.read_csv(config["region_mapping_path"])
+    region_mapping_df = read_csv_wrapper(
+        config["region_mapping_path"], config["platform"], config["bucket"]
+    )
 
     q_extracts_df = q_extracts_df.merge(
         region_mapping_df, left_on=config["region"], right_on="region_code"
@@ -240,8 +264,10 @@ def get_additional_outputs_df(
         "response",
         "status",
         "runame1",
+        "entname1",
         "region",
         "adjustedresponse_pounds_thousands",
+        "winsorised_value",
     ]
     if not config["filter"]:
         count_variables = [f"b_match_{target}_count", f"f_match_{target}_count"]

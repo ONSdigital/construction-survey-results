@@ -1,5 +1,6 @@
 from mbs_results.estimation.estimate import estimate
 from mbs_results.utilities.inputs import load_config
+from mbs_results.utilities.utils import generate_schemas
 from mbs_results.utilities.validation_checks import (
     validate_config,
     validate_estimation,
@@ -45,6 +46,8 @@ def run_pipeline(config_user_dict=None):
     produce_additional_outputs(
         additional_outputs_df=df, qa_outputs=True, optional_outputs=False, config=config
     )
+
+    generate_schemas(config)
 
 
 if __name__ == "__main__":

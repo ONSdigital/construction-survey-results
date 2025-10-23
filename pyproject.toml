@@ -23,6 +23,10 @@ doctest_optionflags = "NORMALIZE_WHITESPACE"
 testpaths = [
     "./tests"
 ]
+filterwarnings = [
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning:importlib"
+]
 
 # `bandit' configurations
 [tool.bandit]

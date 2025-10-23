@@ -1,5 +1,3 @@
-import itertools
-
 import numpy as np
 import pandas as pd
 
@@ -44,6 +42,8 @@ def get_imputation_contribution_output(additional_outputs_df: pd.DataFrame, **co
             None,  # Use None for missing values instead of np.nan
         ),
     )
+    # Convert adjustedresponse from thousands to millions
+    df["adjustedresponse"] = df["adjustedresponse"] / 1000
 
     df["curr_grossed_value"] = (
         df["adjustedresponse"]
@@ -56,40 +56,33 @@ def get_imputation_contribution_output(additional_outputs_df: pd.DataFrame, **co
         pd.pivot_table(
             df,
             values="curr_grossed_value",
-            index=["classification", question_no],
+            index=[question_no],
             columns="returned_or_imputed",
             aggfunc="sum",
         )
         .reset_index()
-        .rename_axis(None, axis=1)[
-            ["classification", question_no, "returned", "imputed"]
-        ]
+        .rename_axis(None, axis=1)[[question_no, "returned", "imputed"]]
     )
 
-    # low level sics that don't match the higher level classification
-    low_level_sics = [
-        sic
-        for sic in config["imputation_contribution_sics"]
-        if sic not in config["imputation_contribution_classification"]
-    ]
-
-    # creating a low level sic for each question code
-    low_level_sic_qc = set(
-        itertools.product(low_level_sics, config["components_questions"])
+    # Totals for all questioncodes are given by Q290
+    total_returned = output_df["returned"].sum()
+    total_imputed = output_df["imputed"].sum()
+    q290_row = pd.DataFrame(
+        {question_no: [290], "returned": [total_returned], "imputed": [total_imputed]}
     )
+    output_df = pd.concat([output_df, q290_row], axis=0, ignore_index=True)
 
-    low_level_sic_df = pd.DataFrame(
-        low_level_sic_qc, columns=["classification", question_no]
-    )
-
-    output_df = pd.concat([output_df, low_level_sic_df], axis=0).fillna(0)
-
+    output_df["returned"] = output_df["returned"].fillna(0)
+    output_df["imputed"] = output_df["imputed"].fillna(0)
     output_df.insert(2, "total", output_df["imputed"] + output_df["returned"])
-    output_df.sort_values([question_no, "classification"], inplace=True)
 
-    # renaming classification to frosic to match the extract
-    # classification contains the higher level frosic code
-    output_df.rename(columns={"classification": "frosic2007"}, inplace=True)
+    # Sort by specified question_no order
+    question_order = [290, 201, 211, 221, 231, 242, 241, 202, 212, 222, 232, 243]
+    output_df[question_no] = pd.Categorical(
+        output_df[question_no], question_order, ordered=True
+    )
+    output_df.sort_values(question_no, inplace=True)
+    output_df[question_no] = output_df[question_no].astype(int)
 
     # setting filename based on periods
     if config["imputation_contribution_periods"]:
