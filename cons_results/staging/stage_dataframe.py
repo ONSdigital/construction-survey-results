@@ -14,12 +14,14 @@ from mbs_results.staging.stage_dataframe import (
 )
 from mbs_results.utilities.inputs import read_csv_wrapper
 
+from cons_results import configure_logger_with_run_id, logger
 from cons_results.staging.create_missing_questions import create_missing_questions
 from cons_results.staging.create_skipped_questions import create_skipped_questions
 from cons_results.staging.derive_imputation_class import derive_imputation_class
 from cons_results.staging.live_or_frozen import run_live_or_frozen
 from cons_results.staging.total_as_zero import flag_total_only_and_zero
 from cons_results.staging.validate_snapshot import validate_snapshot
+from cons_results.utilities.utils import generate_run_id
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
@@ -37,6 +39,12 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     pd.DataFrame
         Combined dataframe containing response and contributor data
     """
+
+    # Configure logger with generated run id
+    if not config.get("run_id"):
+        run_id = generate_run_id()
+        config["run_id"] = run_id
+        configure_logger_with_run_id(run_id)
 
     staging_config = config.copy()
     period = staging_config["period"]
@@ -249,7 +257,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         df, config["nil_status_col"], config["target"], config["nil_values"]
     )
 
-    print("Staging Completed")
+    logger.info("Staging Completed")
 
     return df, unprocessed_data, manual_constructions, filter_df
 

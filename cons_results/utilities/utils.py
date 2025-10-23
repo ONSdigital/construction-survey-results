@@ -55,3 +55,19 @@ def save_df(df: pd.DataFrame, base_filename: str, config: dict, on_demand=True):
             config["bucket"],
             index=False,
         )
+
+
+def generate_run_id() -> str:
+    """
+    Generate a unique run identifier based on the current UTC timestamp and a
+    random UUID segment.
+
+    Returns
+    -------
+    str
+        A unique run identifier in the format YYYYMMDDTHHMMSSZ_XXXXXXXX
+    """
+    from datetime import datetime
+    from uuid import uuid4
+
+    return f"{datetime.utcnow():%Y%m%dT%H%M%SZ}_{uuid4().hex[:8]}"
