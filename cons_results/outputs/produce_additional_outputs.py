@@ -5,7 +5,10 @@ from mbs_results.outputs.scottish_welsh_gov_outputs import generate_devolved_out
 from mbs_results.utilities.inputs import read_csv_wrapper
 from mbs_results.utilities.outputs import write_csv_wrapper
 from mbs_results.utilities.pounds_thousands import create_pounds_thousands_column
-from mbs_results.utilities.utils import convert_column_to_datetime
+from mbs_results.utilities.utils import (
+    convert_column_to_datetime,
+    get_versioned_filename,
+)
 
 from cons_results.outputs.cord_output import get_cord_output
 from cons_results.outputs.imputation_contribution_output import (
@@ -19,7 +22,6 @@ from cons_results.outputs.quarterly_by_sizeband_output import (
     get_quarterly_by_sizeband_output,
 )
 from cons_results.outputs.standard_errors import create_standard_errors
-from cons_results.utilities.utils import get_versioned_filename
 
 
 def produce_additional_outputs(

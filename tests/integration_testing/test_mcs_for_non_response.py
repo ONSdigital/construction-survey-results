@@ -40,6 +40,7 @@ def test_config(filepath):
         "components_questions": [1, 2, 3, 4, 5, 6],
         "debug_mode": False,
         "back_data_format": "csv",
+        "run_id": "1",
     }
 
 
