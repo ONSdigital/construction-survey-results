@@ -44,6 +44,7 @@ class TestCordOutput:
                 202,
             ],
             "imputation_contribution_classification": ["1", "2", "3"],
+            "filter_out_questions": [11, 12, 146, 902, 903, 904],
         }
 
         expected_output = output_df
