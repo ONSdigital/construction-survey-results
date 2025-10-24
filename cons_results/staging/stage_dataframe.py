@@ -68,6 +68,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         target=config["target"],
         question_no=config["question_no"],
         output_path=config["output_path"],
+        run_id=config["run_id"],
         platform=config["platform"],
         bucket=config["bucket"],
     )

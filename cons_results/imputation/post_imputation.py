@@ -217,19 +217,44 @@ def validate_q290(
     period: str,
     reference: str,
     adjustedresponse: str,
+    config,
     output_path: str = "",
     output_file_name: str = "",
     import_platform: str = "network",
     bucket_name: str = "",
 ) -> None:
     """
-    validation function to check q290 values and raise warnings if they
-    are not as expected.
-
-    Parameters
-    ----------
+    Validates that Q290 (total) values match the sum of their
+    component questions for each period and reference.
+    Raises a warning and optionally outputs a CSV if mismatches are found.
     df : pd.DataFrame
-        _description_
+        Dataframe containing response-level data.
+    question_no : str
+        Name of the column in `df` containing question codes (e.g., "questioncode").
+    period : str
+        Name of the column in `df` representing the period (e.g., "period").
+    reference : str
+        Name of the column in `df` representing the reference variable.
+    adjustedresponse : str
+        Name of the column in `df` containing the adjusted response values.
+    config : dict
+        Configuration dictionary.
+    output_path : str, optional
+        Directory path where the output CSV of mismatches will be saved, if requested.
+    output_file_name : str, optional
+        Base name for the output CSV file. If empty, no file is written.
+    import_platform : str, optional
+        Platform identifier for file writing (e.g., "network" or "local").
+        Default is "network".
+    bucket_name : str, optional
+        Name of the storage bucket if saving to S3. Default is empty.
+    Returns
+    -------
+    None
+    Warns
+    -----
+    UserWarning
+        If any Q290 values do not match the sum of their components within a tolerance.
     """
     q290_mask = df[question_no] == 290
     df_q290 = df[q290_mask]
@@ -253,6 +278,7 @@ def validate_q290(
         )
         if output_file_name != "":
             # Only output file if a name is provided
+            output_file = f"{output_file_name}_{config['run_id']}"
             output_file = os.path.join(output_path, output_file_name)
             print(f"Saving mismatched q290 totals to {output_file}")
 

@@ -33,6 +33,7 @@ class TestImputationContributionOutput:
             "components_questions": [201, 202, 211, 221],
             "question_no": "questioncode",
             "snapshot_file_path": "test_snapshot",
+            "run_id": "1",
         }
 
         actual_output = get_imputation_contribution_output(input_df, **config)[0]
