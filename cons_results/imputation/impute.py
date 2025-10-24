@@ -129,6 +129,7 @@ def impute(
         period=config["period"],
         reference=config["reference"],
         adjustedresponse=config["target"],
+        config=config,
         output_path=config["output_path"],
         output_file_name="validate_q290_output.csv",
         import_platform=config["platform"],
