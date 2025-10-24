@@ -38,7 +38,7 @@ def test_config(filepath):
         "back_data_format": "csv",
         "generate_schemas": True,
         "schema_path": "tests/data/test_main/schemas/",
-        "run_id": "1",
+        "run_id": 1,
     }
 
 

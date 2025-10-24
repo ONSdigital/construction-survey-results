@@ -1,7 +1,7 @@
 from mbs_results.estimation.estimate import estimate
 from mbs_results.utilities.inputs import load_config
 from mbs_results.utilities.outputs import save_df
-from mbs_results.utilities.utils import generate_schemas
+from mbs_results.utilities.utils import export_run_id, generate_schemas
 from mbs_results.utilities.validation_checks import (
     validate_config,
     validate_estimation,
@@ -48,6 +48,8 @@ def run_pipeline(config_user_dict=None):
     )
 
     generate_schemas(config)
+
+    export_run_id(config["run_id"])
 
 
 if __name__ == "__main__":
