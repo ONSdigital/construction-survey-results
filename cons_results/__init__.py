@@ -3,6 +3,8 @@ import os
 from logging.handlers import MemoryHandler
 from pathlib import Path
 
+from cons_results.utilities.utils import S3LoggingHandler, configure_s3_client
+
 PROJECT_NAME = "cons_results"
 logger = logging.getLogger(PROJECT_NAME)
 
@@ -62,10 +64,42 @@ logger.addFilter(RunIDFilter())
 mbs_logger.addFilter(RunIDFilter())
 
 
-def configure_logger_with_run_id(new_run_id):
+def get_file_handler_for_run_id(run_id, config):
+    """Function to create a FileHandler for a specific run_id."""
+    platform = config.get("platform", "network")
+
+    if platform.lower() == "s3":
+        # Configure S3 client with RAZ authentication
+        s3_client = configure_s3_client(config)
+        s3_bucket = config.get("bucket")
+        s3_key = f"bat/cons_results_files/logs/{PROJECT_NAME}_{run_id}.log"
+
+        file_handler = S3LoggingHandler(s3_bucket, s3_key, s3_client)
+    else:
+        # Create FileHandler when run_id is known (shared for both loggers)
+        project_root = Path(__file__).resolve().parent.parent
+        project_name = PROJECT_NAME  # project_root.name
+        log_dir = project_root / f"{project_name}_logs"
+        os.makedirs(log_dir, exist_ok=True)
+
+        file_handler = logging.FileHandler(
+            os.path.join(log_dir, f"{PROJECT_NAME}_{run_id}.log")
+        )
+
+    # Set level and formatter for handler (common to both s3 and network)
+    file_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(logging_str)
+    file_handler.setFormatter(formatter)
+
+    return file_handler
+
+
+def configure_logger_with_run_id(new_run_id, config):
     """Function to configure logger with a specific run_id and set up FileHandler."""
     global run_id
     run_id = new_run_id
+
+    file_handler = get_file_handler_for_run_id(run_id, config)
 
     loggers = [logger, mbs_logger]
 
@@ -81,19 +115,6 @@ def configure_logger_with_run_id(new_run_id):
                     handler.close()
                 else:
                     seen_types.add(handler_type)
-
-    # Create FileHandler when run_id is known (shared for both loggers)
-    project_root = Path(__file__).resolve().parent.parent
-    project_name = PROJECT_NAME  # project_root.name
-    log_dir = project_root / f"{project_name}_logs"
-    os.makedirs(log_dir, exist_ok=True)
-
-    file_handler = logging.FileHandler(
-        os.path.join(log_dir, f"{PROJECT_NAME}_{run_id}.log")
-    )
-    file_handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter(logging_str)
-    file_handler.setFormatter(formatter)
 
     # Flush MemoryHandler to FileHandler
     for handler in list(logger.handlers):

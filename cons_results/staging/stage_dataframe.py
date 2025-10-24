@@ -44,7 +44,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     if not config.get("run_id"):
         run_id = generate_run_id()
         config["run_id"] = run_id
-        configure_logger_with_run_id(run_id)
+        configure_logger_with_run_id(run_id, config)
 
     staging_config = config.copy()
     period = staging_config["period"]
