@@ -40,11 +40,12 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         Combined dataframe containing response and contributor data
     """
 
-    # Configure logger with generated run id
+    # Configure logger with existing or generated run id
     if not config.get("run_id"):
         run_id = generate_run_id()
         config["run_id"] = run_id
-        configure_logger_with_run_id(run_id, config)
+
+    configure_logger_with_run_id(config)
 
     staging_config = config.copy()
     period = staging_config["period"]

@@ -8,13 +8,13 @@ from cons_results.utilities.utils import S3LoggingHandler, configure_s3_client
 PROJECT_NAME = "cons_results"
 logger = logging.getLogger(PROJECT_NAME)
 
-# Get the mbs logger immdeidately after import.
+# Get the mbs logger.
 # Ensure that logger name matches MBS configuration. E.g., "MBS" is used here.
 mbs_logger = logging.getLogger("MBS")
 
 BUFFER_CAPACITY = 1000
 
-# Initial septup: Use MemoryHandler to buffer log records util FileHandler is ready
+# Using MemoryHandler to buffer log records util FileHandler is ready
 memory_handler = MemoryHandler(BUFFER_CAPACITY)
 
 # Add MemoryHandler to both loggers to capture early logs
@@ -42,7 +42,6 @@ logging_str = (
     "%(funcName)s: %(lineno)d] [run_id=%(run_id)s] %(message)s"
 )
 
-# Optional: Add a console handler for real-time output
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.DEBUG)
 formatter = logging.Formatter(logging_str)
@@ -64,15 +63,18 @@ logger.addFilter(RunIDFilter())
 mbs_logger.addFilter(RunIDFilter())
 
 
-def get_file_handler_for_run_id(run_id, config):
+def get_file_handler_for_run_id(config):
     """Function to create a FileHandler for a specific run_id."""
     platform = config.get("platform", "network")
+    run_id = config["run_id"]
 
     if platform.lower() == "s3":
-        # Configure S3 client with RAZ authentication
         s3_client = configure_s3_client(config)
         s3_bucket = config.get("bucket")
-        s3_key = f"bat/cons_results_files/logs/{PROJECT_NAME}_{run_id}.log"
+        s3_key = (
+            f"bat/cons_results_files/{PROJECT_NAME}_logs/{PROJECT_NAME}_{run_id}.log"
+        )
+        # s3_key = f"ons/construction/{PROJECT_NAME}_logs/{PROJECT_NAME}_{run_id}.log"
 
         file_handler = S3LoggingHandler(s3_bucket, s3_key, s3_client)
     else:
@@ -86,7 +88,6 @@ def get_file_handler_for_run_id(run_id, config):
             os.path.join(log_dir, f"{PROJECT_NAME}_{run_id}.log")
         )
 
-    # Set level and formatter for handler (common to both s3 and network)
     file_handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter(logging_str)
     file_handler.setFormatter(formatter)
@@ -94,12 +95,12 @@ def get_file_handler_for_run_id(run_id, config):
     return file_handler
 
 
-def configure_logger_with_run_id(new_run_id, config):
+def configure_logger_with_run_id(config):
     """Function to configure logger with a specific run_id and set up FileHandler."""
     global run_id
-    run_id = new_run_id
+    run_id = config["run_id"]
 
-    file_handler = get_file_handler_for_run_id(run_id, config)
+    file_handler = get_file_handler_for_run_id(config)
 
     loggers = [logger, mbs_logger]
 

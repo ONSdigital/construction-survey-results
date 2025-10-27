@@ -66,12 +66,12 @@ def generate_run_id() -> str:
     Returns
     -------
     str
-        A unique run identifier in the format YYYYMMDDTHHMMSSZ_XXXXXXXX
+        A unique run identifier in the format YYYYMMDDHHMMSS_XXXXXXXX
     """
     from datetime import datetime
     from uuid import uuid4
 
-    return f"{datetime.utcnow():%Y%m%dT%H%M%SZ}_{uuid4().hex[:8]}"
+    return f"{datetime.now(): %Y%m%T%H%M%S}_{uuid4().hex[:8]}"
 
 
 # Custom S3 Handler for logging S3 (since S3 doesn't support direct append, this
