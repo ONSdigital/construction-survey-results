@@ -1,4 +1,5 @@
 from mbs_results.utilities.inputs import load_config, read_csv_wrapper
+from mbs_results.utilities.utils import read_run_id
 
 from cons_results.outputs.produce_additional_outputs import produce_additional_outputs
 
@@ -7,6 +8,7 @@ def produce_additional_outputs_wrapper(config_user_dict=None):
     """Produces any additional outputs based on MBS methods output"""
 
     config = load_config("config_outputs.json", config_user_dict)
+    config["run_id"] = read_run_id()
 
     df = read_csv_wrapper(
         filepath=config["cons_output_path"],

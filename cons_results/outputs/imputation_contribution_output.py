@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
-
-from cons_results.utilities.utils import get_versioned_filename
+from mbs_results.utilities.utils import get_versioned_filename
 
 
 def get_imputation_contribution_output(additional_outputs_df: pd.DataFrame, **config):

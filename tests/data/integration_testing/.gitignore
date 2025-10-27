@@ -1,3 +1,3 @@
 # Ignore validate_q290_output.csv
-validate_q290_output.csv
+validate_q290_output*.csv
 excluded_from_results.csv
