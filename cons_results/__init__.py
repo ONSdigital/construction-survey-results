@@ -3,8 +3,6 @@ import os
 from logging.handlers import MemoryHandler
 from pathlib import Path
 
-from cons_results.utilities.utils import S3LoggingHandler, configure_s3_client
-
 PROJECT_NAME = "cons_results"
 logger = logging.getLogger(PROJECT_NAME)
 
@@ -61,6 +59,65 @@ class RunIDFilter(logging.Filter):
 
 logger.addFilter(RunIDFilter())
 mbs_logger.addFilter(RunIDFilter())
+
+
+def configure_s3_client(config):
+    """Configure and return an S3 client with RAZ authentication."""
+    import boto3
+    import raz_client
+
+    s3_client = boto3.client("s3")
+    ssl_file = config.get("ssl_file", "/etc/pki/tls/certs/ca-bundle.crt")
+    raz_client.configure_ranger_raz(s3_client, ssl_file=ssl_file)
+
+    return s3_client
+
+
+# Custom S3 Handler for logging S3 (since S3 doesn't support direct append, this
+# buffers and periodically flushes to S3)
+class S3LoggingHandler(logging.Handler):
+    def __init__(self, s3_bucket, s3_key, s3_client, capacity=100):
+        logging.Handler.__init__(self)
+        self.s3_bucket = s3_bucket
+        self.s3_key = s3_key
+        self.s3_client = s3_client
+        self.buffer = []
+        self.capacity = capacity
+
+    def flush(self):
+        if not self.buffer:
+            return
+
+        log_data = "\n".join(self.buffer) + "\n"
+        try:
+            # Get existing log data from S3
+            existing_obj = self.s3_client.get_object(
+                Bucket=self.s3_bucket, Key=self.s3_key
+            )
+            existing_data = existing_obj["Body"].read().decode("utf-8")
+        except self.s3_client.exceptions.NoSuchKey:
+            existing_data = ""
+
+        # Combine existing data with new log data
+        combined_data = existing_data + log_data
+
+        # Upload combined data back to S3
+        self.s3_client.put_object(
+            Bucket=self.s3_bucket, Key=self.s3_key, Body=combined_data.encode("utf-8")
+        )
+
+        # Clear the buffer
+        self.buffer = []
+
+    def emit(self, record):
+        log_entry = self.format(record) + "\n"
+        self.buffer.append(log_entry)
+        if len(self.buffer) >= self.capacity:
+            self.flush()
+
+    def close(self):
+        self.flush()
+        super
 
 
 def get_file_handler_for_run_id(config):

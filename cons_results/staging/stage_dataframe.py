@@ -1,3 +1,6 @@
+from datetime import datetime
+from uuid import uuid4
+
 import numpy as np
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
@@ -21,7 +24,6 @@ from cons_results.staging.derive_imputation_class import derive_imputation_class
 from cons_results.staging.live_or_frozen import run_live_or_frozen
 from cons_results.staging.total_as_zero import flag_total_only_and_zero
 from cons_results.staging.validate_snapshot import validate_snapshot
-from cons_results.utilities.utils import generate_run_id
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
@@ -40,9 +42,10 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         Combined dataframe containing response and contributor data
     """
 
-    # Configure logger with existing or generated run id
+    # Configure logger with existing run id
+    # or generated run id in the format YYYYMMDDHHMMSS_XXXXXXXX
     if not config.get("run_id"):
-        run_id = generate_run_id()
+        run_id = f"{datetime.now(): %Y%m%T%H%M%S}_{uuid4().hex[:8]}"
         config["run_id"] = run_id
 
     configure_logger_with_run_id(config)
