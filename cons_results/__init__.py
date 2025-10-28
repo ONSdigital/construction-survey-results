@@ -1,7 +1,6 @@
 import logging
 import os
 from logging.handlers import MemoryHandler
-from pathlib import Path
 
 PROJECT_NAME = "cons_results"
 logger = logging.getLogger(PROJECT_NAME)
@@ -124,26 +123,20 @@ def get_file_handler_for_run_id(config):
     """Function to create a FileHandler for a specific run_id."""
     platform = config.get("platform", "network")
     run_id = config["run_id"]
+    log_dir = config["output_path"]
+    log_file_path = os.path.join(log_dir, f"{PROJECT_NAME}_{run_id}.log")
 
     if platform.lower() == "s3":
         s3_client = configure_s3_client(config)
         s3_bucket = config.get("bucket")
-        s3_key = (
-            f"bat/cons_results_files/{PROJECT_NAME}_logs/{PROJECT_NAME}_{run_id}.log"
-        )
-        # s3_key = f"ons/construction/{PROJECT_NAME}_logs/{PROJECT_NAME}_{run_id}.log"
+        s3_key = log_file_path
 
         file_handler = S3LoggingHandler(s3_bucket, s3_key, s3_client)
     else:
         # Create FileHandler when run_id is known (shared for both loggers)
-        project_root = Path(__file__).resolve().parent.parent
-        project_name = PROJECT_NAME  # project_root.name
-        log_dir = project_root / f"{project_name}_logs"
         os.makedirs(log_dir, exist_ok=True)
 
-        file_handler = logging.FileHandler(
-            os.path.join(log_dir, f"{PROJECT_NAME}_{run_id}.log")
-        )
+        file_handler = logging.FileHandler(log_file_path)
 
     file_handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter(logging_str)
