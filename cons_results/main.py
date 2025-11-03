@@ -1,4 +1,5 @@
 from mbs_results.estimation.estimate import estimate
+from mbs_results.logging_config import configure_logger_with_run_id, logger
 from mbs_results.utilities.inputs import load_config
 from mbs_results.utilities.outputs import save_df
 from mbs_results.utilities.utils import export_run_id, generate_schemas
@@ -22,7 +23,14 @@ from cons_results.staging.stage_dataframe import stage_dataframe
 def run_pipeline(config_user_dict=None):
     """This is the main function that runs the pipeline"""
 
+    logger.info("Starting Construction (Cons) pipeline...")
+
     config = load_config("config_user.json", config_user_dict)
+
+    # Now configure full logging with run_id and file handler
+    configure_logger_with_run_id(config)
+    logger.info("Config loaded, logger configured with run_id")
+
     validate_config(config)
 
     df, unprocessed_data, manual_constructions, filter_df = stage_dataframe(config)

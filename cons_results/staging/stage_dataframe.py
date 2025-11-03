@@ -1,6 +1,3 @@
-from datetime import datetime
-from uuid import uuid4
-
 import numpy as np
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
@@ -17,7 +14,7 @@ from mbs_results.staging.stage_dataframe import (
 )
 from mbs_results.utilities.inputs import read_csv_wrapper
 
-from cons_results import configure_logger_with_run_id, logger
+from cons_results import logger
 from cons_results.staging.create_missing_questions import create_missing_questions
 from cons_results.staging.create_skipped_questions import create_skipped_questions
 from cons_results.staging.derive_imputation_class import derive_imputation_class
@@ -41,14 +38,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     pd.DataFrame
         Combined dataframe containing response and contributor data
     """
-
-    # Configure logger with existing run id
-    # or generated run id in the format YYYYMMDDHHMMSS_XXXXXXXX
-    if not config.get("run_id"):
-        run_id = f"{datetime.now(): %Y%m%T%H%M%S}_{uuid4().hex[:8]}"
-        config["run_id"] = run_id
-
-    configure_logger_with_run_id(config)
 
     staging_config = config.copy()
     period = staging_config["period"]
