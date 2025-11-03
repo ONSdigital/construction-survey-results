@@ -1,5 +1,4 @@
 from mbs_results.estimation.estimate import estimate
-from mbs_results.logging_config import configure_logger_with_run_id, logger
 from mbs_results.utilities.inputs import load_config
 from mbs_results.utilities.outputs import save_df
 from mbs_results.utilities.utils import export_run_id, generate_schemas
@@ -11,6 +10,7 @@ from mbs_results.utilities.validation_checks import (
     validate_staging,
 )
 
+from cons_results import configure_logger_with_run_id, logger
 from cons_results.imputation.impute import impute
 from cons_results.outlier_detection.detect_outlier import detect_outlier
 from cons_results.outputs.produce_additional_outputs import (
