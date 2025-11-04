@@ -12,6 +12,7 @@ from mbs_results.staging.stage_dataframe import (
     exclude_from_results,
     read_and_combine_colon_sep_files,
 )
+from mbs_results.staging.validate_snapshot import validate_snapshot
 from mbs_results.utilities.inputs import read_csv_wrapper
 
 from cons_results import logger
@@ -20,7 +21,6 @@ from cons_results.staging.create_skipped_questions import create_skipped_questio
 from cons_results.staging.derive_imputation_class import derive_imputation_class
 from cons_results.staging.live_or_frozen import run_live_or_frozen
 from cons_results.staging.total_as_zero import flag_total_only_and_zero
-from cons_results.staging.validate_snapshot import validate_snapshot
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
@@ -53,10 +53,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     validate_snapshot(
         responses=responses,
         contributors=contributors,
-        status="status",
-        reference=staging_config["reference"],
-        period=staging_config["period"],
-        non_response_statuses=config["non_response_statuses"] + config["nil_values"],
+        config=staging_config,
     )
 
     responses = exclude_from_results(
