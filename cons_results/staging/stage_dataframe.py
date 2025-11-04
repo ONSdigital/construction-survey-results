@@ -15,6 +15,7 @@ from mbs_results.staging.stage_dataframe import (
 from mbs_results.staging.validate_snapshot import validate_snapshot
 from mbs_results.utilities.inputs import read_csv_wrapper
 
+from cons_results import logger
 from cons_results.staging.create_missing_questions import create_missing_questions
 from cons_results.staging.create_skipped_questions import create_skipped_questions
 from cons_results.staging.derive_imputation_class import derive_imputation_class
@@ -247,7 +248,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         df, config["nil_status_col"], config["target"], config["nil_values"]
     )
 
-    print("Staging Completed")
+    logger.info("Staging Completed")
 
     return df, unprocessed_data, manual_constructions, filter_df
 

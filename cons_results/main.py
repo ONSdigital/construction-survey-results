@@ -10,6 +10,7 @@ from mbs_results.utilities.validation_checks import (
     validate_staging,
 )
 
+from cons_results import configure_logger_with_run_id
 from cons_results.imputation.impute import impute
 from cons_results.outlier_detection.detect_outlier import detect_outlier
 from cons_results.outputs.produce_additional_outputs import (
@@ -23,6 +24,9 @@ def run_pipeline(config_user_dict=None):
     """This is the main function that runs the pipeline"""
 
     config = load_config("config_user.json", config_user_dict)
+
+    configure_logger_with_run_id(config)
+
     validate_config(config)
 
     df, unprocessed_data, manual_constructions, filter_df = stage_dataframe(config)
