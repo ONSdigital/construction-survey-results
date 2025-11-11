@@ -8,7 +8,8 @@ def produce_additional_outputs_wrapper(config_user_dict=None):
     """Produces any additional outputs based on MBS methods output"""
 
     config = load_config("config_outputs.json", config_user_dict)
-    config["run_id"] = read_run_id()
+    if config["run_id"] == "":
+        config["run_id"] = read_run_id()
 
     df = read_csv_wrapper(
         filepath=config["cons_output_path"],
