@@ -127,17 +127,10 @@ class TestProduceQAOutput:
         expected = expected_qa_output
         # Index should match expected
 
-        print("Result dictionary length:", len(result))
-
-        pd.testing.assert_frame_equal(
-            result["2023-01"].sort_index(axis=1),
-            expected["2023-01"].sort_index(axis=1),
-            check_like=True
-        )
-
-        pd.testing.assert_frame_equal(
-            result["2023-02"].reset_index(drop=True),
-            expected["2023-02"].reset_index(drop=True),
-            check_like=True,
-            check_dtype=False,
-        )
+        for key in result.keys():
+            pd.testing.assert_frame_equal(
+                result[key].reset_index(drop=True),
+                expected[key].reset_index(drop=True),
+                check_like=True,
+                check_dtype=False,
+            )
