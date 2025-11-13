@@ -47,9 +47,7 @@ def produce_qa_output(
         config["cell_number"],
         config["auxiliary"],  # check if aux or converted aux
         config["froempment"],
-        "classification",
         "runame1",
-        "region",
     ]
 
     # Create value for adj_targer*a*o*g weights
@@ -67,10 +65,6 @@ def produce_qa_output(
         "outlier_weight",
         "weighted adjusted value",  #
     ]
-
-    additional_outputs_df = additional_outputs_df.loc[
-        additional_outputs_df[config["question_no"]] != 290
-    ].copy()
 
     # creating pivot table
     # Converting question no to string, this becomes a column name
@@ -105,9 +99,15 @@ def produce_qa_output(
         on=[config["period"], config["reference"]],
         how="left",
     )
-    # convert question_no column names to strings
+
+    #convert question_no column names to strings
     main_pivot.columns = pd.MultiIndex.from_tuples(
         [(str(l0), l1) for l0, l1 in main_pivot.columns]
     )
 
-    return main_pivot
+    period_dict = {
+        period: df.drop(columns=[config["period"]], errors="ignore")
+        for period, df in main_pivot.groupby(config["period"], dropna=False)
+    }
+
+    return period_dict
