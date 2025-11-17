@@ -52,7 +52,7 @@ def produce_qa_output(
 
     # Create value for adj_targer*a*o*g weights
     additional_outputs_df["weighted adjusted value"] = (
-        additional_outputs_df[config["target"]]
+        additional_outputs_df[config["pound_thousand_col"]]
         * additional_outputs_df["design_weight"]
         * additional_outputs_df["outlier_weight"]
         * additional_outputs_df["calibration_factor"]
@@ -60,10 +60,10 @@ def produce_qa_output(
 
     # selecting 4 value columns
     value_columns = [
-        config["target"],
+        config["pound_thousand_col"],
         config["imputation_marker_col"],
         "outlier_weight",
-        "weighted adjusted value",  #
+        "weighted adjusted value",
     ]
 
     # creating pivot table
@@ -106,7 +106,7 @@ def produce_qa_output(
     )
 
     period_dict = {
-        period: df.drop(columns=[config["period"]], errors="ignore")
+        period: df.drop(columns=[config["period"]], axis=1, level=0)
         for period, df in main_pivot.groupby(config["period"], dropna=False)
     }
 
