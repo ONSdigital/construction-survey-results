@@ -29,6 +29,7 @@ def test_config(filepath):
         "output_path": "tests/data/test_main/output/",
         "population_prefix": "test_universe009",
         "sample_prefix": "finalsel228",
+        "population_counts_prefix": "population_counts",
         "back_data_qv_path": filepath / "test_qv_009_202212.csv",
         "back_data_cp_path": filepath / "test_cp_009_202212.csv",
         "back_data_finalsel_path": str(filepath / "finalsel228_dummy_202212"),

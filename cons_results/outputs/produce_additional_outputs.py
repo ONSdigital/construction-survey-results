@@ -55,7 +55,7 @@ def produce_additional_outputs(
         if name:
             filename = name
         else:
-            filename = get_versioned_filename(output, config)
+            filename = get_versioned_filename(output, config["run_id"])
 
         if df is not None:
 
