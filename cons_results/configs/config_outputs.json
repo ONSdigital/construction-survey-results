@@ -2,7 +2,7 @@
     "bucket": "",
     "idbr_folder_path": "",
     "snapshot_file_path": "",
-    "main_cons_output_path": "",
+    "main_cons_output_folder_path": "",
     "cons_output_prefix": "cons_results",
     "population_counts_prefix": "population_counts",
     "output_path": "",
@@ -26,5 +26,6 @@
     "devolved_nations": ["Scotland", "Wales", "North East", "North West",
     "Yorkshire and The Humber", "East Midlands", "West Midlands",
     "East of England", "London", "South East", "South West"],
-    "run_id": ""
+    "run_id": "",
+    "standard_errors_period": 202510
 }
