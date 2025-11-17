@@ -34,6 +34,7 @@ def sample_df_and_config():
         "reference": "reference",
         "question_no": "question_no",
         "target": "target",
+        "pound_thousand_col": "target",
         "cell_number": "cell_number",
         "auxiliary": "auxiliary",
         "froempment": "froempment",
@@ -65,7 +66,7 @@ def expected_qa_output(outputs_data_dir):
 
 
 class TestProduceQAOutput:
-    @pytest.mark.skip(reason="Unsure if needed")
+    @pytest.mark.skip(reason="Shape and columns are already tested in test_produce_qa_output_index, possibly redundant test")
     def test_produce_qa_output_shape_and_columns(self, sample_df_and_config):
         df, config = sample_df_and_config
         result = produce_qa_output(df, **config)
@@ -99,25 +100,26 @@ class TestProduceQAOutput:
         # Should have 2 rows (since all index columns are the same)
         assert result.shape[0] == 2
 
-    @pytest.mark.skip(reason="Unsure if needed")
+
     def test_produce_qa_output_values(self, sample_df_and_config):
         df, config = sample_df_and_config
         result = produce_qa_output(df, **config)
         # Check that weighted adjusted value is correct (adjustedresponse * 1 * 1 * 1)
+
         for q in ["1", "2", "3"]:
             assert (
-                result[(q, "weighted adjusted value")].iloc[0]
+                result["2023-01"][(q, "weighted adjusted value")].iloc[0]
                 == df.loc[df["question_no"] == int(q), "target"].iloc[0]
             )
             assert (
-                result[(q, "target")].iloc[0]
+                result["2023-01"][(q, "target")].iloc[0]
                 == df.loc[df["question_no"] == int(q), "target"].iloc[0]
             )
             assert (
-                result[(q, "imputation_marker_col")].iloc[0]
+                result["2023-01"][(q, "imputation_marker_col")].iloc[0]
                 == df.loc[df["question_no"] == int(q), "imputation_marker_col"].iloc[0]
             )
-            assert result[(q, "outlier_weight")].iloc[0] == 1.0
+            assert result["2023-01"][(q, "outlier_weight")].iloc[0] == 1.0
 
 
     def test_produce_qa_output_index(self, sample_df_and_config, expected_qa_output):
