@@ -1,8 +1,9 @@
+import glob
+
 import pandas as pd
 import pytest
 
 from cons_results.outputs.qa_output import produce_qa_output
-import glob
 
 
 @pytest.fixture(scope="class")
@@ -56,9 +57,7 @@ def expected_qa_output(outputs_data_dir):
     }
 
     for file, key in zip(csv_files, period_dict.keys()):
-        expected = pd.read_csv(
-            file, header=[0, 1]
-        ).rename(columns={"placeholder": ""})
+        expected = pd.read_csv(file, header=[0, 1]).rename(columns={"placeholder": ""})
 
         period_dict[key] = expected
 
@@ -66,7 +65,9 @@ def expected_qa_output(outputs_data_dir):
 
 
 class TestProduceQAOutput:
-    @pytest.mark.skip(reason="Shape and columns are already tested in test_produce_qa_output_index, possibly redundant test")
+    @pytest.mark.skip(
+        reason="Shape and columns are already tested in test_produce_qa_output_index"
+    )
     def test_produce_qa_output_shape_and_columns(self, sample_df_and_config):
         df, config = sample_df_and_config
         result = produce_qa_output(df, **config)
@@ -100,7 +101,6 @@ class TestProduceQAOutput:
         # Should have 2 rows (since all index columns are the same)
         assert result.shape[0] == 2
 
-
     def test_produce_qa_output_values(self, sample_df_and_config):
         df, config = sample_df_and_config
         result = produce_qa_output(df, **config)
@@ -120,7 +120,6 @@ class TestProduceQAOutput:
                 == df.loc[df["question_no"] == int(q), "imputation_marker_col"].iloc[0]
             )
             assert result["2023-01"][(q, "outlier_weight")].iloc[0] == 1.0
-
 
     def test_produce_qa_output_index(self, sample_df_and_config, expected_qa_output):
         df, config = sample_df_and_config

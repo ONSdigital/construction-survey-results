@@ -100,7 +100,7 @@ def produce_qa_output(
         how="left",
     )
 
-    #convert question_no column names to strings
+    # convert question_no column names to strings
     main_pivot.columns = pd.MultiIndex.from_tuples(
         [(str(l0), l1) for l0, l1 in main_pivot.columns]
     )
