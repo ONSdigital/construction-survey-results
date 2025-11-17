@@ -1,3 +1,5 @@
+import logging
+
 import numpy as np
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
@@ -15,12 +17,13 @@ from mbs_results.staging.stage_dataframe import (
 from mbs_results.staging.validate_snapshot import validate_snapshot
 from mbs_results.utilities.inputs import read_csv_wrapper
 
-from cons_results import logger
 from cons_results.staging.create_missing_questions import create_missing_questions
 from cons_results.staging.create_skipped_questions import create_skipped_questions
 from cons_results.staging.derive_imputation_class import derive_imputation_class
 from cons_results.staging.live_or_frozen import run_live_or_frozen
 from cons_results.staging.total_as_zero import flag_total_only_and_zero
+
+logger = logging.getLogger(__name__)
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:

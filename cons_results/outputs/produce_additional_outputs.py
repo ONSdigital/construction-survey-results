@@ -1,5 +1,6 @@
+import logging
+
 import pandas as pd
-from mbs_results import logger
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 from mbs_results.outputs.scottish_welsh_gov_outputs import generate_devolved_outputs
 from mbs_results.utilities.inputs import read_csv_wrapper
@@ -22,6 +23,8 @@ from cons_results.outputs.quarterly_by_sizeband_output import (
     get_quarterly_by_sizeband_output,
 )
 from cons_results.outputs.standard_errors import create_standard_errors
+
+logger = logging.getLogger(__name__)
 
 
 def produce_additional_outputs(

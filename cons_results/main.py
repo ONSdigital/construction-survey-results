@@ -1,7 +1,12 @@
 from mbs_results.estimation.estimate import estimate
 from mbs_results.utilities.inputs import load_config
 from mbs_results.utilities.outputs import save_df
-from mbs_results.utilities.utils import export_run_id, generate_schemas
+from mbs_results.utilities.setup_logger import setup_logger, upload_logger_file_to_s3
+from mbs_results.utilities.utils import (
+    export_run_id,
+    generate_schemas,
+    get_datetime_now_as_int,
+)
 from mbs_results.utilities.validation_checks import (
     validate_config,
     validate_estimation,
@@ -10,7 +15,6 @@ from mbs_results.utilities.validation_checks import (
     validate_staging,
 )
 
-from cons_results import configure_logger_with_run_id
 from cons_results.imputation.impute import impute
 from cons_results.outlier_detection.detect_outlier import detect_outlier
 from cons_results.outputs.produce_additional_outputs import (
@@ -23,10 +27,17 @@ from cons_results.staging.stage_dataframe import stage_dataframe
 def run_pipeline(config_user_dict=None):
     """This is the main function that runs the pipeline"""
 
+    # Setup run id as YYYYMMDDHHMM
+    run_id = get_datetime_now_as_int()
+
+    # Initialise the logger at the sart of the pipeline
+    logger_name = "cons_results"
+    logger_file_path = f"{logger_name}_{str(run_id)}.log"
+    logger = setup_logger(logger_name=logger_name, logger_file_path=logger_file_path)
+    logger.info(f"Cons Pipeline Started: Log file: {logger_file_path}")
+
     config = load_config("config_user.json", config_user_dict)
-
-    configure_logger_with_run_id(config)
-
+    config["run_id"] = run_id
     validate_config(config)
 
     df, unprocessed_data, manual_constructions, filter_df = stage_dataframe(config)
@@ -54,6 +65,8 @@ def run_pipeline(config_user_dict=None):
     generate_schemas(config)
 
     export_run_id(config["run_id"])
+
+    upload_logger_file_to_s3(config, logger_file_path)
 
 
 if __name__ == "__main__":
