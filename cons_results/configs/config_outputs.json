@@ -1,10 +1,10 @@
 {
-    "run_id": "",
     "bucket": "",
     "idbr_folder_path": "",
     "snapshot_file_path": "",
-    "cons_output_path": "",
-    "population_counts_path": "",
+    "main_cons_output_path": "",
+    "cons_output_prefix": "cons_results",
+    "population_counts_prefix": "population_counts",
     "output_path": "",
     "ludets_prefix": "",
     "current_period": 202303,
@@ -26,5 +26,5 @@
     "devolved_nations": ["Scotland", "Wales", "North East", "North West",
     "Yorkshire and The Humber", "East Midlands", "West Midlands",
     "East of England", "London", "South East", "South West"],
-    "standard_errors_period": 202303
+    "run_id": ""
 }
