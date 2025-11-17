@@ -126,13 +126,6 @@ class TestProduceQAOutput:
         # Index should match expected
 
         for key in result.keys():
-            print(
-                "\n",
-                key,
-                result[key].iloc[:, 0],
-                expected[key].iloc[:, 0],
-                sep="\n\n\n",
-            )
 
             pd.testing.assert_frame_equal(
                 result[key].reset_index(drop=True),
