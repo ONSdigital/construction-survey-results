@@ -1,4 +1,8 @@
+import boto3
 import pandas as pd
+import raz_client
+from rdsa_utils.cdp.helpers.s3_utils import write_excel
+
 from mbs_results import logger
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 from mbs_results.outputs.scottish_welsh_gov_outputs import generate_devolved_outputs
@@ -68,18 +72,48 @@ def produce_additional_outputs(
             if isinstance(df, dict):
                 # if the output is a dictionary (e.g. from generate_devolved_outputs),
                 # we need to save each DataFrame in the dictionary
-                for nation, df in df.items():
-                    nation_name = nation.lower().replace(" ", "_")
-                    nation_filename = f"{config['output_path']}{nation_name}_{filename}"
-                    write_csv_wrapper(
-                        df,
-                        nation_filename,
-                        config["platform"],
-                        config["bucket"],
-                        index=False,
-                    )
 
-                    logger.info(nation_filename + " saved")
+                if output == "produce_qa_output":
+                    run_id = config["run_id"]
+                    
+                    filename = f"qa_output_by_period_{run_id}.xlsx"
+
+                    for period, df in df.items():
+                        if config["platform"] == "s3":
+                            client = boto3.client("s3")
+                            raz_client.configure_ranger_raz(
+                                client, ssl_file="/etc/pki/tls/certs/ca-bundle.crt"
+                            )
+
+                            write_excel(
+                                client, 
+                                config["bucket_name"], 
+                                df, 
+                                config["output_path"] + filename,
+                                sheet_name=f"{period}",
+                                startcol=-1,
+                            )
+
+                        if config["platform"] == "network":
+                            df.to_excel(
+                                config["output_path"] + filename,
+                                sheet_name=f"{period}",
+                                startcol=-1,
+                            )
+
+                if output == "devolved_outputs":
+                    for nation, df in df.items():
+                        nation_name = nation.lower().replace(" ", "_")
+                        nation_filename = f"{config['output_path']}{nation_name}_{filename}"
+                        write_csv_wrapper(
+                            df,
+                            nation_filename,
+                            config["platform"],
+                            config["bucket"],
+                            index=False,
+                        )
+
+                        logger.info(nation_filename + " saved")
 
             else:
 
