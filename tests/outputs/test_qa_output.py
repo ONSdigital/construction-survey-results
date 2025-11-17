@@ -1,5 +1,3 @@
-import glob
-
 import pandas as pd
 import pytest
 
@@ -49,17 +47,16 @@ def sample_df_and_config():
 @pytest.fixture(scope="class")
 def expected_qa_output(outputs_data_dir):
 
-    csv_files = glob.glob(str(outputs_data_dir / "qa_output" / "*.csv"))
+    path = outputs_data_dir / "qa_output"
 
     period_dict = {
-        "2023-01": "",
-        "2023-02": "",
+        "2023-01": pd.read_csv(path / "expected_output_p1.csv", header=[0, 1]).rename(
+            columns={"placeholder": ""}
+        ),
+        "2023-02": pd.read_csv(path / "expected_output_p2.csv", header=[0, 1]).rename(
+            columns={"placeholder": ""}
+        ),
     }
-
-    for file, key in zip(csv_files, period_dict.keys()):
-        expected = pd.read_csv(file, header=[0, 1]).rename(columns={"placeholder": ""})
-
-        period_dict[key] = expected
 
     return period_dict
 
@@ -129,6 +126,14 @@ class TestProduceQAOutput:
         # Index should match expected
 
         for key in result.keys():
+            print(
+                "\n",
+                key,
+                result[key].iloc[:, 0],
+                expected[key].iloc[:, 0],
+                sep="\n\n\n",
+            )
+
             pd.testing.assert_frame_equal(
                 result[key].reset_index(drop=True),
                 expected[key].reset_index(drop=True),
