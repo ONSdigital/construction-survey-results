@@ -97,11 +97,23 @@ def produce_additional_outputs(
                             )
 
                         if config["platform"] == "network":
-                            df.to_excel(
-                                config["output_path"] + filename,
-                                sheet_name=f"{period}",
-                                startcol=-1,
-                            )
+                            file_exists = False
+                            if file_exists:
+                                writer = pd.ExcelWriter(
+                                    config["output_path"] + filename,
+                                    engine="openpyxl",
+                                    mode="a",
+                                    if_sheet_exists="overlay",
+                                )
+                            else:
+                                writer = pd.ExcelWriter(
+                                    config["output_path"] + filename,
+                                    engine="openpyxl",
+                                    mode="w",
+                                )
+                            with writer:
+                                df.to_excel(writer, sheet_name=f"{period}", startcol=0)
+                            file_exists = True
 
                 if output == "devolved_outputs":
                     for nation, df in df.items():
