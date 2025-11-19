@@ -76,14 +76,16 @@ def produce_additional_outputs(
                 if output == "produce_qa_output":
                     run_id = config["run_id"]
 
-                    filename = f"qa_output_by_period_{run_id}.xlsx"
+                    filename = f"qa_output_{run_id}.xlsx"
 
                     # output the file locally whether platform is s3 or local
                     # todo: Add read_excel_wrapper to MBS
 
                     with pd.ExcelWriter(config["output_path"] + filename) as writer:
-                        for period, df in period_dict.items():
-                            df.to_excel(writer, sheet_name=f"{period}", startcol=0)
+                        for period, dataframe in df.items():
+                            dataframe.to_excel(
+                                writer, sheet_name=f"{period}", startcol=0
+                            )
 
                         if config["platform"] == "s3":
                             client = boto3.client("s3")
