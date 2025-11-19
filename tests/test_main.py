@@ -56,7 +56,7 @@ class TestMain:
         patern = glob(out_path + "cons_results_*.csv")
 
         actual = pd.read_csv(patern[0])
-        expected = pd.read_csv(out_path + "expected_from_cons_main.csv")
+        expected = pd.read_csv(out_path + "expected_from_cons_main_1.csv")
 
         assert_frame_equal(actual, expected, check_like=False)
 
