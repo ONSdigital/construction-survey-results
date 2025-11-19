@@ -1,3 +1,5 @@
+import os
+
 import boto3
 import pandas as pd
 import raz_client
@@ -78,22 +80,37 @@ def produce_additional_outputs(
 
                     filename = f"qa_output_{run_id}.xlsx"
 
-                    # output the file locally whether platform is s3 or local
                     # todo: Add read_excel_wrapper to MBS
 
-                    with pd.ExcelWriter(config["output_path"] + filename) as writer:
-                        for period, dataframe in df.items():
-                            dataframe.to_excel(
-                                writer, sheet_name=f"{period}", startcol=0
-                            )
+                    # if platform == "network", save locally using output path
+                    if config["platform"] == "network":
+                        with pd.ExcelWriter(config["output_path"] + filename) as writer:
+                            for period, dataframe in df.items():
+                                dataframe.to_excel(
+                                    writer, sheet_name=f"{period}", startcol=0
+                                )
 
-                        if config["platform"] == "s3":
-                            client = boto3.client("s3")
-                            raz_client.configure_ranger_raz(
-                                client, ssl_file="/etc/pki/tls/certs/ca-bundle.crt"
-                            )
+                    # if platform == "s3", save to working directory first
+                    # then move to s3
+                    if config["platform"] == "s3":
+                        client = boto3.client("s3")
+                        raz_client.configure_ranger_raz(
+                            client, ssl_file="/etc/pki/tls/certs/ca-bundle.crt"
+                        )
 
-                            # we need to move the file from local storage to S3
+                        with pd.ExcelWriter(filename) as writer:
+                            for period, dataframe in df.items():
+                                dataframe.to_excel(
+                                    writer, sheet_name=f"{period}", startcol=0
+                                )
+
+                        client.upload_file(
+                            filename, config["bucket"], config["output_path"] + filename
+                        )
+
+                        # deleting from local storage after uploading to S3
+                        if os.path.exists(filename):
+                            os.remove(filename)
 
                 if output == "devolved_outputs":
                     for nation, df in df.items():
