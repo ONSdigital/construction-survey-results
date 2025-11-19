@@ -66,7 +66,7 @@ def produce_qa_output(
 
     # selecting 4 value columns
     value_columns = [
-        config["pound_thousand_col"],
+        config["target"],
         config["imputation_marker_col"],
         "outlier_weight",
         "weighted adjusted value",
@@ -74,9 +74,9 @@ def produce_qa_output(
 
     # rename adjustedresponse_pounds_thousands to adjustedresponse
     # to match what's on the extract
-    additional_outputs_df = additional_outputs_df.drop("adjustedresponse", axis=1)
+    additional_outputs_df = additional_outputs_df.drop(config["target"], axis=1)
     additional_outputs_df = additional_outputs_df.rename(
-        columns={"adjustedresponse_pounds_thousands": "adjustedresponse"}
+        columns={config["pound_thousand_col"]: config["target"]}
     )
 
     # creating pivot table
