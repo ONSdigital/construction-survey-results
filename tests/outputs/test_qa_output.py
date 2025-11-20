@@ -9,7 +9,8 @@ def sample_df_and_config():
     data = {
         "reference": [101, 101, 101, 102, 103, 104],
         "question_no": [1, 2, 3, 2, 1, 1],
-        "target": [10, 20, 30, 40, 50, 60],
+        "target": [100, 200, 300, 400, 500, 600],
+        "target_pounds_thousands": [10, 20, 30, 40, 50, 60],
         "adj_target": [11, 22, 33, 44, 55, 66],
         "marker": ["a", "b", "c", "d", "e", "f"],
         "imputation_marker_col": ["r", "i", "c", "i", "r", "c"],
@@ -33,13 +34,14 @@ def sample_df_and_config():
         "reference": "reference",
         "question_no": "question_no",
         "target": "target",
-        "pound_thousand_col": "target",
+        "pound_thousand_col": "target_pounds_thousands",
         "cell_number": "cell_number",
         "auxiliary": "auxiliary",
         "froempment": "froempment",
         "sic": "sic",
         "imputation_marker_col": "imputation_marker_col",
         "nil_status_col": "nil_status_col",
+        "filter_out_questions": [11, 12],
     }
     return df, config
 
@@ -102,15 +104,21 @@ class TestProduceQAOutput:
         df, config = sample_df_and_config
         result = produce_qa_output(df, **config)
         # Check that weighted adjusted value is correct (adjustedresponse * 1 * 1 * 1)
+        # Note that we rename target to pound_thousand_col within the function
+        # Which is why we are comparing target to pound_thousand_col below
 
         for q in ["1", "2", "3"]:
             assert (
                 result["2023-01"][(q, "weighted adjusted value")].iloc[0]
-                == df.loc[df["question_no"] == int(q), "target"].iloc[0]
+                == df.loc[
+                    df["question_no"] == int(q), config["pound_thousand_col"]
+                ].iloc[0]
             )
             assert (
-                result["2023-01"][(q, "target")].iloc[0]
-                == df.loc[df["question_no"] == int(q), "target"].iloc[0]
+                result["2023-01"][(q, config["target"])].iloc[0]
+                == df.loc[
+                    df["question_no"] == int(q), config["pound_thousand_col"]
+                ].iloc[0]
             )
             assert (
                 result["2023-01"][(q, "imputation_marker_col")].iloc[0]
@@ -121,6 +129,7 @@ class TestProduceQAOutput:
     def test_produce_qa_output_index(self, sample_df_and_config, expected_qa_output):
         df, config = sample_df_and_config
         result = produce_qa_output(df, **config)
+
         # Index should be a MultiIndex with the specified index columns
         expected = expected_qa_output
         # Index should match expected
