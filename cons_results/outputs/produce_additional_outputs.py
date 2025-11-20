@@ -119,6 +119,7 @@ def produce_additional_outputs(
 
                         logger.info(nation_filename + " saved")
 
+            else:
                 if output == "imputes_and_constructed_output":
                     # This needs to output to different location for s3 replication
                     write_csv_wrapper(
@@ -128,8 +129,6 @@ def produce_additional_outputs(
                         config["bucket"],
                         index=False,
                     )
-
-            else:
 
                 write_csv_wrapper(
                     df,
