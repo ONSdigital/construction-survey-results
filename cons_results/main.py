@@ -33,6 +33,7 @@ def run_pipeline(config_user_dict=None):
     # Initialise the logger at the sart of the pipeline
     logger_name = "cons_results"
     logger_file_path = f"{logger_name}_{str(run_id)}.log"
+    logger = setup_logger(logger_name="mbs_results", logger_file_path=logger_file_path)
     logger = setup_logger(logger_name=logger_name, logger_file_path=logger_file_path)
     logger.info(f"Cons Pipeline Started: Log file: {logger_file_path}")
 
