@@ -1,6 +1,9 @@
+import os
 import logging
-
+import boto3
 import pandas as pd
+import raz_client
+from mbs_results import logger
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 from mbs_results.outputs.scottish_welsh_gov_outputs import generate_devolved_outputs
 from mbs_results.utilities.inputs import read_csv_wrapper
@@ -10,6 +13,7 @@ from mbs_results.utilities.utils import (
     convert_column_to_datetime,
     get_versioned_filename,
 )
+from rdsa_utils.cdp.helpers.s3_utils import write_excel
 
 from cons_results.outputs.cord_output import get_cord_output
 from cons_results.outputs.imputation_contribution_output import (
@@ -27,6 +31,7 @@ from cons_results.outputs.standard_errors import create_standard_errors
 logger = logging.getLogger(__name__)
 
 
+# flake8: noqa: C901
 def produce_additional_outputs(
     additional_outputs_df: pd.DataFrame,
     qa_outputs: bool,
@@ -58,7 +63,7 @@ def produce_additional_outputs(
         if name:
             filename = name
         else:
-            filename = get_versioned_filename(output, config)
+            filename = get_versioned_filename(output, config["run_id"])
 
         if df is not None:
 
@@ -71,18 +76,59 @@ def produce_additional_outputs(
             if isinstance(df, dict):
                 # if the output is a dictionary (e.g. from generate_devolved_outputs),
                 # we need to save each DataFrame in the dictionary
-                for nation, df in df.items():
-                    nation_name = nation.lower().replace(" ", "_")
-                    nation_filename = f"{config['output_path']}{nation_name}_{filename}"
-                    write_csv_wrapper(
-                        df,
-                        nation_filename,
-                        config["platform"],
-                        config["bucket"],
-                        index=False,
-                    )
 
-                    logger.info(nation_filename + " saved")
+                if output == "produce_qa_output":
+                    run_id = config["run_id"]
+
+                    filename = f"qa_output_{run_id}.xlsx"
+
+                    # todo: Add read_excel_wrapper to MBS
+
+                    # if platform == "network", save locally using output path
+                    if config["platform"] == "network":
+                        with pd.ExcelWriter(config["output_path"] + filename) as writer:
+                            for period, dataframe in df.items():
+                                dataframe.to_excel(
+                                    writer, sheet_name=f"{period}", startcol=-1
+                                )
+
+                    # if platform == "s3", save to working directory first
+                    # then move to s3
+                    if config["platform"] == "s3":
+                        client = boto3.client("s3")
+                        raz_client.configure_ranger_raz(
+                            client, ssl_file="/etc/pki/tls/certs/ca-bundle.crt"
+                        )
+
+                        with pd.ExcelWriter(filename) as writer:
+                            for period, dataframe in df.items():
+                                dataframe.to_excel(
+                                    writer, sheet_name=f"{period}", startcol=-1
+                                )
+
+                        client.upload_file(
+                            filename, config["bucket"], config["output_path"] + filename
+                        )
+
+                        # deleting from local storage after uploading to S3
+                        if os.path.exists(filename):
+                            os.remove(filename)
+
+                if output == "devolved_outputs":
+                    for nation, df in df.items():
+                        nation_name = nation.lower().replace(" ", "_")
+                        nation_filename = (
+                            f"{config['output_path']}{nation_name}_{filename}"
+                        )
+                        write_csv_wrapper(
+                            df,
+                            nation_filename,
+                            config["platform"],
+                            config["bucket"],
+                            index=False,
+                        )
+
+                        logger.info(nation_filename + " saved")
 
             else:
 

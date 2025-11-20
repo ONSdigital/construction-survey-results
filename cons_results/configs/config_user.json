@@ -20,5 +20,5 @@
     "generate_schemas": false,
     "schema_path": "",
     "debug_mode": false,
-    "run_id": null
+    "run_id": ""
 }
