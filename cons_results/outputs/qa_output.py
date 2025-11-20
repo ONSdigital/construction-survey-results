@@ -50,6 +50,12 @@ def produce_qa_output(
         "runame1",
     ]
 
+    additional_outputs_df = additional_outputs_df[
+        ~additional_outputs_df[config["question_no"]].isin(
+            config["filter_out_questions"]
+        )
+    ]
+
     # Create value for adj_targer*a*o*g weights
     additional_outputs_df["weighted adjusted value"] = (
         additional_outputs_df[config["pound_thousand_col"]]
@@ -60,11 +66,18 @@ def produce_qa_output(
 
     # selecting 4 value columns
     value_columns = [
-        config["pound_thousand_col"],
+        config["target"],
         config["imputation_marker_col"],
         "outlier_weight",
         "weighted adjusted value",
     ]
+
+    # rename adjustedresponse_pounds_thousands to adjustedresponse
+    # to match what's on the extract
+    additional_outputs_df = additional_outputs_df.drop(config["target"], axis=1)
+    additional_outputs_df = additional_outputs_df.rename(
+        columns={config["pound_thousand_col"]: config["target"]}
+    )
 
     # creating pivot table
     # Converting question no to string, this becomes a column name
