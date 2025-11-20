@@ -20,5 +20,6 @@
     "generate_schemas": false,
     "schema_path": "",
     "debug_mode": false,
-    "run_id": ""
+    "run_id": "",
+    "output_path_replication": ""
 }
