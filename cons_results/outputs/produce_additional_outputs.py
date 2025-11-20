@@ -87,7 +87,7 @@ def produce_additional_outputs(
                         with pd.ExcelWriter(config["output_path"] + filename) as writer:
                             for period, dataframe in df.items():
                                 dataframe.to_excel(
-                                    writer, sheet_name=f"{period}", startcol=0
+                                    writer, sheet_name=f"{period}", startcol=-1
                                 )
 
                     # if platform == "s3", save to working directory first
@@ -101,7 +101,7 @@ def produce_additional_outputs(
                         with pd.ExcelWriter(filename) as writer:
                             for period, dataframe in df.items():
                                 dataframe.to_excel(
-                                    writer, sheet_name=f"{period}", startcol=0
+                                    writer, sheet_name=f"{period}", startcol=-1
                                 )
 
                         client.upload_file(
