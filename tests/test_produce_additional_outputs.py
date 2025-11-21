@@ -66,6 +66,19 @@ def test_config(filepath):
         },
         "run_id": "1",
         "r_m_quarter": None,
+        "r_m_region_order": {
+            "North East": 1,
+            "Yorkshire and The Humber": 2,
+            "East Midlands": 3,
+            "East of England": 4,
+            "London": 5,
+            "South East": 6,
+            "South West": 7,
+            "Wales": 8,
+            "West Midlands": 9,
+            "North West": 10,
+            "Scotland": 11,
+        },
     }
 
 
