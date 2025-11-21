@@ -1,3 +1,5 @@
+import logging
+
 import numpy as np
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
@@ -20,6 +22,8 @@ from cons_results.staging.create_skipped_questions import create_skipped_questio
 from cons_results.staging.derive_imputation_class import derive_imputation_class
 from cons_results.staging.live_or_frozen import run_live_or_frozen
 from cons_results.staging.total_as_zero import flag_total_only_and_zero
+
+logger = logging.getLogger(__name__)
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
@@ -247,7 +251,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         df, config["nil_status_col"], config["target"], config["nil_values"]
     )
 
-    print("Staging Completed")
+    logger.info("Staging Completed")
 
     return df, unprocessed_data, manual_constructions, filter_df
 
