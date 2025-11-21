@@ -54,7 +54,7 @@ def test_config(filepath):
             "trading as 3",
             "region",
         ],
-        "devolved_questions": [11, 12, 202, 212, 222, 232, 243],
+        "r_m_questions": [11, 12, 202, 212, 222, 232, 243],
         "question_no_plaintext": {
             11: "start_date",
             12: "end_date",
@@ -65,6 +65,7 @@ def test_config(filepath):
             243: "private_non_housing",
         },
         "run_id": "1",
+        "r_m_quarter": None,
     }
 
 
