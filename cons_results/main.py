@@ -1,7 +1,11 @@
 from mbs_results.estimation.estimate import estimate
 from mbs_results.utilities.inputs import load_config
 from mbs_results.utilities.outputs import save_df
-from mbs_results.utilities.utils import export_run_id, generate_schemas
+from mbs_results.utilities.utils import (
+    export_run_id,
+    generate_schemas,
+    get_or_create_run_id,
+)
 from mbs_results.utilities.validation_checks import (
     validate_config,
     validate_estimation,
@@ -23,6 +27,7 @@ def run_pipeline(config_user_dict=None):
     """This is the main function that runs the pipeline"""
 
     config = load_config("config_user.json", config_user_dict)
+    config["run_id"] = get_or_create_run_id(config)
     validate_config(config)
 
     df, unprocessed_data, manual_constructions, filter_df = stage_dataframe(config)

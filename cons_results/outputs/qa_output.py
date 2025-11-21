@@ -47,14 +47,18 @@ def produce_qa_output(
         config["cell_number"],
         config["auxiliary"],  # check if aux or converted aux
         config["froempment"],
-        "classification",
         "runame1",
-        "region",
+    ]
+
+    additional_outputs_df = additional_outputs_df[
+        ~additional_outputs_df[config["question_no"]].isin(
+            config["filter_out_questions"]
+        )
     ]
 
     # Create value for adj_targer*a*o*g weights
     additional_outputs_df["weighted adjusted value"] = (
-        additional_outputs_df[config["target"]]
+        additional_outputs_df[config["pound_thousand_col"]]
         * additional_outputs_df["design_weight"]
         * additional_outputs_df["outlier_weight"]
         * additional_outputs_df["calibration_factor"]
@@ -65,12 +69,15 @@ def produce_qa_output(
         config["target"],
         config["imputation_marker_col"],
         "outlier_weight",
-        "weighted adjusted value",  #
+        "weighted adjusted value",
     ]
 
-    additional_outputs_df = additional_outputs_df.loc[
-        additional_outputs_df[config["question_no"]] != 290
-    ].copy()
+    # rename adjustedresponse_pounds_thousands to adjustedresponse
+    # to match what's on the extract
+    additional_outputs_df = additional_outputs_df.drop(config["target"], axis=1)
+    additional_outputs_df = additional_outputs_df.rename(
+        columns={config["pound_thousand_col"]: config["target"]}
+    )
 
     # creating pivot table
     # Converting question no to string, this becomes a column name
@@ -105,9 +112,15 @@ def produce_qa_output(
         on=[config["period"], config["reference"]],
         how="left",
     )
+
     # convert question_no column names to strings
     main_pivot.columns = pd.MultiIndex.from_tuples(
         [(str(l0), l1) for l0, l1 in main_pivot.columns]
     )
 
-    return main_pivot
+    period_dict = {
+        period: df.drop(columns=[config["period"]], axis=1, level=0)
+        for period, df in main_pivot.groupby(config["period"], dropna=False)
+    }
+
+    return period_dict
