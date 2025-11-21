@@ -40,6 +40,7 @@ def test_config(filepath):
         "generate_schemas": True,
         "schema_path": "tests/data/test_main/schemas/",
         "run_id": 1,
+        "output_path_replication": "tests/data/test_main/output/",
     }
 
 

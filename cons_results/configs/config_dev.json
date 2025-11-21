@@ -124,7 +124,7 @@
         "12":"derived",
         "13":"fir"
     },
-    "mandatory_outputs":["produce_qa_output"],
+    "mandatory_outputs":["produce_qa_output", "imputes_and_constructed_output"],
     "components_questions":[201,202,211,212,221,222,231,232,241,242,243],
 
     "census_extra_calibration_group": [],

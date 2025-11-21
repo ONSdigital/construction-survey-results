@@ -36,7 +36,7 @@ def config():
         "period": "period",
         "reference": "reference",
         "question_no": "questioncode",
-        "target": "adjustedresponse",
+        "pound_thousand_col": "adjustedresponse",
         "current_period": "202202",
         "run_id": "1",
     }
