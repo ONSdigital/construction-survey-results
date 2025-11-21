@@ -18,7 +18,8 @@ def test_config(filepath):
         "bucket": "",
         "idbr_folder_path": filepath,
         "snapshot_file_path": str(filepath / "dummy_snapshot.json"),
-        "cons_output_path": "tests/data/test_main/output/expected_from_cons_main.csv",
+        "main_cons_output_folder_path": "tests/data/test_main/output/",
+        "cons_output_prefix": "expected_from_cons_main",
         "cdid_data_path": "tests/data/outputs/csdb_output/cdid_mapping.csv",
         "output_path": "tests/data/test_main/output/",
         "current_period": 202206,
@@ -63,6 +64,7 @@ def test_config(filepath):
             232: "public_non_housing",
             243: "private_non_housing",
         },
+        "run_id": "1",
     }
 
 

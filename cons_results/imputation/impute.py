@@ -124,7 +124,9 @@ def impute(
         config["target"],
     )
 
-    validate_q290_file_name = get_versioned_filename("validate_q290_output", config)
+    validate_q290_file_name = get_versioned_filename(
+        "validate_q290_output", config["run_id"]
+    )
 
     validate_q290(
         df=df,

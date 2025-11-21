@@ -29,6 +29,7 @@ def test_config(filepath):
         "output_path": "tests/data/test_main/output/",
         "population_prefix": "test_universe009",
         "sample_prefix": "finalsel228",
+        "population_counts_prefix": "population_counts",
         "back_data_qv_path": filepath / "test_qv_009_202212.csv",
         "back_data_cp_path": filepath / "test_cp_009_202212.csv",
         "back_data_finalsel_path": str(filepath / "finalsel228_dummy_202212"),
@@ -55,7 +56,7 @@ class TestMain:
         patern = glob(out_path + "cons_results_*.csv")
 
         actual = pd.read_csv(patern[0])
-        expected = pd.read_csv(out_path + "expected_from_cons_main.csv")
+        expected = pd.read_csv(out_path + "expected_from_cons_main_1.csv")
 
         assert_frame_equal(actual, expected, check_like=False)
 
