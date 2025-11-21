@@ -3,7 +3,6 @@ import logging
 import boto3
 import pandas as pd
 import raz_client
-from mbs_results import logger
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 from mbs_results.outputs.scottish_welsh_gov_outputs import generate_devolved_outputs
 from mbs_results.utilities.inputs import read_csv_wrapper

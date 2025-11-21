@@ -27,14 +27,16 @@ from cons_results.staging.stage_dataframe import stage_dataframe
 def run_pipeline(config_user_dict=None):
     """This is the main function that runs the pipeline"""
 
-    # Setup run id as YYYYMMDDHHMM
-    run_id = get_datetime_now_as_int()
+    # Setup run id
+    run_id = (
+        config_user_dict.get("run_id")
+        if config_user_dict
+        else get_datetime_now_as_int()
+    )
 
     # Initialise the logger at the sart of the pipeline
-    logger_name = "cons_results"
-    logger_file_path = f"{logger_name}_{str(run_id)}.log"
-    logger = setup_logger(logger_name="mbs_results", logger_file_path=logger_file_path)
-    logger = setup_logger(logger_name=logger_name, logger_file_path=logger_file_path)
+    logger_file_path = f"cons_results_{str(run_id)}.log"
+    logger = setup_logger(logger_file_path=logger_file_path)
     logger.info(f"Cons Pipeline Started: Log file: {logger_file_path}")
 
     config = load_config("config_user.json", config_user_dict)
