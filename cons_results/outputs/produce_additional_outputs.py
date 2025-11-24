@@ -75,7 +75,7 @@ def produce_additional_outputs(
                 # if the output is a dictionary (e.g. from generate_devolved_outputs),
                 # we need to save each DataFrame in the dictionary
 
-                if output == "produce_qa_output":
+                if output in []:
                     run_id = config["run_id"]
 
                     filename = f"qa_output_{run_id}.xlsx"
@@ -112,7 +112,7 @@ def produce_additional_outputs(
                         if os.path.exists(filename):
                             os.remove(filename)
 
-                if output == "devolved_outputs":
+                if output in ["devolved_outputs", "qa_output"]:
                     for nation, df in df.items():
                         nation_name = nation.lower().replace(" ", "_")
                         nation_filename = (

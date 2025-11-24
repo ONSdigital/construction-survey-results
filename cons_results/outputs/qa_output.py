@@ -72,6 +72,10 @@ def produce_qa_output(
         "weighted adjusted value",
     ]
 
+    additional_outputs_df = additional_outputs_df.loc[
+        additional_outputs_df[config["question_no"]] != 290
+    ].copy()
+
     # rename adjustedresponse_pounds_thousands to adjustedresponse
     # to match what's on the extract
     additional_outputs_df = additional_outputs_df.drop(config["target"], axis=1)
@@ -119,7 +123,7 @@ def produce_qa_output(
     )
 
     period_dict = {
-        period: df.drop(columns=[config["period"]], axis=1, level=0)
+        period: df.copy()
         for period, df in main_pivot.groupby(config["period"], dropna=False)
     }
 
