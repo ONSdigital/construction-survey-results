@@ -114,7 +114,7 @@ def produce_additional_outputs(
 
                 if output in ["devolved_outputs", "produce_qa_output"]:
                     for nation, df in df.items():
-                        nation_name = nation.lower().replace(" ", "_")
+                        nation_name = str(nation).lower().replace(" ", "_")
                         nation_filename = (
                             f"{config['output_path']}{nation_name}_{filename}"
                         )
