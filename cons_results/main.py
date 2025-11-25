@@ -1,6 +1,7 @@
 from mbs_results.estimation.estimate import estimate
 from mbs_results.utilities.inputs import load_config
 from mbs_results.utilities.outputs import save_df
+from mbs_results.utilities.setup_logger import setup_logger, upload_logger_file_to_s3
 from mbs_results.utilities.utils import (
     export_run_id,
     generate_schemas,
@@ -13,7 +14,6 @@ from mbs_results.utilities.validation_checks import (
     validate_outlier_detection,
     validate_staging,
 )
-from mbs_results.utilities.setup_logger import setup_logger, upload_logger_file_to_s3
 
 from cons_results.imputation.impute import impute
 from cons_results.outlier_detection.detect_outlier import detect_outlier
