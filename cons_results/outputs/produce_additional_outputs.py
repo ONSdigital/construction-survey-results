@@ -112,7 +112,7 @@ def produce_additional_outputs(
                         if os.path.exists(filename):
                             os.remove(filename)
 
-                if output in ["devolved_outputs", "qa_output"]:
+                if output in ["devolved_outputs", "produce_qa_output"]:
                     for nation, df in df.items():
                         nation_name = nation.lower().replace(" ", "_")
                         nation_filename = (
