@@ -137,6 +137,7 @@ def produce_additional_outputs(
                     config["bucket"],
                     index=False,
                 )
+                logger.info(config["output_path_replication"] + filename + " saved")
 
             else:
                 write_csv_wrapper(
@@ -147,8 +148,7 @@ def produce_additional_outputs(
                     index=False,
                     header=header,
                 )
-
-            print(config["output_path"] + filename + " saved")
+                logger.info(config["output_path"] + filename + " saved")
 
 
 def produce_quarterly_extracts(
