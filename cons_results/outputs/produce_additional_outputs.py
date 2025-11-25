@@ -128,8 +128,18 @@ def produce_additional_outputs(
 
                         logger.info(nation_filename + " saved")
 
-            else:
+            elif output == "imputes_and_constructed_output":
+                # This needs to output to different location for s3 replication
+                write_csv_wrapper(
+                    df,
+                    config["output_path_replication"] + filename,
+                    config["platform"],
+                    config["bucket"],
+                    index=False,
+                )
+                logger.info(config["output_path_replication"] + filename + " saved")
 
+            else:
                 write_csv_wrapper(
                     df,
                     config["output_path"] + filename,
@@ -138,8 +148,7 @@ def produce_additional_outputs(
                     index=False,
                     header=header,
                 )
-
-            print(config["output_path"] + filename + " saved")
+                logger.info(config["output_path"] + filename + " saved")
 
 
 def produce_quarterly_extracts(

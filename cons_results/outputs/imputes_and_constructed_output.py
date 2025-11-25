@@ -1,5 +1,4 @@
 import pandas as pd
-from mbs_results.utilities.utils import get_versioned_filename
 
 
 def get_imputes_and_constructed_output(
@@ -49,7 +48,7 @@ def get_imputes_and_constructed_output(
         [
             config["reference"],
             config["question_no"],
-            config["target"],
+            config["pound_thousand_col"],
             config["imputation_marker_col"],
         ]
     ]
@@ -60,15 +59,13 @@ def get_imputes_and_constructed_output(
 
     imputes_and_constructed_output = imputes_and_constructed_output.rename(
         columns={
-            config["target"]: "constructedresponse",
+            config["pound_thousand_col"]: "constructedresponse",
             config["imputation_marker_col"]: "imputationmarker",
         }
     )
 
     imputes_and_constructed_output.reset_index(drop=True, inplace=True)
 
-    filename_prefix = f"constructed228_{config['current_period']}"
-
-    filename = get_versioned_filename(filename_prefix, config["run_id"])
+    filename = f"constructed228_{config['current_period']}.csv"
 
     return imputes_and_constructed_output, filename
