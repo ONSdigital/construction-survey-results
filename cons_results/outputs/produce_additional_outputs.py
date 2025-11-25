@@ -76,9 +76,6 @@ def produce_additional_outputs(
                 # we need to save each DataFrame in the dictionary
 
                 if output in []:
-                    run_id = config["run_id"]
-
-                    filename = f"qa_output_{run_id}.xlsx"
 
                     # todo: Add read_excel_wrapper to MBS
 
