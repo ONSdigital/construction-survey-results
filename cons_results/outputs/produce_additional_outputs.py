@@ -77,19 +77,16 @@ def produce_additional_outputs(
                 # if the output is a dictionary (e.g. from generate_devolved_outputs),
                 # we need to save each DataFrame in the dictionary
 
-                if output == "produce_qa_output":
-                    run_id = config["run_id"]
-
-                    filename = f"qa_output_{run_id}.xlsx"
+                if output in []:
 
                     # todo: Add read_excel_wrapper to MBS
 
                     # if platform == "network", save locally using output path
                     if config["platform"] == "network":
                         with pd.ExcelWriter(config["output_path"] + filename) as writer:
-                            for period, dataframe in df.items():
+                            for name, dataframe in df.items():
                                 dataframe.to_excel(
-                                    writer, sheet_name=f"{period}", startcol=-1
+                                    writer, sheet_name=f"{name}", startcol=-1
                                 )
 
                     # if platform == "s3", save to working directory first
@@ -101,9 +98,9 @@ def produce_additional_outputs(
                         )
 
                         with pd.ExcelWriter(filename) as writer:
-                            for period, dataframe in df.items():
+                            for name, dataframe in df.items():
                                 dataframe.to_excel(
-                                    writer, sheet_name=f"{period}", startcol=-1
+                                    writer, sheet_name=f"{name}", startcol=-1
                                 )
 
                         client.upload_file(
@@ -114,21 +111,19 @@ def produce_additional_outputs(
                         if os.path.exists(filename):
                             os.remove(filename)
 
-                if output == "devolved_outputs":
-                    for nation, df in df.items():
-                        nation_name = nation.lower().replace(" ", "_")
-                        nation_filename = (
-                            f"{config['output_path']}{nation_name}_{filename}"
-                        )
+                elif output in ["devolved_outputs", "produce_qa_output"]:
+                    for name, df in df.items():
+                        name = str(name).lower().replace(" ", "_")
+                        output_filename = f"{config['output_path']}{name}_{filename}"
                         write_csv_wrapper(
                             df,
-                            nation_filename,
+                            output_filename,
                             config["platform"],
                             config["bucket"],
                             index=False,
                         )
 
-                        logger.info(nation_filename + " saved")
+                        logger.info(output_filename + " saved")
 
             elif output == "imputes_and_constructed_output":
                 # This needs to output to different location for s3 replication
