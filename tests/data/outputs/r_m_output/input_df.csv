@@ -1,0 +1,5 @@
+﻿reference,period,questioncode,adjustedresponse,region,design_weight,calibration_factor,outlier_weight
+1,202303,202,40,XX,1,1,1
+1,202304,202,99990,XX,1,1,1
+2,202304,212,20,WW,101,1,1
+2,202304,290,20,WW,101,1,1
