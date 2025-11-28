@@ -67,4 +67,34 @@ def create_standard_errors(additional_outputs_df, **config):
     )
     df = df.round({"sample_var": 3, "std_error": 3, "cov": 3})
 
-    return df
+    # Custom sort
+    custom_question_order = {
+        290: 1,
+        201: 2,
+        211: 3,
+        221: 4,
+        231: 5,
+        242: 6,
+        241: 7,
+        202: 8,
+        212: 9,
+        222: 10,
+        232: 11,
+        243: 12,
+    }
+
+    return (
+        df.sort_values(
+            by=[config["period"], "classification", config["cell_number"]],
+        )
+        .sort_values(
+            by=config["question_no"],
+            key=lambda x: x.map(custom_question_order),
+            kind="mergesort",
+        )
+        .sort_values(
+            by=config["period"],
+            kind="mergesort",
+        )
+        .reset_index(drop=True)
+    )

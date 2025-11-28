@@ -10,7 +10,7 @@ def filepath():
 
 
 @pytest.fixture
-def sample_config(filepath):
+def sample_config():
     return {
         "period": "period",
         "question_no": "questioncode",
