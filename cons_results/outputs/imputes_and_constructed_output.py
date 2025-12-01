@@ -49,6 +49,7 @@ def get_imputes_and_constructed_output(
             config["reference"],
             config["question_no"],
             config["target"],
+            config["pound_thousand_col"],
             config["imputation_marker_col"],
         ]
     ]

@@ -1,5 +1,5 @@
-period,reference,questioncode,adjustedresponse,imputation_flags_adjustedresponse
-202201,1,201,0,fir
-202201,2,202,10000,bir
-202202,3,203,0,r
-202202,4,204,20000,fimc
+period,reference,questioncode,adjustedresponse,adjustedresponse_pounds_thousands,imputation_flags_adjustedresponse
+202201,1,201,0,0,fir
+202201,2,202,10000,10,bir
+202202,3,203,0,0,r
+202202,4,204,20000,20,fimc

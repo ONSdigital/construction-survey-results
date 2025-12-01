@@ -127,14 +127,30 @@ def produce_additional_outputs(
 
             elif output == "imputes_and_constructed_output":
                 # This needs to output to different location for s3 replication
+
+                rap_output = df.drop(columns=["constructedresponse"]).copy()
+
+                standard_output = df.drop(columns=config["pound_thousand_col"]).copy()
+
                 write_csv_wrapper(
-                    df,
+                    rap_output,
+                    config["output_path"] + filename,
+                    config["platform"],
+                    config["bucket"],
+                    index=False,
+                )
+                logger.info(config["output_path"] + filename + " saved (RAP output)")
+
+                write_csv_wrapper(
+                    standard_output,
                     config["output_path_replication"] + filename,
                     config["platform"],
                     config["bucket"],
                     index=False,
                 )
-                logger.info(config["output_path_replication"] + filename + " saved")
+                logger.info(
+                    config["output_path_replication"] + filename + " saved (SPP output)"
+                )
 
             else:
                 write_csv_wrapper(
