@@ -202,7 +202,7 @@ def fill_columns_in_created_questions(
     df.loc[df[flag_col_name], target_col] = 0
 
     # combining and filling columns
-    columns_dont_fill = [reference, question_col, target_col, period]
+    columns_dont_fill = [reference, question_col, target_col, period, "response"]
     columns_to_fill = set(
         contributors_keep_col + responses_keep_col + finalsel_keep_col
     )
