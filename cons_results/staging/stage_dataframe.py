@@ -251,6 +251,12 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         df, config["nil_status_col"], config["target"], config["nil_values"]
     )
 
+    df = set_290_components_null(
+        df,
+        staging_config["question_no"],
+        staging_config["target"],
+    )
+
     logger.info("Staging Completed")
 
     return df, unprocessed_data, manual_constructions, filter_df
@@ -329,3 +335,42 @@ def flag_290_case(
 
     # Return modified DataFrame
     return responses
+
+
+def set_290_components_null(
+    df: pd.DataFrame,
+    question_no: str,
+    adjusted_response: str,
+) -> pd.DataFrame:
+    """
+    Function to set component question responses to null if they equal 
+    zero when 290 special case flag is True
+
+    Parameters
+    ----------
+    df : pd.Dataframe
+        Input DataFrame which has 290 special cases flagged.
+    question_no : str
+        Column name containing question_col variable.
+    adjusted_response: str
+        Column name containing adjusted response for a question code.
+
+    Returns
+    -------
+    df: pd.DataFrame
+        Output DataFrame with component questions set to null where 290 special case flag is True.
+    """
+
+    case_expression = (
+        (df["290_flag"]) & (df[question_no] != 290) & (df[adjusted_response] == 0)
+    )
+
+    # Set component question responses to null where 290_flag is True and adjusted_response is 0
+    df.loc[case_expression, adjusted_response] = np.nan
+
+    # Create a flag to show where component question responses have been set to null
+    df["q290_component_set_null"] = False
+
+    df.loc[case_expression, "q290_component_set_null"] = True
+
+    return df

@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from cons_results.staging.stage_dataframe import flag_290_case
+from cons_results.staging.stage_dataframe import flag_290_case, set_290_components_null
 
 
 @pytest.fixture()
@@ -23,6 +23,22 @@ def test_flag_290_case(filepath):
         contributors,
         "period",
         "reference",
+        "question_no",
+        "adjustedresponse",
+    )
+
+    assert_frame_equal(output_df, expected_output_df)
+
+
+def test_set_290_component_null(filepath):
+    expected_output_df = pd.read_csv(
+        filepath / "290_flag_null_components_expected.csv"
+    )
+
+    input_df = pd.read_csv(filepath / "290_flag_expected.csv")
+
+    output_df = set_290_components_null(
+        input_df,
         "question_no",
         "adjustedresponse",
     )
