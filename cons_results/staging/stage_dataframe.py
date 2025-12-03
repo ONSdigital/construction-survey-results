@@ -343,7 +343,7 @@ def set_290_components_null(
     adjusted_response: str,
 ) -> pd.DataFrame:
     """
-    Function to set component question responses to null if they equal 
+    Function to set component question responses to null if they equal
     zero when 290 special case flag is True
 
     Parameters
@@ -358,14 +358,16 @@ def set_290_components_null(
     Returns
     -------
     df: pd.DataFrame
-        Output DataFrame with component questions set to null where 290 special case flag is True.
+        Output DataFrame with component questions set to null where
+        290 special case flag is True.
     """
 
     case_expression = (
         (df["290_flag"]) & (df[question_no] != 290) & (df[adjusted_response] == 0)
     )
 
-    # Set component question responses to null where 290_flag is True and adjusted_response is 0
+    # Set component question responses to null where 290_flag
+    # is True and adjusted_response is 0
     df.loc[case_expression, adjusted_response] = np.nan
 
     # Create a flag to show where component question responses have been set to null

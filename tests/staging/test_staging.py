@@ -31,9 +31,7 @@ def test_flag_290_case(filepath):
 
 
 def test_set_290_component_null(filepath):
-    expected_output_df = pd.read_csv(
-        filepath / "290_flag_null_components_expected.csv"
-    )
+    expected_output_df = pd.read_csv(filepath / "290_flag_null_components_expected.csv")
 
     input_df = pd.read_csv(filepath / "290_flag_expected.csv")
 
