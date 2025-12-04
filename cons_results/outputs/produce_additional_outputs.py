@@ -69,7 +69,12 @@ def produce_additional_outputs(
 
             header = (
                 False
-                if output in ["quarterly_by_sizeband_output", "quarterly_extracts"]
+                if output
+                in [
+                    "quarterly_by_sizeband_output",
+                    "quarterly_extracts",
+                    "produce_qa_output",
+                ]
                 else True
             )
 
@@ -121,6 +126,7 @@ def produce_additional_outputs(
                             config["platform"],
                             config["bucket"],
                             index=False,
+                            header=header,
                         )
 
                         logger.info(output_filename + " saved")
