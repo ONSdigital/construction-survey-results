@@ -2,6 +2,7 @@ import pandas as pd
 from mbs_results.outlier_detection.detect_outlier import join_l_values
 from mbs_results.outlier_detection.winsorisation import winsorise
 from mbs_results.utilities.constrains import replace_with_manual_outlier_weights
+from mbs_results.utilities.pounds_thousands import create_pounds_thousands_column
 
 from cons_results.outlier_detection.derive_outlier_weights import (
     derive_q290_outlier_weights,
@@ -64,6 +65,15 @@ def detect_outlier(
     # This is needed for the additional outputs functions
     post_win["winsorised_value"] = (
         post_win["outlier_weight"] * post_win["adjustedresponse"]
+    )
+
+    post_win = create_pounds_thousands_column(
+        post_win,
+        question_col=config.get("question_no"),
+        source_col=config.get("target"),
+        dest_col=config.get("pound_thousand_col"),
+        questions_to_apply=config.get("pounds_thousands_questions"),
+        ensure_at_end=False,
     )
 
     return post_win
