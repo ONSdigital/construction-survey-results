@@ -316,12 +316,12 @@ def get_additional_outputs_df(
         "flag_construction_matches_count",
         "default_link_flag_construction_matches",
         target,
+        "adjustedresponse_pounds_thousands",
         "response",
         "status",
         "runame1",
         "entname1",
         "region",
-        "adjustedresponse_pounds_thousands",
         "winsorised_value",
     ]
     if not config["filter"]:
@@ -340,7 +340,7 @@ def get_additional_outputs_df(
         source_col=target,
         dest_col=dest_col,
         questions_to_apply=questions_to_apply,
-        ensure_at_end=True,
+        ensure_at_end=False,
     )
 
     # converting cell_number to int
