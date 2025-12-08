@@ -1,9 +1,9 @@
+import logging
 import os
 
 import boto3
 import pandas as pd
 import raz_client
-from mbs_results import logger
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 from mbs_results.utilities.outputs import write_csv_wrapper
 from mbs_results.utilities.pounds_thousands import create_pounds_thousands_column
@@ -22,6 +22,8 @@ from cons_results.outputs.quarterly_by_sizeband_output import (
 )
 from cons_results.outputs.r_m_output import produce_r_m_output
 from cons_results.outputs.standard_errors import create_standard_errors
+
+logger = logging.getLogger(__name__)
 
 
 # flake8: noqa: C901
@@ -61,7 +63,12 @@ def produce_additional_outputs(
 
             header = (
                 False
-                if output in ["quarterly_by_sizeband_output", "quarterly_extracts"]
+                if output
+                in [
+                    "quarterly_by_sizeband_output",
+                    "quarterly_extracts",
+                    "produce_qa_output",
+                ]
                 else True
             )
 
@@ -69,19 +76,16 @@ def produce_additional_outputs(
                 # if the output is a dictionary (e.g. from produce_qa_output),
                 # we need to save each DataFrame in the dictionary
 
-                if output == "produce_qa_output":
-                    run_id = config["run_id"]
-
-                    filename = f"qa_output_{run_id}.xlsx"
+                if output in []:
 
                     # todo: Add read_excel_wrapper to MBS
 
                     # if platform == "network", save locally using output path
                     if config["platform"] == "network":
                         with pd.ExcelWriter(config["output_path"] + filename) as writer:
-                            for period, dataframe in df.items():
+                            for name, dataframe in df.items():
                                 dataframe.to_excel(
-                                    writer, sheet_name=f"{period}", startcol=-1
+                                    writer, sheet_name=f"{name}", startcol=-1
                                 )
 
                     # if platform == "s3", save to working directory first
@@ -93,9 +97,9 @@ def produce_additional_outputs(
                         )
 
                         with pd.ExcelWriter(filename) as writer:
-                            for period, dataframe in df.items():
+                            for name, dataframe in df.items():
                                 dataframe.to_excel(
-                                    writer, sheet_name=f"{period}", startcol=-1
+                                    writer, sheet_name=f"{name}", startcol=-1
                                 )
 
                         client.upload_file(
@@ -106,8 +110,33 @@ def produce_additional_outputs(
                         if os.path.exists(filename):
                             os.remove(filename)
 
-            else:
+                elif output in ["produce_qa_output"]:
+                    for name, df in df.items():
+                        name = str(name).lower().replace(" ", "_")
+                        output_filename = f"{config['output_path']}{name}_{filename}"
+                        write_csv_wrapper(
+                            df,
+                            output_filename,
+                            config["platform"],
+                            config["bucket"],
+                            index=False,
+                            header=header,
+                        )
 
+                        logger.info(output_filename + " saved")
+
+            elif output == "imputes_and_constructed_output":
+                # This needs to output to different location for s3 replication
+                write_csv_wrapper(
+                    df,
+                    config["output_path_replication"] + filename,
+                    config["platform"],
+                    config["bucket"],
+                    index=False,
+                )
+                logger.info(config["output_path_replication"] + filename + " saved")
+
+            else:
                 write_csv_wrapper(
                     df,
                     config["output_path"] + filename,
@@ -116,8 +145,7 @@ def produce_additional_outputs(
                     index=False,
                     header=header,
                 )
-
-            print(config["output_path"] + filename + " saved")
+                logger.info(config["output_path"] + filename + " saved")
 
 
 def get_additional_outputs_df(
