@@ -106,22 +106,6 @@ def produce_additional_outputs(
                         if os.path.exists(filename):
                             os.remove(filename)
 
-                if output == "devolved_outputs":
-                    for nation, df in df.items():
-                        nation_name = nation.lower().replace(" ", "_")
-                        nation_filename = (
-                            f"{config['output_path']}{nation_name}_{filename}"
-                        )
-                        write_csv_wrapper(
-                            df,
-                            nation_filename,
-                            config["platform"],
-                            config["bucket"],
-                            index=False,
-                        )
-
-                        logger.info(nation_filename + " saved")
-
             else:
 
                 write_csv_wrapper(
