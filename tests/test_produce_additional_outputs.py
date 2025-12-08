@@ -28,7 +28,6 @@ def test_config(filepath):
         "r_and_m_quarter": None,
         "sizeband_quarter": ["2023Q2"],
         "imputation_contribution_periods": [202302],
-        "devolved_nations": ["Scotland", "Wales"],
         "ludets_prefix": "dummy_ludets228_",
         "local_unit_columns": [
             "ruref",

@@ -144,6 +144,7 @@ class TestRMOutput:
             "platform": "network",
             "period": "period",
             "bucket": "",
+            "run_id": "",
         }
 
         expected_output = output_df

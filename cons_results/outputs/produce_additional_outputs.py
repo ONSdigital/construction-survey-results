@@ -66,7 +66,7 @@ def produce_additional_outputs(
             )
 
             if isinstance(df, dict):
-                # if the output is a dictionary (e.g. from generate_devolved_outputs),
+                # if the output is a dictionary (e.g. from produce_qa_output),
                 # we need to save each DataFrame in the dictionary
 
                 if output == "produce_qa_output":

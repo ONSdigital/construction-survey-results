@@ -19,10 +19,9 @@ def filter_region(
     # Filter LU data for the devolved nation region
     region_col = "region"
     employment_col = "employment"
-    print(local_unit_data)
+
     # Filter LU data for the devolved nation region and sum employment by reference
     local_unit_data["reference"] = local_unit_data["ruref"]
-    # local_unit_data["reference"] = local_unit_data["reference"].astype("int64")
     regional_employment = (
         local_unit_data[local_unit_data[region_col].isin(region_code)]
         .groupby(["reference", "period"])[employment_col]
@@ -202,6 +201,6 @@ def produce_r_m_output(additional_outputs_df: pd.DataFrame, **config):
 
     df, quarter = reformat_r_m_output(df, **config)
 
-    filename = f"r_and_m_regional_extracts_{quarter}.csv"
+    filename = f"r_and_m_regional_extracts_{quarter}_{config['run_id']}.csv"
 
     return (df, filename)
