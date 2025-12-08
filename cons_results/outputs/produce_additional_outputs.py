@@ -8,7 +8,6 @@ from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 from mbs_results.outputs.scottish_welsh_gov_outputs import generate_devolved_outputs
 from mbs_results.utilities.inputs import read_csv_wrapper
 from mbs_results.utilities.outputs import write_csv_wrapper
-from mbs_results.utilities.pounds_thousands import create_pounds_thousands_column
 from mbs_results.utilities.utils import (
     convert_column_to_datetime,
     get_versioned_filename,
@@ -333,15 +332,6 @@ def get_additional_outputs_df(
         ]
 
     final_cols += count_variables
-
-    df = create_pounds_thousands_column(
-        df,
-        question_col=question_col,
-        source_col=target,
-        dest_col=dest_col,
-        questions_to_apply=questions_to_apply,
-        ensure_at_end=False,
-    )
 
     # converting cell_number to int
     # needed for outputs that use cell_number for sizebands
