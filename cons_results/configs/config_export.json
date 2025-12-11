@@ -1,0 +1,32 @@
+{
+"platform": "s3",
+"bucket": "",
+"ssl_file": "/etc/pki/tls/certs/ca-bundle.crt",
+"output_dir": "",
+"export_dir": "",
+"schemas_dir": null,
+"run_id": "",
+"copy_or_move_files": "copy",
+"files_to_export": {
+    "methods_output": false,
+    "population_counts": false,
+    "produce_qa_output": false,
+    "r_and_m_regional_extracts": false,
+    "constructed_output": false,
+    "cord_output":false,
+    "imputation_contribution_output":false,
+    "quarterly_by_sizeband_output":false,
+    "standard_errors": false
+},
+"files_basename": {
+    "methods_output": "cons_results",
+    "population_counts": "population_counts",
+    "produce_qa_output": "produce_qa_output",
+    "r_and_m_regional_extracts": "r_and_m_regional_extracts",
+    "constructed_output": "constructed228",
+    "cord_output":"cord_output",
+    "imputation_contribution_output":"imputation_contribution_output",
+    "quarterly_by_sizeband_output":"quarterly_by_sizeband_output",
+    "standard_errors":"standard_errors_publication_period"
+}
+}
