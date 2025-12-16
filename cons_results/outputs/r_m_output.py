@@ -48,7 +48,9 @@ def calculate_regional_employment(
     return regional_employment
 
 
-def calculate_total_employment(local_unit_data: pd.DataFrame, employment_col: str = "employment"):
+def calculate_total_employment(
+    local_unit_data: pd.DataFrame, employment_col: str = "employment"
+):
     """
     Calculate total employment across all periods in local unit data
 
