@@ -1,9 +1,6 @@
 import logging
-import os
 
-import boto3
 import pandas as pd
-import raz_client
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 from mbs_results.outputs.scottish_welsh_gov_outputs import generate_devolved_outputs
 from mbs_results.utilities.inputs import read_csv_wrapper
@@ -12,7 +9,6 @@ from mbs_results.utilities.utils import (
     convert_column_to_datetime,
     get_versioned_filename,
 )
-from rdsa_utils.cdp.helpers.s3_utils import write_excel
 
 from cons_results.outputs.cord_output import get_cord_output
 from cons_results.outputs.imputation_contribution_output import (
