@@ -255,6 +255,15 @@ def produce_r_m_output(additional_outputs_df: pd.DataFrame, **config):
 
     """
 
+    # Set to 'is not True' to capture any misspellings etc. of False.
+    if config["produce_r_m_output"] is not True:
+        logger.warning(
+            "Skipping R+M output as config option is not set to True."
+            + "\nIf you want to produce the R+M output, please set 'produce_r_m_output'"
+            + " in the output config to True."
+        )
+        return None
+
     df = additional_outputs_df[
         [
             "reference",

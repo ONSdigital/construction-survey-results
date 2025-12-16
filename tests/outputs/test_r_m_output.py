@@ -142,6 +142,7 @@ class TestRMOutput:
                 "North West": 10,
                 "Scotland": 11,
             },
+            "produce_r_m_output": True,
             "r_m_quarter": "2023Q2",
             "local_unit_columns": [
                 "ruref",

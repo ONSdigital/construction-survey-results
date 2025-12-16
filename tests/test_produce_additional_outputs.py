@@ -64,6 +64,7 @@ def test_config(filepath):
             243: "private_non_housing",
         },
         "run_id": "1",
+        "produce_r_m_output": True,
         "r_m_quarter": None,
         "r_m_region_order": {
             "North East": 1,
