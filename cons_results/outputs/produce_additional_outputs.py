@@ -6,8 +6,11 @@ import pandas as pd
 import raz_client
 from mbs_results.outputs.get_additional_outputs import get_additional_outputs
 from mbs_results.utilities.outputs import write_csv_wrapper
-from mbs_results.utilities.pounds_thousands import create_pounds_thousands_column
-from mbs_results.utilities.utils import get_versioned_filename
+from mbs_results.utilities.utils import (
+    convert_column_to_datetime,
+    get_versioned_filename,
+)
+from rdsa_utils.cdp.helpers.s3_utils import write_excel
 
 from cons_results.outputs.cord_output import get_cord_output
 from cons_results.outputs.imputation_contribution_output import (
@@ -201,12 +204,12 @@ def get_additional_outputs_df(
         "flag_construction_matches_count",
         "default_link_flag_construction_matches",
         target,
+        "adjustedresponse_pounds_thousands",
         "response",
         "status",
         "runame1",
         "entname1",
         "region",
-        "adjustedresponse_pounds_thousands",
         "winsorised_value",
     ]
     if not config["filter"]:
@@ -218,15 +221,6 @@ def get_additional_outputs_df(
         ]
 
     final_cols += count_variables
-
-    df = create_pounds_thousands_column(
-        df,
-        question_col=question_col,
-        source_col=target,
-        dest_col=dest_col,
-        questions_to_apply=questions_to_apply,
-        ensure_at_end=True,
-    )
 
     # converting cell_number to int
     # needed for outputs that use cell_number for sizebands
