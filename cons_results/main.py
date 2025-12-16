@@ -5,7 +5,7 @@ from mbs_results.utilities.setup_logger import setup_logger, upload_logger_file_
 from mbs_results.utilities.utils import (
     export_run_id,
     generate_schemas,
-    get_datetime_now_as_int,
+    get_or_create_run_id,
 )
 from mbs_results.utilities.validation_checks import (
     validate_config,
@@ -27,21 +27,16 @@ from cons_results.staging.stage_dataframe import stage_dataframe
 def run_pipeline(config_user_dict=None):
     """This is the main function that runs the pipeline"""
 
-    # Setup run id
-    run_id = (
-        config_user_dict.get("run_id")
-        if config_user_dict
-        else get_datetime_now_as_int()
-    )
+    config = load_config("config_user.json", config_user_dict)
+    validate_config(config)
 
-    # Initialise the logger at the sart of the pipeline
-    logger_file_path = f"cons_results_{str(run_id)}.log"
+    # Setup run id
+    config["run_id"] = get_or_create_run_id(config)
+
+    # Initialise the logger at the start of the pipeline
+    logger_file_path = f"cons_results_{config['run_id']}.log"
     logger = setup_logger(logger_file_path=logger_file_path)
     logger.info(f"Cons Pipeline Started: Log file: {logger_file_path}")
-
-    config = load_config("config_user.json", config_user_dict)
-    config["run_id"] = run_id
-    validate_config(config)
 
     df, unprocessed_data, manual_constructions, filter_df = stage_dataframe(config)
     validate_staging(df, config)
