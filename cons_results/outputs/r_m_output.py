@@ -21,7 +21,7 @@ def calculate_regional_employment(
     local_unit_data : pd.DataFrame
         local unit data (ludets) read in first part of produce_r_m_output wrapper.
     region : str
-        name to region to filter by (i.e. "Scotland", "South East")
+        name of region to filter by (i.e. "Scotland", "South East")
     region_code : str
         Code of region in local unit data, to apply filter.
     employment_col : str, optional
@@ -48,7 +48,7 @@ def calculate_regional_employment(
     return regional_employment
 
 
-def calculate_total_employment(local_unit_data: pd.DataFrame):
+def calculate_total_employment(local_unit_data: pd.DataFrame, employment_col: str = "employment"):
     """
     Calculate total employment across all periods in local unit data
 
@@ -56,6 +56,8 @@ def calculate_total_employment(local_unit_data: pd.DataFrame):
     ----------
     local_unit_data : pd.DataFrame
         local unit data (ludets) read in first part of produce_r_m_output wrapper.
+    employment_col : str, optional
+        Name of column with employment data in ludets. The default is "employment".
 
     Returns
     -------
@@ -65,10 +67,10 @@ def calculate_total_employment(local_unit_data: pd.DataFrame):
     """
 
     total_employment = (
-        local_unit_data.groupby(["reference", "period"])["employment"]
+        local_unit_data.groupby(["reference", "period"])[employment_col]
         .sum()
         .reset_index()
-        .rename(columns={"employment": "total_employment"})
+        .rename(columns={employment_col: "total_employment"})
     )
 
     return total_employment
@@ -122,7 +124,7 @@ def calculate_regional_percent(
 def handle_rus_not_in_ludets(df: pd.DataFrame, region: str, region_code: str):
     """
     Helper function called within `calculate_regional_turnover`. If any reference
-    has is assigned to one region in df, but has no data in ludets, assign a percentage
+    is assigned to one region in df, but has no data in ludets, assign a percentage
     of 100% to that region.
 
     """
@@ -257,7 +259,7 @@ def produce_r_m_output(additional_outputs_df: pd.DataFrame, **config):
 
     # Set to 'is not True' to capture any misspellings etc. of False.
     if config["produce_r_m_output"] is not True:
-        logger.warning(
+        logger.info(
             "Skipping R+M output as config option is not set to True."
             + "\nIf you want to produce the R+M output, please set 'produce_r_m_output'"
             + " in the output config to True."
