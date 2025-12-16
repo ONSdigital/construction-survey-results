@@ -1,0 +1,4 @@
+reference,period,questioncode,adjustedresponse,region,design_weight,calibration_factor,outlier_weight,gross_turnover_uk,percentage_Scotland,turnover_Scotland
+1,202303,202,40,XX,1,1,1,0.04,1,0.04
+1,202304,202,99990,XX,1,1,1,99.99,0.090909091,9.090000009
+2,202304,212,20,WW,101,1,1,2.02,,

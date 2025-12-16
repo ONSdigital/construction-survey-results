@@ -6,8 +6,11 @@ from mbs_results.outputs.scottish_welsh_gov_outputs import read_and_combine_lude
 from pandas.testing import assert_frame_equal
 
 from cons_results.outputs.r_m_output import (
+    calculate_regional_employment,
     calculate_regional_percent,
-    filter_region,
+    calculate_regional_turnover,
+    calculate_total_employment,
+    handle_rus_not_in_ludets,
     produce_r_m_output,
     reformat_r_m_output,
 )
@@ -29,14 +32,42 @@ def output_df(filepath):
 
 
 @pytest.fixture(scope="class")
-def filter_region_output(filepath):
-    return pd.read_csv(filepath / "filter_region_output.csv", index_col=False)
+def calculate_regional_employment_output(filepath):
+    return pd.read_csv(
+        filepath / "calculate_regional_employment_output.csv", index_col=False
+    )
+
+
+@pytest.fixture(scope="class")
+def calculate_total_employment_output(filepath):
+    return pd.read_csv(
+        filepath / "calculate_total_employment_output.csv", index_col=False
+    )
 
 
 @pytest.fixture(scope="class")
 def calculate_regional_percent_output(filepath):
     return pd.read_csv(
         filepath / "calculate_regional_percent_output.csv", index_col=False
+    )
+
+
+@pytest.fixture(scope="class")
+def calculate_regional_turnover_output(filepath):
+    return pd.read_csv(
+        filepath / "calculate_regional_turnover_output.csv", index_col=False
+    )
+
+
+@pytest.fixture(scope="class")
+def handle_rus_not_in_ludets_input(filepath):
+    return pd.read_csv(filepath / "handle_rus_not_in_ludets_input.csv", index_col=False)
+
+
+@pytest.fixture(scope="class")
+def handle_rus_not_in_ludets_output(filepath):
+    return pd.read_csv(
+        filepath / "handle_rus_not_in_ludets_output.csv", index_col=False
     )
 
 
@@ -153,16 +184,49 @@ class TestRMOutput:
 
         assert_frame_equal(expected_output, actual_output)
 
-    def test_filter_region(self, ludets_data, filter_region_output):
+    def test_calculate_regional_employment(
+        self, ludets_data, calculate_regional_employment_output
+    ):
 
-        expected_output = filter_region_output
+        ludets_data["reference"] = ludets_data["ruref"]
 
-        actual_output = filter_region(ludets_data, "Scotland", ["XX"])
+        expected_output = calculate_regional_employment_output
+        actual_output = calculate_regional_employment(ludets_data, "Scotland", ["XX"])
+
+        assert_frame_equal(expected_output, actual_output)
+
+    def test_calculate_total_employment(
+        self, ludets_data, calculate_total_employment_output
+    ):
+
+        ludets_data["reference"] = ludets_data["ruref"]
+
+        expected_output = calculate_total_employment_output
+        actual_output = calculate_total_employment(ludets_data)
 
         assert_frame_equal(expected_output, actual_output)
 
     def test_calculate_regional_percent(
-        self, input_df, filter_region_output, calculate_regional_percent_output
+        self,
+        calculate_regional_employment_output,
+        calculate_total_employment_output,
+        calculate_regional_percent_output,
+    ):
+
+        expected_output = calculate_regional_percent_output
+        actual_output = calculate_regional_percent(
+            calculate_regional_employment_output,
+            calculate_total_employment_output,
+            "Scotland",
+        )
+
+        assert_frame_equal(expected_output, actual_output)
+
+    def test_calculate_regional_turnover(
+        self,
+        input_df,
+        calculate_regional_percent_output,
+        calculate_regional_turnover_output,
     ):
 
         df = input_df[input_df["questioncode"].isin([202, 212])]
@@ -175,10 +239,21 @@ class TestRMOutput:
             / 1000
         )
 
-        expected_output = calculate_regional_percent_output
+        expected_output = calculate_regional_turnover_output
 
-        actual_output = calculate_regional_percent(
-            df, filter_region_output, "Scotland", ["XX"]
+        actual_output = calculate_regional_turnover(
+            df, calculate_regional_percent_output, "Scotland", ["XX"]
+        )
+
+        assert_frame_equal(expected_output, actual_output)
+
+    def test_handle_rus_not_in_ludets(
+        self, handle_rus_not_in_ludets_input, handle_rus_not_in_ludets_output
+    ):
+
+        expected_output = handle_rus_not_in_ludets_output
+        actual_output = handle_rus_not_in_ludets(
+            handle_rus_not_in_ludets_input, "Wales", ["WW"]
         )
 
         assert_frame_equal(expected_output, actual_output)

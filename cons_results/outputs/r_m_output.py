@@ -6,22 +6,37 @@ from mbs_results.outputs.scottish_welsh_gov_outputs import read_and_combine_lude
 logger = logging.getLogger(__name__)
 
 
-def filter_region(
-    local_unit_data: pd.DataFrame, region: str, region_code: str
+def calculate_regional_employment(
+    local_unit_data: pd.DataFrame,
+    region: str,
+    region_code: str,
+    employment_col: str = "employment",
+    region_col: str = "region",
 ) -> pd.DataFrame:
+    """
+    Using local unit data to calculate employment for a given region
 
-    percent_col = f"percentage_{region}"
+    Parameters
+    ----------
+    local_unit_data : pd.DataFrame
+        local unit data (ludets) read in first part of produce_r_m_output wrapper.
+    region : str
+        name to region to filter by (i.e. "Scotland", "South East")
+    region_code : str
+        Code of region in local unit data, to apply filter.
+    employment_col : str, optional
+        Name of column with employment data in ludets. The default is "employment".
+    region_col : str, optional
+        Name of column with region code in ludets. The default is "region".
 
-    # compute the grossed UK turnover or returns
+    Returns
+    -------
+    regional_employment : pd.DataFrame
+        Regional employment figures for given region across all references and
+        periods.
 
-    # Calculate froempment ratio:
-    # (sum of froempment in filtered LU data) / (froempment in df)
-    # Filter LU data for the devolved nation region
-    region_col = "region"
-    employment_col = "employment"
+    """
 
-    # Filter LU data for the devolved nation region and sum employment by reference
-    local_unit_data["reference"] = local_unit_data["ruref"]
     regional_employment = (
         local_unit_data[local_unit_data[region_col].isin(region_code)]
         .groupby(["reference", "period"])[employment_col]
@@ -30,7 +45,25 @@ def filter_region(
         .rename(columns={employment_col: f"{employment_col}_{region}"})
     )
 
-    # Sum total employment by reference from the pipeline data
+    return regional_employment
+
+
+def calculate_total_employment(local_unit_data: pd.DataFrame):
+    """
+    Calculate total employment across all periods in local unit data
+
+    Parameters
+    ----------
+    local_unit_data : pd.DataFrame
+        local unit data (ludets) read in first part of produce_r_m_output wrapper.
+
+    Returns
+    -------
+    total_employment : pd.DataFrame
+        Total employment figures by reference and period.
+
+    """
+
     total_employment = (
         local_unit_data.groupby(["reference", "period"])["employment"]
         .sum()
@@ -38,7 +71,40 @@ def filter_region(
         .rename(columns={"employment": "total_employment"})
     )
 
-    # Merge the two Dataframes and calculate the percentage
+    return total_employment
+
+
+def calculate_regional_percent(
+    regional_employment: pd.DataFrame,
+    total_employment: pd.DataFrame,
+    region: str,
+    employment_col: str = "employment",
+):
+    """
+    Calculate percent of employees in given region for each reference.
+
+    Parameters
+    ----------
+    regional_employment : pd.DataFrame
+        Regional employment figures for given region, calculated in
+        `calculate_regional_employment`.
+    total_employment : pd.DataFrame
+        Total employment figures, calculated in `calculate_total_employment`.
+    region : str
+        Name of region.
+    employment_col : str, optional
+        Name of column with employment data in ludets. The default is "employment".
+
+    Returns
+    -------
+    merged_df : pd.DataFrame
+        Final output with percentage of employment in given region, calculated
+        from regional and total employment figures.
+
+    """
+
+    percent_col = f"percentage_{region}"
+
     merged_df = pd.merge(
         regional_employment,
         total_employment,
@@ -53,9 +119,47 @@ def filter_region(
     return merged_df
 
 
-def calculate_regional_percent(
+def handle_rus_not_in_ludets(df: pd.DataFrame, region: str, region_code: str):
+    """
+    Helper function called within `calculate_regional_turnover`. If any reference
+    has is assigned to one region in df, but has no data in ludets, assign a percentage
+    of 100% to that region.
+
+    """
+
+    df.loc[
+        df[f"percentage_{region}"].isnull() & (df["region"].isin(region_code)),
+        f"percentage_{region}",
+    ] = 1
+
+    return df
+
+
+def calculate_regional_turnover(
     df: pd.DataFrame, merged_df: pd.DataFrame, region: str, region_code: str
 ):
+    """
+    Calculating regional proportions of turnover from regional percent and overall
+    turnover figures. Uses result of `calculate_regional_percent`
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Cons results df with turnover figure
+    merged_df : pd.DataFrame
+        Output from `calculate_regional_percent`
+    region : str
+        Name of region.
+    region_code : str
+        Code of region.
+
+    Returns
+    -------
+    df : pd.DataFrame
+        DataFrame output containing regional proportion of turnover figures.
+
+    """
+
     df = df.merge(
         merged_df[["reference", "period", f"percentage_{region}"]],
         on=["reference", "period"],
@@ -63,10 +167,7 @@ def calculate_regional_percent(
     )
 
     # Set percentage to 100% where region code matches but no data in ludets
-    df.loc[
-        df[f"percentage_{region}"].isnull() & (df["region"].isin(region_code)),
-        f"percentage_{region}",
-    ] = 1
+    df = handle_rus_not_in_ludets(df, region, region_code)
 
     df[f"turnover_{region}"] = df[f"percentage_{region}"] * df["gross_turnover_uk"]
 
@@ -170,6 +271,8 @@ def produce_r_m_output(additional_outputs_df: pd.DataFrame, **config):
 
     # TODO: Replace with dedicated cons functions
     ludets = read_and_combine_ludets_files(config)
+    ludets["reference"] = ludets["ruref"]
+    total_employment = calculate_total_employment(ludets)
 
     region_to_code = {
         "Scotland": ["XX"],
@@ -196,8 +299,11 @@ def produce_r_m_output(additional_outputs_df: pd.DataFrame, **config):
     for region in region_to_code.keys():
         region_code = region_to_code[region]
         logger.info(f"Filtering for {region} with region code {region_code}")
-        merged_df = filter_region(ludets, region, region_code)
-        df = calculate_regional_percent(df, merged_df, region, region_code)
+        regional_employment = calculate_regional_employment(ludets, region, region_code)
+        merged_df = calculate_regional_percent(
+            regional_employment, total_employment, region
+        )
+        df = calculate_regional_turnover(df, merged_df, region, region_code)
 
     df, quarter = reformat_r_m_output(df, **config)
 
