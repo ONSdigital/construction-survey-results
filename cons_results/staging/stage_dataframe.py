@@ -88,8 +88,11 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         .drop(columns=[staging_config["imputation_marker_col"]])
         .drop_duplicates()
     )
+    
+    if "290_flag" not in responses.columns:
+        responses["290_flag"] = False
 
-    responses = responses[staging_config["responses_keep_cols"]]
+    responses = responses[staging_config["responses_keep_cols"] + ["290_flag"]]
 
     responses = enforce_datatypes(
         responses, keep_columns=staging_config["responses_keep_cols"], **staging_config

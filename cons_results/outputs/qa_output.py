@@ -82,6 +82,13 @@ def produce_qa_output(
     additional_outputs_df = additional_outputs_df.rename(
         columns={config["pound_thousand_col"]: config["target"]}
     )
+    
+    total_only = additional_outputs_df["290_flag"] == True & (
+        additional_outputs_df[config["imputation_marker_col"]] != "c"
+        )
+    additional_outputs_df.loc[total_only, config["imputation_marker_col"]] = (
+        additional_outputs_df.loc[total_only, config["imputation_marker_col"]] + "_c"
+    )
 
     # creating pivot table
     # Converting question no to string, this becomes a column name
