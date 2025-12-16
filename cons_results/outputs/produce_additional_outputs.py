@@ -81,54 +81,19 @@ def produce_additional_outputs(
                 # if the output is a dictionary (e.g. from generate_devolved_outputs),
                 # we need to save each DataFrame in the dictionary
 
-                if output in []:
+                for name, df in df.items():
+                    name = str(name).lower().replace(" ", "_")
+                    output_filename = f"{config['output_path']}{name}_{filename}"
+                    write_csv_wrapper(
+                        df,
+                        output_filename,
+                        config["platform"],
+                        config["bucket"],
+                        index=False,
+                        header=header,
+                    )
 
-                    # todo: Add read_excel_wrapper to MBS
-
-                    # if platform == "network", save locally using output path
-                    if config["platform"] == "network":
-                        with pd.ExcelWriter(config["output_path"] + filename) as writer:
-                            for name, dataframe in df.items():
-                                dataframe.to_excel(
-                                    writer, sheet_name=f"{name}", startcol=-1
-                                )
-
-                    # if platform == "s3", save to working directory first
-                    # then move to s3
-                    if config["platform"] == "s3":
-                        client = boto3.client("s3")
-                        raz_client.configure_ranger_raz(
-                            client, ssl_file="/etc/pki/tls/certs/ca-bundle.crt"
-                        )
-
-                        with pd.ExcelWriter(filename) as writer:
-                            for name, dataframe in df.items():
-                                dataframe.to_excel(
-                                    writer, sheet_name=f"{name}", startcol=-1
-                                )
-
-                        client.upload_file(
-                            filename, config["bucket"], config["output_path"] + filename
-                        )
-
-                        # deleting from local storage after uploading to S3
-                        if os.path.exists(filename):
-                            os.remove(filename)
-
-                elif output in ["devolved_outputs", "produce_qa_output"]:
-                    for name, df in df.items():
-                        name = str(name).lower().replace(" ", "_")
-                        output_filename = f"{config['output_path']}{name}_{filename}"
-                        write_csv_wrapper(
-                            df,
-                            output_filename,
-                            config["platform"],
-                            config["bucket"],
-                            index=False,
-                            header=header,
-                        )
-
-                        logger.info(output_filename + " saved")
+                    logger.info(output_filename + " saved")
 
             elif output == "imputes_and_constructed_output":
                 # This needs to output to different location for s3 replication
