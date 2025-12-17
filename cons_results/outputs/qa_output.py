@@ -40,6 +40,15 @@ def produce_qa_output(
         imputation_marker_col,
     """
 
+    additional_outputs_df = replace_imputation_markers_total_only(
+        additional_outputs_df,
+        reference=config["reference"],
+        period=config["period"],
+        question_no=config["question_no"],
+        imputation_marker_col=config["imputation_marker_col"],
+        suffix="_c",
+    )
+
     index_columns = [
         config["period"],
         config["sic"],
@@ -81,18 +90,6 @@ def produce_qa_output(
     additional_outputs_df = additional_outputs_df.drop(config["target"], axis=1)
     additional_outputs_df = additional_outputs_df.rename(
         columns={config["pound_thousand_col"]: config["target"]}
-    )
-    
-    has_true_290_flag = additional_outputs_df["290_flag"].groupby([additional_outputs_df["reference"], additional_outputs_df["period"]]).transform("any")
-    additional_outputs_df.loc[has_true_290_flag] = True
-    
-    total_only = additional_outputs_df["290_flag"] == True & (
-        additional_outputs_df[config["imputation_marker_col"]] != "c") & (
-        additional_outputs_df[config["imputation_marker_col"]] != "r"
-    )
-        
-    additional_outputs_df.loc[total_only, config["imputation_marker_col"]] = (
-        additional_outputs_df.loc[total_only, config["imputation_marker_col"]] + "_c"
     )
 
     # creating pivot table
@@ -140,3 +137,22 @@ def produce_qa_output(
     }
 
     return period_dict
+
+
+def replace_imputation_markers_total_only(
+    df: pd.DataFrame, reference, period, question_no, imputation_marker_col, suffix="_c"
+) -> pd.DataFrame:
+
+    has_true_290_flag = (
+        df["290_flag"].groupby([df["reference"], df["period"]]).transform("any")
+    )
+
+    imputation_markers_to_change = (df[question_no] != 290) & (
+        ~df[imputation_marker_col].isin(["r", "c"])
+    )
+
+    mask = has_true_290_flag & imputation_markers_to_change
+
+    df.loc[mask, imputation_marker_col] = df.loc[mask, imputation_marker_col] + suffix
+
+    return df
