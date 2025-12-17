@@ -144,7 +144,7 @@ def replace_imputation_markers_total_only(
 ) -> pd.DataFrame:
 
     has_true_290_flag = (
-        df["290_flag"].groupby([df["reference"], df["period"]]).transform("any")
+        df["290_flag"].groupby([df[reference], df[period]]).transform("any")
     )
 
     imputation_markers_to_change = (df[question_no] != 290) & (
