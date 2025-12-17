@@ -142,6 +142,29 @@ def produce_qa_output(
 def replace_imputation_markers_total_only(
     df: pd.DataFrame, reference, period, question_no, imputation_marker_col, suffix="_c"
 ) -> pd.DataFrame:
+    """
+    Appends a suffix to imputation markers for component questions when they are created
+    from a total_only record.
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The input DataFrame.
+    reference : str
+        The column name for the reference.
+    period : str
+        The column name for the period.
+    question_no : str
+        The column name for the question numbers.
+    imputation_marker_col : str
+        The column name for the imputation markers.
+    suffix : str, optional
+        The suffix to append to eligible imputation markers. Default is "_c".
+
+    Returns
+    -------
+    pd.DataFrame
+        The DataFrame with updated imputation markers for eligible rows.
+    """
 
     has_true_290_flag = (
         df["290_flag"].groupby([df[reference], df[period]]).transform("any")
