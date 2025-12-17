@@ -83,9 +83,14 @@ def produce_qa_output(
         columns={config["pound_thousand_col"]: config["target"]}
     )
     
+    has_true_290_flag = additional_outputs_df["290_flag"].groupby([additional_outputs_df["reference"], additional_outputs_df["period"]]).transform("any")
+    additional_outputs_df.loc[has_true_290_flag] = True
+    
     total_only = additional_outputs_df["290_flag"] == True & (
-        additional_outputs_df[config["imputation_marker_col"]] != "c"
-        )
+        additional_outputs_df[config["imputation_marker_col"]] != "c") & (
+        additional_outputs_df[config["imputation_marker_col"]] != "r"
+    )
+        
     additional_outputs_df.loc[total_only, config["imputation_marker_col"]] = (
         additional_outputs_df.loc[total_only, config["imputation_marker_col"]] + "_c"
     )
