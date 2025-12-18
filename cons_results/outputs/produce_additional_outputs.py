@@ -172,6 +172,7 @@ def get_additional_outputs_df(
         "entname1",
         "region",
         "winsorised_value",
+        "290_flag",
     ]
     if not config["filter"]:
         count_variables = [f"b_match_{target}_count", f"f_match_{target}_count"]

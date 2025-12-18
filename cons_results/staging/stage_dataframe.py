@@ -89,8 +89,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         .drop_duplicates()
     )
 
-    responses = responses[staging_config["responses_keep_cols"]]
-
     responses = enforce_datatypes(
         responses, keep_columns=staging_config["responses_keep_cols"], **staging_config
     )
