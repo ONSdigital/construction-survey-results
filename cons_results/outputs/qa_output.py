@@ -171,7 +171,7 @@ def replace_imputation_markers_total_only(
     )
 
     imputation_markers_to_change = (df[question_no] != 290) & (
-        ~df[imputation_marker_col].isin(["r", "c"])
+        ~df[imputation_marker_col].isin(["r", "c", "mc"])
     )
 
     mask = has_true_290_flag & imputation_markers_to_change
