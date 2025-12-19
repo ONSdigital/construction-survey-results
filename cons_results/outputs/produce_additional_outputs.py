@@ -21,7 +21,6 @@ from cons_results.outputs.r_m_output import produce_r_m_output
 logger = logging.getLogger(__name__)
 
 
-# flake8: noqa: C901
 def produce_additional_outputs(
     additional_outputs_df: pd.DataFrame,
     qa_outputs: bool,
@@ -130,9 +129,7 @@ def get_additional_outputs_df(
     pd.DataFrame
 
     """
-    questions_to_apply = config.get("pounds_thousands_questions")
     question_col = config.get("question_no")
-    dest_col = config.get("pound_thousand_col")
     target = config.get("target")
 
     # below needed for mandotary and optional outputs
