@@ -1,7 +1,13 @@
+from pathlib import Path
+
 import pandas as pd
 import pytest
+from pandas.testing import assert_frame_equal
 
-from cons_results.outputs.qa_output import produce_qa_output
+from cons_results.outputs.qa_output import (
+    produce_qa_output,
+    replace_imputation_markers_total_only,
+)
 
 
 @pytest.fixture(scope="class")
@@ -26,6 +32,7 @@ def sample_df_and_config():
         "nil_status_col": ["N", "N", "N", "Y", "N", "Y"],
         "classification": [100, 100, 100, 100, 100, 100],
         "region": ["North", "North", "North", "South", "East", "West"],
+        "290_flag": [False, False, False, False, False, False],
     }
     df = pd.DataFrame(data)
     config = {
@@ -142,3 +149,39 @@ class TestProduceQAOutput:
                 check_like=True,
                 check_dtype=False,
             )
+
+
+@pytest.fixture(scope="class")
+def filepath():
+    return Path("tests/data/outputs/qa_output")
+
+
+@pytest.fixture(scope="class")
+def input_df(filepath):
+    return pd.read_csv(
+        filepath / "replace_imputation_markers_input.csv", index_col=False
+    )
+
+
+@pytest.fixture(scope="class")
+def output_df(filepath):
+    return pd.read_csv(
+        filepath / "replace_imputation_markers_output.csv", index_col=False
+    )
+
+
+class TestReplaceImputationMarkersTotalOnly:
+    def test_replace_imputation_markers_total_only(self, input_df, output_df):
+
+        expected_output = output_df
+
+        actual_output = replace_imputation_markers_total_only(
+            input_df,
+            reference="reference",
+            period="period",
+            question_no="questioncode",
+            imputation_marker_col="imputation_marker",
+            suffix="_c",
+        )
+
+        assert_frame_equal(actual_output, expected_output)

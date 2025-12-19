@@ -89,8 +89,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         .drop_duplicates()
     )
 
-    responses = responses[staging_config["responses_keep_cols"]]
-
     responses = enforce_datatypes(
         responses, keep_columns=staging_config["responses_keep_cols"], **staging_config
     )
@@ -344,7 +342,7 @@ def set_290_components_null(
 ) -> pd.DataFrame:
     """
     Function to set component question responses to null if they equal
-    zero when 290 special case flag is True
+    zero when 290 special case flag is True and skipped_questions is False.
 
     Parameters
     ----------
@@ -363,7 +361,10 @@ def set_290_components_null(
     """
 
     case_expression = (
-        (df["290_flag"]) & (df[question_no] != 290) & (df[adjusted_response] == 0)
+        (df["290_flag"])
+        & (df[question_no] != 290)
+        & (df[adjusted_response] == 0)
+        & (~df["skipped_question"])
     )
 
     # Set component question responses to null where 290_flag

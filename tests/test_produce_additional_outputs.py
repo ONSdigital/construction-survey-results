@@ -28,7 +28,6 @@ def test_config(filepath):
         "r_and_m_quarter": None,
         "sizeband_quarter": ["2023Q2"],
         "imputation_contribution_periods": [202302],
-        "devolved_nations": ["Scotland", "Wales"],
         "ludets_prefix": "dummy_ludets228_",
         "local_unit_columns": [
             "ruref",
@@ -54,7 +53,7 @@ def test_config(filepath):
             "trading as 3",
             "region",
         ],
-        "devolved_questions": [11, 12, 202, 212, 222, 232, 243],
+        "r_m_questions": [11, 12, 202, 212, 222, 232, 243],
         "question_no_plaintext": {
             11: "start_date",
             12: "end_date",
@@ -65,6 +64,21 @@ def test_config(filepath):
             243: "private_non_housing",
         },
         "run_id": "1",
+        "produce_r_m_output": True,
+        "r_m_quarter": None,
+        "r_m_region_order": {
+            "North East": 1,
+            "Yorkshire and The Humber": 2,
+            "East Midlands": 3,
+            "East of England": 4,
+            "London": 5,
+            "South East": 6,
+            "South West": 7,
+            "Wales": 8,
+            "West Midlands": 9,
+            "North West": 10,
+            "Scotland": 11,
+        },
     }
 
 
