@@ -23,9 +23,8 @@
 | generate_schemas | Whether to generate schema files. | bool | Either `true` or `false`. |
 | schema_path | The path to where the schema files are stored. | string | Any valid filepath. |
 | debug_mode | Whether to export all the intermediate methods outputs (imputation, estimation, winsorisation). | bool | Either `true` or `false`. |
-
-## Guidance for use
-As an end user, you will only need to change the user config (named `config_user.json`) - you just need to update the filepaths and period information in the user config. Note: for ONS users, you can find example filepaths in the Confluence documentation.
+| run_id | The run identifier to tag outputs and filenames. | string | Any text. |
+| output_path_replication | The filepath where replication outputs should be saved to. | string | Any filepath. |
 
 # Config outputs
 | Parameter | Description | Data Type | Acceptable Values |
@@ -33,23 +32,24 @@ As an end user, you will only need to change the user config (named `config_user
 | bucket | The path to the bucket. | string | Any filepath. |
 | idbr_folder_path | The path to the folder containing the IDBR data. | string | Any filepath. |
 | snapshot_file_path | The full filepath to the snapshot data | string | Any filepath. |
+| main_cons_output_folder_path | The folder path to where the main construction (cons_results) output is saved to. | string | Any filepath. |
+| cons_output_prefix | The filename prefix for the main Construction methods output (i.e. cons_results). | string | Any text. |
+| population_counts_prefix | The filename prefix for population counts files. | string | Any text. |
 | cons_output_path | The filepath to the file containing the methods output. | string | Any filepath. |
 | output_path | The filepath where outputs should be saved to. | string | Any filepath. |
 | ludets_prefix | The prefix for local unit files. | string | Any text. |
-| current_period | The most recent period to include in the outputs (same as above). | int | Any int in the form `yyyymm`. |
+| current_period | The most recent period to include in the outputs. | int | Any int in the form `yyyymm`. |
 | revision_window | The number of months to use as a revision window. | int | Any int in the form `mm` or `m` (does not need to be zero-padded). |
 | region_mapping_path | The filepath to the region mapping file. | string | Any filepath. |
-| r_and_m_quarter | The quarter to use to produce regional R&M extracts. Must be in 'YYYYQX' format, e.g., '2023Q1' | string or null | `"YYYYQX"` or null |
+| produce_r_m_output | Whether to produce regional R&M extracts. | bool | Either `true` or `false`. |
+| r_m_quarter | The quarter to use to produce regional R&M extracts. Must be in 'YYYYQX' format, e.g., '2023Q1' | string or null | `"YYYYQX"` or null |
 | sizeband_quarter | A list of optional quarters to filter the quarterly_by_sizeband_output on. | list | A list containing any quarter in the format `YYYYQX` (e.g. ["2023Q2"]) or an empty list. |
 | imputation_contribution_periods | A list of optional periods to filter the imputation_contribution_output on. | list | Any period in the format `YYYYMM` (e.g. ["202201"]) or an empty list. |
-| devolved_questions | List of devolved questions. | list | A list of question numbers. |
+| r_m_questions | List of question numbers included in the regional R&M extracts. | list | A list of question numbers. |
 | question_no_plaintext | Mapping of question numbers to plain text. | dict | A dictionary mapping question numbers to plain text. |
-| devolved_nations | List of devolved nations. | list | A list of nation names. |
-
-## Guidance for additional outputs
-As an end user, you will only need to change the outputs config (named `config_outputs.json`) - you just need to update the filepaths and period information in the output config. Note: for ONS users, you can find example filepaths in the Confluence documentation.
-
-
+| run_id | The run identifier to tag outputs and filenames. | string | Any text. |
+| standard_errors_period | Publication period to use for exporting standard errors. | int | Any int in the form `yyyymm`. |
+| r_m_region_order | Ordering of regions for regional R&M outputs. | dict | A dictionary mapping region name to sort order (int). |
 
 # Export Config
 
@@ -62,7 +62,7 @@ As an end user, you will only need to change the outputs config (named `config_o
 | export_dir | The path to the folder containing the files to be exported to. | string | Any filepath. |
 | schemas_dir | The path to the folder containing the schema toml data, if empty the export headers in manifest will be set to empty string. | string | Any filepath. |
 | copy_or_move_files | Whether to copy or move the listed files. | string | `"copy"`, `"move"` |
-| files_to_export | The filnames for the files to be exported use `false` if you don't want to export the relevant files. | dictionary of strings | Any filename. |
+| files_to_export | The filnames for the files to be exported. Use `false` if you don't want to export the relevant files. | dictionary of strings | Any filename. |
 | files_basename | The base name for a file. | dictionary of strings | Any base file name. |
 e.g the example below has run_id `202511071451` , methods_output set to `true` and methods_output basename `cons_results`, thus will export only the file `cons_results_202511071451.csv` and create the relevant manifest file:
 ```
@@ -93,10 +93,6 @@ e.g the example below has run_id `202511071451` , methods_output set to `true` a
 ```
 
 You may extend the `files_to_export` and `files_basename` dictionaries with more outputs if required.
-
-## Guidance for additional outputs
-As an end user, you will only need to change the export config (named `config_export.json`). The process will copy (or move) the files listed in the `files` section from the defined `output_dir` to `export_dir`, and will create a manifest json file for the NiFi.
-
 
 # Dev Config
 | Parameter | Description | Default | Data Type | Acceptable Values |
@@ -142,7 +138,7 @@ As an end user, you will only need to change the export config (named `config_ex
 | filter_out_questions | A list of questions to filter out when running the pipeline. | `[11, 12, 146, 902, 903, 904]` | list | A list of ints where each int refers to a question. |
 | csw_to_spp_columns | Mapping of CSW to SPP columns. | `{ "returned_value":"response", "adjusted_value":"adjustedresponse", "question_no":"questioncode"}` | dict | A dictionary in the format `{ "CSW_col_name": "SPP_col_name"}`. |
 | type_to_imputation_marker | A dictionary mapper mapping type to imputation marker. | `{ "0": "selected, no return", "1": "r", "2": "derived", "3": "fir", "4": "bir", "5": "mc", "6": "c", "10": "r", "11": "r", "12": "derived", "13": "fir" }` | dict | A dictionary in the format `{ "type":"imputation_marker"}` where imputation marker is a value found in the imputation_marker_col. |
-| mandatory_outputs | A list of mandatory outputs to produce after the pipeline has run. | `["produce_qa_output"]` | list | Any of the outputs listed in `cons_results/outputs/produce_additional_outputs.py` within the `produce_additional_outputs` function. |
+| mandatory_outputs | A list of mandatory outputs to produce after the pipeline has run. | `["produce_qa_output", "imputes_and_constructed_output"]` | list | Any of the outputs listed in `cons_results/outputs/produce_additional_outputs.py` within the `produce_additional_outputs` function. |
 | components_questions | List of component question numbers. | `[201,202,211,212,221,222,231,232,241,242,243]` | list | A list of question numbers. |
 | census_extra_calibration_group | Extra calibration groups for census. | `[]` | list | A list of calibration groups. |
 | bands | Mapping of band numbers to question ranges. | `{ "0": [1,7], "1": [11,17], ... }` | dict | A dictionary mapping band numbers to question ranges. |
