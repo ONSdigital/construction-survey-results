@@ -1,3 +1,5 @@
+import logging
+
 import numpy as np
 import pandas as pd
 from mbs_results.staging.back_data import append_back_data
@@ -12,6 +14,7 @@ from mbs_results.staging.stage_dataframe import (
     exclude_from_results,
     read_and_combine_colon_sep_files,
 )
+from mbs_results.staging.validate_snapshot import validate_snapshot
 from mbs_results.utilities.inputs import read_csv_wrapper
 
 from cons_results.staging.create_missing_questions import create_missing_questions
@@ -19,7 +22,8 @@ from cons_results.staging.create_skipped_questions import create_skipped_questio
 from cons_results.staging.derive_imputation_class import derive_imputation_class
 from cons_results.staging.live_or_frozen import run_live_or_frozen
 from cons_results.staging.total_as_zero import flag_total_only_and_zero
-from cons_results.staging.validate_snapshot import validate_snapshot
+
+logger = logging.getLogger(__name__)
 
 
 def stage_dataframe(config: dict) -> pd.DataFrame:
@@ -52,10 +56,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
     validate_snapshot(
         responses=responses,
         contributors=contributors,
-        status="status",
-        reference=staging_config["reference"],
-        period=staging_config["period"],
-        non_response_statuses=config["non_response_statuses"] + config["nil_values"],
+        config=staging_config,
     )
 
     responses = exclude_from_results(
@@ -68,6 +69,7 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         target=config["target"],
         question_no=config["question_no"],
         output_path=config["output_path"],
+        run_id=config["run_id"],
         platform=config["platform"],
         bucket=config["bucket"],
     )
@@ -86,8 +88,6 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         .drop(columns=[staging_config["imputation_marker_col"]])
         .drop_duplicates()
     )
-
-    responses = responses[staging_config["responses_keep_cols"]]
 
     responses = enforce_datatypes(
         responses, keep_columns=staging_config["responses_keep_cols"], **staging_config
@@ -249,7 +249,13 @@ def stage_dataframe(config: dict) -> pd.DataFrame:
         df, config["nil_status_col"], config["target"], config["nil_values"]
     )
 
-    print("Staging Completed")
+    df = set_290_components_null(
+        df,
+        staging_config["question_no"],
+        staging_config["target"],
+    )
+
+    logger.info("Staging Completed")
 
     return df, unprocessed_data, manual_constructions, filter_df
 
@@ -327,3 +333,47 @@ def flag_290_case(
 
     # Return modified DataFrame
     return responses
+
+
+def set_290_components_null(
+    df: pd.DataFrame,
+    question_no: str,
+    adjusted_response: str,
+) -> pd.DataFrame:
+    """
+    Function to set component question responses to null if they equal
+    zero when 290 special case flag is True and skipped_questions is False.
+
+    Parameters
+    ----------
+    df : pd.Dataframe
+        Input DataFrame which has 290 special cases flagged.
+    question_no : str
+        Column name containing question_col variable.
+    adjusted_response: str
+        Column name containing adjusted response for a question code.
+
+    Returns
+    -------
+    df: pd.DataFrame
+        Output DataFrame with component questions set to null where
+        290 special case flag is True.
+    """
+
+    case_expression = (
+        (df["290_flag"])
+        & (df[question_no] != 290)
+        & (df[adjusted_response] == 0)
+        & (~df["skipped_question"])
+    )
+
+    # Set component question responses to null where 290_flag
+    # is True and adjusted_response is 0
+    df.loc[case_expression, adjusted_response] = np.nan
+
+    # Create a flag to show where component question responses have been set to null
+    df["q290_component_set_null"] = False
+
+    df.loc[case_expression, "q290_component_set_null"] = True
+
+    return df

@@ -50,6 +50,54 @@ As an end user, you will only need to change the user config (named `config_user
 As an end user, you will only need to change the outputs config (named `config_outputs.json`) - you just need to update the filepaths and period information in the output config. Note: for ONS users, you can find example filepaths in the Confluence documentation.
 
 
+
+# Export Config
+
+| Parameter | Description | Data Type | Acceptable Values |
+|---|---|---|---|
+| platform | Specifies whether you're running the pipeline locally or on DAP. | string | `"network"`, `"s3"` |
+| bucket | The path to the bucket. | string | Any filepath. |
+| ssl_file | The path to the ssl certificate. | string | Any filepath. |
+| output_dir | The path to the folder containing the files to be exported from. | string | Any filepath. |
+| export_dir | The path to the folder containing the files to be exported to. | string | Any filepath. |
+| schemas_dir | The path to the folder containing the schema toml data, if empty the export headers in manifest will be set to empty string. | string | Any filepath. |
+| copy_or_move_files | Whether to copy or move the listed files. | string | `"copy"`, `"move"` |
+| files_to_export | The filnames for the files to be exported use `false` if you don't want to export the relevant files. | dictionary of strings | Any filename. |
+| files_basename | The base name for a file. | dictionary of strings | Any base file name. |
+e.g the example below has run_id `202511071451` , methods_output set to `true` and methods_output basename `cons_results`, thus will export only the file `cons_results_202511071451.csv` and create the relevant manifest file:
+```
+"run_id": "202511071451",
+"files_to_export": {
+    "methods_output": false,
+    "population_counts": false,
+    "produce_qa_output": false,
+    "r_and_m_regional_extracts": false,
+    "constructed_output": false,
+    "cord_output":false,
+    "imputation_contribution_output":false,
+    "quarterly_by_sizeband_output":false,
+    "standard_errors": false
+},
+"files_basename": {
+    "methods_output": "cons_results",
+    "population_counts": "population_counts",
+    "produce_qa_output": "produce_qa_output",
+    "r_and_m_regional_extracts": "r_and_m_regional_extracts",
+    "constructed_output": "constructed228",
+    "cord_output":"cord_output",
+    "imputation_contribution_output":"imputation_contribution_output",
+    "quarterly_by_sizeband_output":"quarterly_by_sizeband_output",
+    "standard_errors":"standard_errors_publication_period"
+}
+
+```
+
+You may extend the `files_to_export` and `files_basename` dictionaries with more outputs if required.
+
+## Guidance for additional outputs
+As an end user, you will only need to change the export config (named `config_export.json`). The process will copy (or move) the files listed in the `files` section from the defined `output_dir` to `export_dir`, and will create a manifest json file for the NiFi.
+
+
 # Dev Config
 | Parameter | Description | Default | Data Type | Acceptable Values |
 |---|---|---|---|---|

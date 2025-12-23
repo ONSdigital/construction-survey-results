@@ -40,6 +40,15 @@ def produce_qa_output(
         imputation_marker_col,
     """
 
+    additional_outputs_df = replace_imputation_markers_total_only(
+        additional_outputs_df,
+        reference=config["reference"],
+        period=config["period"],
+        question_no=config["question_no"],
+        imputation_marker_col=config["imputation_marker_col"],
+        suffix="_c",
+    )
+
     index_columns = [
         config["period"],
         config["sic"],
@@ -47,14 +56,18 @@ def produce_qa_output(
         config["cell_number"],
         config["auxiliary"],  # check if aux or converted aux
         config["froempment"],
-        "classification",
         "runame1",
-        "region",
+    ]
+
+    additional_outputs_df = additional_outputs_df[
+        ~additional_outputs_df[config["question_no"]].isin(
+            config["filter_out_questions"]
+        )
     ]
 
     # Create value for adj_targer*a*o*g weights
     additional_outputs_df["weighted adjusted value"] = (
-        additional_outputs_df[config["target"]]
+        additional_outputs_df[config["pound_thousand_col"]]
         * additional_outputs_df["design_weight"]
         * additional_outputs_df["outlier_weight"]
         * additional_outputs_df["calibration_factor"]
@@ -65,12 +78,19 @@ def produce_qa_output(
         config["target"],
         config["imputation_marker_col"],
         "outlier_weight",
-        "weighted adjusted value",  #
+        "weighted adjusted value",
     ]
 
     additional_outputs_df = additional_outputs_df.loc[
         additional_outputs_df[config["question_no"]] != 290
     ].copy()
+
+    # rename adjustedresponse_pounds_thousands to adjustedresponse
+    # to match what's on the extract
+    additional_outputs_df = additional_outputs_df.drop(config["target"], axis=1)
+    additional_outputs_df = additional_outputs_df.rename(
+        columns={config["pound_thousand_col"]: config["target"]}
+    )
 
     # creating pivot table
     # Converting question no to string, this becomes a column name
@@ -105,9 +125,57 @@ def produce_qa_output(
         on=[config["period"], config["reference"]],
         how="left",
     )
+
     # convert question_no column names to strings
     main_pivot.columns = pd.MultiIndex.from_tuples(
         [(str(l0), l1) for l0, l1 in main_pivot.columns]
     )
 
-    return main_pivot
+    period_dict = {
+        period: df.copy()
+        for period, df in main_pivot.groupby(config["period"], dropna=False)
+    }
+
+    return period_dict
+
+
+def replace_imputation_markers_total_only(
+    df: pd.DataFrame, reference, period, question_no, imputation_marker_col, suffix="_c"
+) -> pd.DataFrame:
+    """
+    Appends a suffix to imputation markers for component questions when they are created
+    from a total_only record.
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The input DataFrame.
+    reference : str
+        The column name for the reference.
+    period : str
+        The column name for the period.
+    question_no : str
+        The column name for the question numbers.
+    imputation_marker_col : str
+        The column name for the imputation markers.
+    suffix : str, optional
+        The suffix to append to eligible imputation markers. Default is "_c".
+
+    Returns
+    -------
+    pd.DataFrame
+        The DataFrame with updated imputation markers for eligible rows.
+    """
+
+    has_true_290_flag = (
+        df["290_flag"].groupby([df[reference], df[period]]).transform("any")
+    )
+
+    imputation_markers_to_change = (df[question_no] != 290) & (
+        ~df[imputation_marker_col].isin(["r", "c", "mc"])
+    )
+
+    mask = has_true_290_flag & imputation_markers_to_change
+
+    df.loc[mask, imputation_marker_col] = df.loc[mask, imputation_marker_col] + suffix
+
+    return df

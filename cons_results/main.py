@@ -1,6 +1,12 @@
 from mbs_results.estimation.estimate import estimate
 from mbs_results.utilities.inputs import load_config
-from mbs_results.utilities.utils import generate_schemas
+from mbs_results.utilities.outputs import save_df
+from mbs_results.utilities.setup_logger import setup_logger, upload_logger_file_to_s3
+from mbs_results.utilities.utils import (
+    export_run_id,
+    generate_schemas,
+    get_or_create_run_id,
+)
 from mbs_results.utilities.validation_checks import (
     validate_config,
     validate_estimation,
@@ -16,7 +22,6 @@ from cons_results.outputs.produce_additional_outputs import (
     produce_additional_outputs,
 )
 from cons_results.staging.stage_dataframe import stage_dataframe
-from cons_results.utilities.utils import save_df
 
 
 def run_pipeline(config_user_dict=None):
@@ -24,6 +29,14 @@ def run_pipeline(config_user_dict=None):
 
     config = load_config("config_user.json", config_user_dict)
     validate_config(config)
+
+    # Setup run id
+    config["run_id"] = get_or_create_run_id(config)
+
+    # Initialise the logger at the start of the pipeline
+    logger_file_path = f"cons_results_{config['run_id']}.log"
+    logger = setup_logger(logger_file_path=logger_file_path)
+    logger.info(f"Cons Pipeline Started: Log file: {logger_file_path}")
 
     df, unprocessed_data, manual_constructions, filter_df = stage_dataframe(config)
     validate_staging(df, config)
@@ -48,6 +61,10 @@ def run_pipeline(config_user_dict=None):
     )
 
     generate_schemas(config)
+
+    export_run_id(config["run_id"])
+
+    upload_logger_file_to_s3(config, logger_file_path)
 
 
 if __name__ == "__main__":

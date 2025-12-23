@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
-
-from cons_results.utilities.utils import get_versioned_filename
+from mbs_results.utilities.utils import get_versioned_filename
 
 
 def get_imputation_contribution_output(additional_outputs_df: pd.DataFrame, **config):
@@ -92,7 +91,7 @@ def get_imputation_contribution_output(additional_outputs_df: pd.DataFrame, **co
         periods_prefix = "_".join(periods_strings)
         filename_prefix = f"imputation_contribution_output_{periods_prefix}"
 
-        filename = get_versioned_filename(filename_prefix, config)
+        filename = get_versioned_filename(filename_prefix, config["run_id"])
 
         return (output_df.reset_index(drop=True), filename)
 

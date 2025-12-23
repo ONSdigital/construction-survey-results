@@ -1,6 +1,8 @@
 import pandas as pd
 from mbs_results.imputation.ratio_of_means import ratio_of_means
 from mbs_results.staging.data_cleaning import convert_annual_thousands
+from mbs_results.utilities.pounds_thousands import create_pounds_thousands_column
+from mbs_results.utilities.utils import get_versioned_filename
 
 from cons_results.imputation.post_imputation import (
     create_q290,
@@ -123,18 +125,32 @@ def impute(
         config["target"],
     )
 
+    validate_q290_file_name = get_versioned_filename(
+        "validate_q290_output", config["run_id"]
+    )
+
     validate_q290(
         df=df,
         question_no=config["question_no"],
         period=config["period"],
         reference=config["reference"],
         adjustedresponse=config["target"],
+        config=config,
         output_path=config["output_path"],
-        output_file_name="validate_q290_output.csv",
+        output_file_name=validate_q290_file_name,
         import_platform=config["platform"],
         bucket_name=config["bucket"],
     )
 
     df[config["period"]] = df[config["period"]].dt.strftime("%Y%m").astype("int")
+
+    df = create_pounds_thousands_column(
+        df,
+        question_col=config.get("question_no"),
+        source_col=config.get("target"),
+        dest_col=config.get("pound_thousand_col"),
+        questions_to_apply=config.get("pounds_thousands_questions"),
+        ensure_at_end=False,
+    )
 
     return df
