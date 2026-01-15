@@ -165,6 +165,7 @@ def get_additional_outputs_df(
         "region",
         "winsorised_value",
         "290_flag",
+        "derived_zeros",
     ]
     if not config["filter"]:
         count_variables = [f"b_match_{target}_count", f"f_match_{target}_count"]
