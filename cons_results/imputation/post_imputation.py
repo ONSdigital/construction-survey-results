@@ -1,3 +1,4 @@
+import logging
 import os
 import warnings
 
@@ -291,3 +292,73 @@ def validate_q290(
             )
     else:
         print("q290 values match the sum of components for all periods and references.")
+
+
+def validate_r_before_derived_zero(
+    df: pd.DataFrame,
+    question_no: str,
+    imputation_flag: str,
+    period: str,
+    reference: str,
+) -> None:
+    """
+    Validates that for each period and reference, any component question with a
+    derived_zero ('d') imputation flag is preceded by at least one response ('r')
+    imputation flag. If a 'd' flag is found without a preceding 'r' flag, a warning
+    is logged with the relevant period and reference combinations.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Dataframe containing response-level data.
+    question_no : str
+        Name of the column in `df` containing question codes (e.g., "questioncode").
+    imputation_flag : str
+        Name of the column in `df` containing imputation flags.
+    period : str
+        Name of the column in `df` representing the period (e.g., "period").
+    reference : str
+        Name of the column in `df` representing the reference variable.
+
+    Returns
+    -------
+    None
+
+    Warns
+    -----
+    """
+    logger = logging.getLogger(__name__)
+
+    components_only = df.copy()
+    components_only = components_only[components_only[question_no] != 290]
+    components_only.sort_values(by=[reference, period], inplace=True)
+
+    grouped = components_only.groupby([reference, question_no])[
+        imputation_flag
+    ].unique()
+
+    # helper function to check if 'r' appears before 'd' in the list of flags
+    def check_r_before_d(list_of_flags):
+        if "d" not in list_of_flags:
+            return True
+        for element in list_of_flags:
+            if element == "d":
+                return False
+            elif element == "r":
+                return True
+
+        return False
+
+    result = grouped.apply(check_r_before_d)
+
+    false_indices = result[result.eq(False)].index
+
+    false_indices_list = false_indices.to_list()[0:5]
+
+    if false_indices_list:
+        logger.warning(
+            f"""These reference and questioncode combinations
+                       have a 'd' flag for components without being preceded
+                       by a response, which may be an error.
+                       Please check these: {false_indices_list}"""
+        )
