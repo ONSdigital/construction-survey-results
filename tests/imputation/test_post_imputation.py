@@ -1,3 +1,4 @@
+import logging
 import os
 import tempfile
 from pathlib import Path
@@ -13,7 +14,10 @@ from cons_results.imputation.post_imputation import (
     derive_q290,
     rescale_290_case,
     validate_q290,
+    validate_r_before_derived_zero,
 )
+
+LOGGER = logging.getLogger(__name__)
 
 
 @pytest.fixture()
@@ -129,3 +133,36 @@ class TestPostImputation:
             config=config,
         )
         mock_to_csv.assert_not_called()
+
+    def test_validate_r_before_derived_zero(self, filepath, caplog):
+        """
+        Testing the warning message for validate_r_before_derived_zero function
+        references 7 and 8 should trigger the warning.
+        """
+
+        df_input = pd.read_csv(filepath / "validate_r_before_derived_zero_input.csv")
+
+        # This is to get the list of indices that should trigger the warning
+        false_indices_list = (
+            df_input[df_input["reference"].isin([7, 8])]
+            .set_index(["reference", "question_no"])
+            .index.tolist()
+        )
+        # get unique and sorted indices
+        false_indices_list = list(sorted(set(false_indices_list)))
+
+        # copy the exact warning message from the function
+        expected_warning = f"""These reference and questioncode combinations
+                       have a 'd' flag for components without being preceded
+                       by a response, which may be an error.
+                       Please check these: {false_indices_list}"""
+
+        with caplog.at_level(logging.WARNING):
+            validate_r_before_derived_zero(
+                df=df_input,
+                question_no="question_no",
+                imputation_flag="imputation_flag",
+                period="period",
+                reference="reference",
+            )
+        assert expected_warning in caplog.text
