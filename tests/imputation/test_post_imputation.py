@@ -144,7 +144,7 @@ class TestPostImputation:
 
         # This is to get the list of indices that should trigger the warning
         false_indices_list = (
-            df_input[df_input["reference"].isin([7, 8, 9, 10])]
+            df_input[df_input["reference"].isin([7, 8, 9, 10, 11, 12])]
             .set_index(["reference", "question_no"])
             .index.tolist()
         )

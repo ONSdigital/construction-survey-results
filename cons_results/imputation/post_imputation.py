@@ -333,21 +333,9 @@ def validate_r_before_derived_zero(
     components_only = components_only[components_only[question_no] != 290]
     components_only.sort_values(by=[reference, period], inplace=True)
 
-    grouped = components_only.groupby([reference, question_no])[
-        imputation_flag
-    ].unique()
-
-    # helper function to check if 'r' appears before 'd' in the list of flags
-    def check_r_before_d(list_of_flags):
-        if "d" not in list_of_flags:
-            return True
-        for element in list_of_flags:
-            if element == "d":
-                return False
-            elif element == "r":
-                return True
-
-        return False
+    grouped = components_only.groupby([reference, question_no]).agg(
+        {imputation_flag: lambda x: x.to_list()}
+    )
 
     result = grouped.apply(check_r_before_d)
 
@@ -362,3 +350,25 @@ def validate_r_before_derived_zero(
                        by a response, which may be an error.
                        Please check these: {false_indices_list}"""
         )
+
+
+def check_r_before_d(list_of_flags):
+    """Helper function to check if 'r' precedes 'd' in a list of imputation flags.
+    Parameters
+    ----------
+    list_of_flags : list
+        A list of imputation flags for a specific reference and question code."""
+
+    d_indices = [i for i, j in enumerate(list_of_flags) if j == "d"]
+
+    if "d" not in list_of_flags:
+        return True
+
+    if list_of_flags[d_indices[0] - 1] != "r":
+        return False
+
+    for index in d_indices[::-1]:
+        if list_of_flags[index - 1] not in ["r", "d"]:
+            return False
+
+    return True
