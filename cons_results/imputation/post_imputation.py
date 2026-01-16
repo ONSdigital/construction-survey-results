@@ -337,6 +337,8 @@ def validate_r_before_derived_zero(
         {imputation_flag: lambda x: x.to_list()}
     )
 
+    grouped = grouped[imputation_flag].squeeze()
+
     result = grouped.apply(check_r_before_d)
 
     false_indices = result[result.eq(False)].index
@@ -364,7 +366,9 @@ def check_r_before_d(list_of_flags):
     if "d" not in list_of_flags:
         return True
 
-    if list_of_flags[d_indices[0] - 1] != "r":
+    first_index = max(d_indices[0] - 1, 0)
+
+    if list_of_flags[first_index] != "r":
         return False
 
     for index in d_indices[::-1]:

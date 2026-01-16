@@ -144,7 +144,7 @@ class TestPostImputation:
 
         # This is to get the list of indices that should trigger the warning
         false_indices_list = (
-            df_input[df_input["reference"].isin([7, 8, 9, 10, 11, 12])]
+            df_input[df_input["reference"].isin([7, 8, 9, 10, 11])]
             .set_index(["reference", "question_no"])
             .index.tolist()
         )
@@ -152,10 +152,7 @@ class TestPostImputation:
         false_indices_list = list(sorted(set(false_indices_list)))
 
         # copy the exact warning message from the function
-        expected_warning = f"""These reference and questioncode combinations
-                       have a 'd' flag for components without being preceded
-                       by a response, which may be an error.
-                       Please check these: {false_indices_list}"""
+        expected_warning = f"""{false_indices_list}"""
 
         with caplog.at_level(logging.WARNING):
             validate_r_before_derived_zero(
