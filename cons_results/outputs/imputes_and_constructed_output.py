@@ -1,5 +1,7 @@
 import pandas as pd
 
+from cons_results.outputs.qa_output import change_derived_zeros_to_fir
+
 
 def get_imputes_and_constructed_output(
     additional_outputs_df: pd.DataFrame, **config
@@ -39,6 +41,11 @@ def get_imputes_and_constructed_output(
     """
     if config["state"] != "frozen":
         return
+
+    additional_outputs_df = change_derived_zeros_to_fir(
+        additional_outputs_df,
+        config["imputation_marker_col"],
+    )
 
     additional_outputs_df = additional_outputs_df[
         additional_outputs_df[config["period"]] == config["current_period"]

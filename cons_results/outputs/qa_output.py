@@ -49,6 +49,11 @@ def produce_qa_output(
         suffix="_c",
     )
 
+    additional_outputs_df = change_derived_zeros_to_fir(
+        additional_outputs_df,
+        config["imputation_marker_col"],
+    )
+
     index_columns = [
         config["period"],
         config["sic"],
@@ -178,4 +183,17 @@ def replace_imputation_markers_total_only(
 
     df.loc[mask, imputation_marker_col] = df.loc[mask, imputation_marker_col] + suffix
 
+    return df
+
+
+def change_derived_zeros_to_fir(df, imputation_flag_col):
+    """
+    Change imputation flag to 'fir' where derived_zeros is True
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The input DataFrame.
+    imputation_flag_col : str
+        The column name for the imputation flag."""
+    df.loc[df["derived_zeros"] == True, imputation_flag_col] = "fir"  # noqa
     return df

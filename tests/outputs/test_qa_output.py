@@ -33,6 +33,7 @@ def sample_df_and_config():
         "classification": [100, 100, 100, 100, 100, 100],
         "region": ["North", "North", "North", "South", "East", "West"],
         "290_flag": [False, False, False, False, False, False],
+        "derived_zeros": [False, False, False, True, True, False],
     }
     df = pd.DataFrame(data)
     config = {

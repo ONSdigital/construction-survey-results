@@ -9,6 +9,7 @@ from cons_results.imputation.post_imputation import (
     derive_q290,
     rescale_290_case,
     validate_q290,
+    validate_r_before_derived_zero,
 )
 from cons_results.staging.create_skipped_questions import create_skipped_questions
 
@@ -151,6 +152,14 @@ def impute(
         dest_col=config.get("pound_thousand_col"),
         questions_to_apply=config.get("pounds_thousands_questions"),
         ensure_at_end=False,
+    )
+
+    validate_r_before_derived_zero(
+        df,
+        config["question_no"],
+        config["imputation_marker_col"],
+        config["period"],
+        config["reference"],
     )
 
     return df
