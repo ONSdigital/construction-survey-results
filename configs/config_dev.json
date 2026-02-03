@@ -1,0 +1,185 @@
+{
+    "platform" : "s3",
+
+    "back_data_type":"type",
+    "back_data_format": "json",
+    "imputation_marker_col":"imputation_flags_adjustedresponse",
+    "state": "frozen",
+
+    "auxiliary": "frotover",
+    "auxiliary_converted": "converted_frotover",
+    "calibration_factor": "calibration_factor",
+    "cell_number": "cell_no",
+    "design_weight": "design_weight",
+    "status": "statusencoded",
+    "form_id_idbr": "formtype",
+    "calibration_group": "cell_no",
+    "sic": "frosic2007",
+    "period": "period",
+    "question_no": "questioncode",
+    "reference": "reference",
+    "region": "region",
+    "sampled": "is_sampled",
+    "census": "is_census",
+    "strata": "cell_no",
+    "target": "adjustedresponse",
+    "form_id_spp": "form_type_spp",
+    "imputation_class": "imputation_class",
+    "l_value_question_no": "questioncode",
+    "froempment": "froempment",
+    "nil_status_col": "status",
+    "pound_thousand_col": "adjustedresponse_pounds_thousands",
+
+    "master_column_type_dict" : {
+        "reference": "int",
+        "period": "date",
+        "response": "str",
+        "questioncode": "int",
+        "adjustedresponse": "float",
+        "frozensic": "str",
+        "frozenemployees": "int",
+        "frozenturnover": "float",
+        "cellnumber": "int",
+        "formtype": "str",
+        "status": "str",
+        "statusencoded": "int",
+        "frosic2007": "str",
+        "froempment": "int",
+        "frotover": "float",
+        "cell_no": "int",
+        "region": "str"},
+
+    "contributors_keep_cols": [
+        "period",
+        "reference",
+        "status",
+        "statusencoded"
+    ],
+
+    "responses_keep_cols": [
+        "adjustedresponse",
+        "period",
+        "questioncode",
+        "reference",
+        "response"
+    ],
+
+    "finalsel_keep_cols": [
+        "formtype",
+        "cell_no",
+        "froempment",
+        "frotover",
+        "reference",
+        "region",
+        "runame1",
+        "entname1"
+    ],
+
+    "temporarily_remove_cols": [],
+    "non_sampled_strata": [
+        "5141", "5142", "5143",
+        "5371", "5372", "5373",
+        "5661", "5662", "5663"
+    ],
+    "population_column_names": [
+        "reference", "checkletter", "inqcode", "entref", "wowentref", "frosic2003",
+        "rusic2003", "frosic2007", "rusic2007", "froempees", "employees",
+        "froempment", "employment", "froFTEempt", "FTEempt", "frotover",
+        "turnover", "entrepmkr", "legalstatus", "inqstop", "entzonemkr", "region",
+        "live_lu", "live_vat", "live_paye", "immfoc", "ultfoc", "cell_no",
+        "selmkr", "inclexcl"
+    ],
+    "population_keep_columns": [
+        "reference", "region", "frotover", "cell_no"
+    ],
+
+    "sample_column_names": [
+        "reference","checkletter","frosic2003","rusic2003","frosic2007",
+        "rusic2007","froempees","employees","froempment","employment","froFTEempt",
+        "FTEempt","frotover","turnover","entref","wowentref","vatref","payeref",
+        "crn","live_lu","live_vat","live_paye","legalstatus","entrepmkr","region",
+        "birthdate","entname1","entname2","entname3","runame1","runame2","runame3",
+        "ruaddr1","ruaddr2","ruaddr3","ruaddr4","ruaddr5","rupostcode","tradstyle1",
+        "tradstyle2","tradstyle3","contact","telephone","fax","seltype","inclexcl",
+        "cell_no","formtype","cso_tel","currency"
+    ],
+    "sample_keep_columns": ["reference", "runame1", "entname1"],
+
+     "filter_out_questions": [11, 12 ,146,902, 903, 904],
+     "csw_to_spp_columns":{
+        "returned_value":"response",
+        "adjusted_value":"adjustedresponse",
+        "question_no":"questioncode"
+    },
+    "type_to_imputation_marker" : {
+        "0":"selected, no return",
+        "1":"r",
+        "2":"derived",
+        "3":"fir",
+        "4":"bir",
+        "5":"mc",
+        "6":"c",
+        "10":"r",
+        "11":"r",
+        "12":"derived",
+        "13":"fir"
+    },
+    "mandatory_outputs":["produce_qa_output", "imputes_and_constructed_output", "cord_output"],
+    "components_questions":[201,202,211,212,221,222,231,232,241,242,243],
+
+    "census_extra_calibration_group": [],
+
+    "bands" : {
+        "0": [1,7],
+        "1": [11,17],
+        "2": [21,27],
+        "3": [31,37],
+        "4": [41,47],
+        "5": [51,57],
+        "6": [61,67],
+        "7": [71,77],
+        "8": [81,87],
+        "9": [91,97],
+        "10": [101,107],
+        "11": [111,117],
+        "12": [121,127],
+        "13": [131,137]
+    },
+
+    "imputation_contribution_sics": [
+        "41200", "41201", "41202", "42000", "42110", "42120", "42130", "42210",
+        "42220", "42900", "42910", "42990", "43100", "43110", "43120", "43130",
+        "43210", "43220", "43290", "43310", "43320", "43330", "43340", "43341",
+        "43342", "43390", "43910", "43990", "43991", "43999"
+    ],
+
+    "imputation_contribution_classification": [
+        "41200", "42000", "42900", "43100", "43210", "43220", "43290", "43310",
+        "43320", "43330", "43340", "43390", "43910", "43990"
+    ],
+
+    "local_unit_columns": ["ruref", "entref", "lu ref", "check letter", "sic03", "sic07",
+    "employees", "employment", "fte", "Name1", "Name2", "Name3", "Address1", "Address2",
+    "Address3", "Address4", "Address5", "Postcode", "trading as 1", "trading as 2",
+    "trading as 3", "region"
+    ],
+
+    "nil_values" : ["Combined child (NIL2)", "Out of scope (NIL3)", "Ceased trading (NIL4)" ,"Dormant (NIL5)",
+    "Part year return (NIL8)",
+    "No UK activity (NIL9)"],
+
+    "non_response_statuses": ["Form sent out", "Excluded from Results"],
+    "clear_statuses": ["Clear", "Clear - overridden"],
+
+    "sizeband_numeric_to_character": {
+        "1": "A",
+        "2": "B",
+        "3": "C",
+        "4": "D",
+        "5": "E",
+        "6": "F",
+        "7": "G"
+    },
+
+    "pounds_thousands_questions": [201, 202, 211, 212, 221, 222, 231, 232, 241, 242, 243, 290]
+}
