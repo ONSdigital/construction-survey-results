@@ -61,6 +61,7 @@ def produce_additional_outputs(
                     "quarterly_by_sizeband_output",
                     "quarterly_extracts",
                     "produce_qa_output",
+                    "r_m_output",
                 ]
                 else True
             )

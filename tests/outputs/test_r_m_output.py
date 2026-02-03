@@ -233,11 +233,10 @@ class TestRMOutput:
         df = input_df[input_df["questioncode"].isin([202, 212])]
 
         df["gross_turnover_uk"] = (
-            df["adjustedresponse"]
+            df["adjustedresponse_pounds_thousands"]
             * df["design_weight"]
             * df["outlier_weight"]
             * df["calibration_factor"]
-            / 1000
         )
 
         expected_output = calculate_regional_turnover_output

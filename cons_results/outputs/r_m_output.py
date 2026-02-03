@@ -273,7 +273,7 @@ def produce_r_m_output(additional_outputs_df: pd.DataFrame, **config):
             "reference",
             "period",
             "questioncode",
-            "adjustedresponse",
+            "adjustedresponse_pounds_thousands",
             "region",
             "design_weight",
             "calibration_factor",
@@ -302,11 +302,10 @@ def produce_r_m_output(additional_outputs_df: pd.DataFrame, **config):
     }
 
     df["gross_turnover_uk"] = (
-        df["adjustedresponse"]
+        df["adjustedresponse_pounds_thousands"]
         * df["design_weight"]
         * df["outlier_weight"]
         * df["calibration_factor"]
-        / 1000
     )
 
     for region in region_to_code.keys():
