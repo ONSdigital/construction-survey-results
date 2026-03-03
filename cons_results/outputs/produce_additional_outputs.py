@@ -167,16 +167,33 @@ def get_additional_outputs_df(
         "winsorised_value",
         "290_flag",
         "derived_zeros",
+        "converted_frotover",
+        "backdata_adjustedresponse",
+        "backdata_flags_adjustedresponse",
+        "adjustedresponse_man",
+        "default_link_flag_construction_matches",
+        "is_total_and_only_zero",
+        "skipped_question",
+        "adjustedresponse_pre_rescale",
+        "failed_rescale",
+        "l_value",
+        "is_sampled",
+        "is_census",
+        "nw_ag_flag",
+        "predicted_unit_value",
+        "ratio_estimation_treshold",
     ]
-    if not config["filter"]:
-        count_variables = [f"b_match_{target}_count", f"f_match_{target}_count"]
-    else:
-        count_variables = [
-            f"b_match_filtered_{target}_count",
-            f"f_match_filtered_{target}_count",
+    
+    possible_match_cols = [
+        f"f_match_{target}",
+        f"b_match_{target}",
+        f"f_match_filtered_{target}",
+        f"b_match_filtered_{target}",
         ]
-
-    final_cols += count_variables
+    
+    match_columns_to_add = [c for c in possible_match_cols if c in df.columns]
+    
+    final_cols += match_columns_to_add
 
     # converting cell_number to int
     # needed for outputs that use cell_number for sizebands
